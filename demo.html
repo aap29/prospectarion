@@ -24,7 +24,7 @@
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
-  connect-src 'self' https://wa.me https://api.whatsapp.com;
+  connect-src 'self' https://wa.me https://api.whatsapp.com https://script.google.com https://script.googleusercontent.com;
   frame-ancestors 'none';
   form-action 'self';
 ">
@@ -1791,6 +1791,172 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
 .d360-rede-chip.sem-link { cursor:default; }
 
 /* ═══════════════════════════════════════════
+   V10.4 — CARTÃO DE BOAS-VINDAS (topo do Início, só no primeiro acesso)
+═══════════════════════════════════════════ */
+.bv-cartao {
+  position: relative; background: #fff; border: 1.5px solid rgba(242,100,25,.35);
+  border-radius: var(--r); padding: 16px 16px 14px; margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(242,100,25,.10);
+}
+.bv-cartao[hidden] { display: none !important; }
+.bv-titulo { font-size: 18px; font-weight: 900; color: var(--text); padding-right: 40px; line-height: 1.25; }
+.bv-titulo em { font-style: normal; color: var(--accent); }
+.bv-sub { font-size: 13px; color: var(--muted); margin: 4px 0 12px; line-height: 1.5; }
+.bv-fechar {
+  position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 50%;
+  border: none; background: transparent; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1;
+}
+.bv-fechar:hover { background: var(--accent-lt); color: var(--accent); }
+.bv-passos { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.bv-passo {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; text-align: left;
+  background: var(--bg, #F5F6F7); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; cursor: pointer; font: inherit; color: var(--text); font-size: 14px; font-weight: 700;
+}
+.bv-passo:hover { border-color: var(--accent); }
+.bv-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: #fff; font-size: 13px; font-weight: 900;
+}
+.bv-passo.feito { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.35); color: #047857; cursor: default; }
+.bv-passo.feito .bv-num { background: #10B981; }
+.bv-passo .bv-seta { margin-left: auto; color: var(--accent); font-size: 18px; }
+.bv-passo.feito .bv-seta { display: none; }
+.bv-comecar {
+  width: 100%; min-height: 48px; border: none; border-radius: 12px; cursor: pointer;
+  background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; font-size: 16px; font-weight: 800;
+  box-shadow: 0 4px 14px rgba(242,100,25,.3);
+}
+.bv-progresso { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; }
+.bv-passo:focus-visible, .bv-comecar:focus-visible, .bv-fechar:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+
+/* ═══════════════════════════════════════════
+   V10.4 — TABLET (768–1023px): 2 colunas, conteúdo centralizado
+═══════════════════════════════════════════ */
+.nav-marca { display: none; }
+@media (min-width: 768px) {
+  .app-screen { padding-left: max(20px, calc((100% - 960px) / 2)); padding-right: max(20px, calc((100% - 960px) / 2)); }
+  #as-dash.active { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; align-content: start; }
+  #as-dash > * { grid-column: 1 / -1; min-width: 0; }
+  #as-dash > .d360-section { grid-column: auto; }
+  #as-dash > .d360-section:has(#d360-radar),
+  #as-dash > .d360-section:has(.d360-atalhos),
+  #as-dash > .d360-section:has(#d360-orientador) { grid-column: 1 / -1; }
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .d360-radar-grid { grid-template-columns: repeat(3, 1fr); }
+  .d360-atalhos { grid-template-columns: repeat(6, 1fr); }
+  #contacts-list, #notes-list, #pc-lista { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+  #contacts-list > *, #notes-list > *, #pc-lista > * { margin-bottom: 0 !important; min-width: 0; }
+  #contacts-list > :not(.contact-card), #pc-lista > :not(.pc-card) { grid-column: 1 / -1; }
+  .bv-passos { grid-template-columns: repeat(3, 1fr); }
+  .modal-overlay { align-items: center; }
+  .modal-sheet { border-radius: var(--r-lg); padding-bottom: 24px; }
+}
+
+/* ═══════════════════════════════════════════
+   V10.4 — COMPUTADOR (a partir de 1024px): menu lateral fixo, largura máxima 1200px
+═══════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  #mod-app.ativo { padding-left: 232px; }
+  #mod-app .bottom-nav {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 232px; z-index: 60;
+    flex-direction: column; align-items: stretch; gap: 2px; padding: 0 12px 16px;
+    border-top: none; border-right: 1px solid var(--border); overflow-y: auto;
+  }
+  #mod-app .nav-marca {
+    display: flex; align-items: center; height: 58px; padding: 0 8px; margin-bottom: 8px;
+    border-bottom: 2px solid var(--accent); font-size: 17px; font-weight: 900; letter-spacing: -.5px; color: var(--text);
+    flex-shrink: 0;
+  }
+  #mod-app .nav-marca em { font-style: normal; color: var(--accent); }
+  #mod-app .bottom-nav .nav-btn {
+    flex: 0 0 auto; flex-direction: row; justify-content: flex-start; gap: 12px;
+    min-height: 44px; padding: 8px 12px; border-radius: 10px; font-size: 14px; font-weight: 700; text-align: left;
+  }
+  #mod-app .bottom-nav .nav-btn:hover { background: var(--bg, #F5F6F7); color: var(--text); }
+  #mod-app .bottom-nav .nav-btn.active { background: var(--accent-lt); color: var(--accent); }
+  #mod-app .bottom-nav .nav-icon { font-size: 20px; width: 24px; text-align: center; }
+  #mod-app .app-topbar .brand-logo { display: none; }
+  #mod-app .app-topbar .at-title { text-align: left; font-size: 17px; }
+  .app-screen { padding-left: max(28px, calc((100% - 1200px) / 2)); padding-right: max(28px, calc((100% - 1200px) / 2)); padding-top: 24px; padding-bottom: 40px; }
+  #as-dash.active { column-gap: 20px; }
+  #as-dash > .d360-section:has(#d360-orientador) { grid-column: auto; }
+  .d360-radar-grid { gap: 12px; }
+  #contacts-list, #notes-list { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  #as-perfil > *, #as-perfil-pro > * { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .pl-board { padding: 16px max(16px, calc((100% - 1400px) / 2)); }
+  .pl-col { flex: 1 1 0; min-width: 150px; max-width: none; }
+  .ld-lista { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════════
+   V10.4 — LEADS DO TESTE (tela do proprietário)
+═══════════════════════════════════════════ */
+.ld-topo h2 { font-size: 20px; font-weight: 900; margin: 0; }
+.ld-sub { font-size: 13px; color: var(--muted); margin: 4px 0 12px; line-height: 1.5; }
+.ld-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ld-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 14px;
+  border-radius: 10px; border: 1.5px solid var(--border); background: #fff; color: var(--text);
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;
+}
+.ld-btn-pri { background: var(--accent); border-color: var(--accent); color: #fff; margin-top: 10px; }
+.ld-btn-wa { background: #25D366; border-color: #25D366; color: #fff; }
+.ld-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.ld-chip { min-height: 36px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: #fff; color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.ld-chip.ativo { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ld-aviso { background: var(--accent-lt); border: 1px solid rgba(242,100,25,.3); border-radius: var(--r); padding: 14px; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+.ld-aviso .ld-btn { display: flex; width: 100%; }
+.ld-lista { display: grid; gap: 10px; }
+.ld-card { background: #fff; border: 1px solid var(--border); border-radius: var(--r); padding: 14px; min-width: 0; }
+.ld-card-topo { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.ld-nome { font-size: 16px; font-weight: 800; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.ld-tag { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 10px; white-space: nowrap; }
+.ld-tag-ativo { background: rgba(16,185,129,.12); color: #047857; }
+.ld-tag-fim { background: #F3F4F6; color: #4B5563; }
+.ld-linha { font-size: 14px; margin-top: 3px; overflow-wrap: anywhere; }
+.ld-cinza { color: var(--muted); font-size: 12px; }
+.ld-botoes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.ld-botoes .ld-btn { flex: 1 1 140px; }
+.ld-vazio { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 28px 12px; font-size: 14px; background: #fff; border: 1px dashed var(--border); border-radius: var(--r); }
+.ld-cfg label { display: block; font-size: 13px; font-weight: 700; margin: 12px 0 6px; }
+.ld-cfg .input { width: 100%; font-size: 16px; }
+.ld-cfg p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+/* ── V10.4.1: botão "Instalar na tela inicial" ── */
+.inst-cartao {
+  display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box;
+  margin: 0 0 14px; padding: 14px 16px; border: none; border-radius: 14px; cursor: pointer; text-align: left;
+  background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; font-family: inherit;
+  box-shadow: 0 4px 16px rgba(242,100,25,.3);
+}
+.inst-cartao .inst-cartao-icone { font-size: 26px; line-height: 1; flex: 0 0 auto; }
+.inst-cartao .inst-cartao-txt { flex: 1; min-width: 0; }
+.inst-cartao strong { display: block; font-size: 16px; font-weight: 800; }
+.inst-cartao small { display: block; font-size: 13px; opacity: .92; margin-top: 2px; }
+.inst-cartao .inst-cartao-seta { font-size: 22px; opacity: .9; }
+.inst-cartao:focus-visible, .inst-splash:focus-visible, .inst-ok:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+.inst-fundo {
+  position: fixed; inset: 0; z-index: 100002; background: rgba(17,24,39,.55);
+  display: flex; align-items: flex-end; justify-content: center; padding: 16px;
+}
+@media (min-width: 768px) { .inst-fundo { align-items: center; } }
+.inst-caixa {
+  width: 100%; max-width: 440px; max-height: 90%; overflow-y: auto; box-sizing: border-box;
+  background: #fff; color: #1A1A1A; border-radius: 18px; padding: 22px 20px 18px; box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  font-size: 16px; line-height: 1.55;
+}
+.inst-caixa .inst-icone { font-size: 40px; text-align: center; margin-bottom: 4px; }
+.inst-caixa h2 { margin: 0 0 8px; font-size: 20px; font-weight: 900; text-align: center; }
+.inst-caixa p { margin: 0 0 10px; }
+.inst-caixa ol { margin: 0 0 12px; padding-left: 22px; }
+.inst-caixa li { margin-bottom: 8px; }
+.inst-caixa .inst-dica { font-size: 14px; color: #6B7280; }
+.inst-ok {
+  display: block; width: 100%; min-height: 52px; border: none; border-radius: 12px; cursor: pointer;
+  background: #F26419; color: #fff; font-size: 17px; font-weight: 800; font-family: inherit;
+}
+
+/* ═══════════════════════════════════════════
    V10.2 — EDIÇÃO HOSPEDADA (degustação / demonstração)
    Tema único claro (branco + laranja da marca), por escolha.
 ═══════════════════════════════════════════ */
@@ -1879,6 +2045,18 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
 
 /* V10.3: o app não aparece embaixo da tela de planos (antes dava para rolar e usar sem plano) */
 #mod-app:not(.ativo) { display: none; }
+
+/* V10.4: cadastro do teste grátis */
+.pub-form label { display: block; font-size: 15px; font-weight: 700; margin: 12px 0 6px; }
+.pub-campo { width: 100%; min-height: 48px; font-size: 16px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); font-family: inherit; }
+.pub-campo:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(242,100,25,.18); }
+.pub-erro { display: none; color: #B91C1C; font-size: 14px; font-weight: 600; margin-top: 6px; }
+.pub-aceite { display: flex !important; align-items: flex-start; gap: 10px; font-weight: 600 !important; margin-top: 16px !important; cursor: pointer; }
+.pub-aceite input { width: 24px; height: 24px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); }
+.pub-termos { margin-top: 10px; font-size: 14px; }
+.pub-termos summary { cursor: pointer; color: var(--accent); font-weight: 700; min-height: 32px; }
+.pub-termos p { font-size: 14px; color: var(--muted); }
+.pub-btn[disabled] { opacity: .7; cursor: wait; }
 
 #pub-faixa[hidden], .pub-voltar-app[hidden] { display: none !important; }
 </style>
@@ -2127,6 +2305,9 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
     ═══════════════════════════════════════════ -->
     <div class="app-screen active" id="as-dash">
 
+      <!-- ── V10.4: BOAS-VINDAS (só no primeiro acesso) ── -->
+      <section class="bv-cartao" id="bv-cartao" aria-label="Boas-vindas" hidden></section>
+
       <!-- ── CABEÇALHO 360° ── -->
       <div class="d360-header">
         <div class="d360-avatar-wrap">
@@ -2288,8 +2469,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
       <div class="stat-card" style="padding:6px 14px;border-radius:var(--r)" id="activity-list">
         <div class="activity-item">
           <div class="activity-dot" style="background:var(--accent)"></div>
-          <div class="activity-text">Bem-vindo ao PROSPECTARION!<span>Comece adicionando seus contatos</span></div>
-          <div class="activity-time">Agora</div>
+          <div class="activity-text">Nenhuma atividade ainda<span>Suas ações vão aparecer aqui</span></div>
+          <div class="activity-time"></div>
         </div>
       </div>
 
@@ -2578,6 +2759,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
         <div class="ps-bar"><div class="ps-bar-fill" id="ps-fill" style="width:0%"></div></div>
         <div class="ps-exp" id="ps-exp">Plano ativo</div>
       </div>
+      <button type="button" class="inst-cartao inst-botao" onclick="instInstalar()"><span class="inst-cartao-icone" aria-hidden="true">📲</span><span class="inst-cartao-txt"><strong>Instalar na tela inicial</strong><small>Abra o PROSPECTARION com um toque, como um app</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button>
       <div class="section-title">Configurações</div>
       <div class="stat-card" style="padding:0 14px;border-radius:var(--r)">
         <div class="settings-item" onclick="editarPerfil()"><div class="settings-icon">👤</div><div style="flex:1"><div class="settings-label">Meu perfil</div><div class="settings-sub">Perfil profissional, foto e redes</div></div><div class="settings-arrow">›</div></div>
@@ -2585,11 +2767,11 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
         <div class="settings-item" onclick="exportarBackupJSON()"><div class="settings-icon">💾</div><div style="flex:1"><div class="settings-label">Exportar Backup Completo</div><div class="settings-sub">JSON com todos os dados do CRM</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="document.getElementById('input-restaurar-json').click()"><div class="settings-icon">📂</div><div style="flex:1"><div class="settings-label">Restaurar Backup Completo</div><div class="settings-sub">Importar arquivo JSON do PROSPECTARION</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="pubColarBackup()"><div class="settings-icon">📋</div><div style="flex:1"><div class="settings-label">Colar backup copiado</div><div class="settings-sub">Recupera os dados a partir do texto copiado</div></div><div class="settings-arrow">›</div></div>
-        <div class="settings-item" onclick="pubInstalar()"><div class="settings-icon">📲</div><div style="flex:1"><div class="settings-label">Adicionar à tela inicial</div><div class="settings-sub">Abrir o PROSPECTARION com um toque</div></div><div class="settings-arrow">›</div></div>
         <input type="file" id="input-restaurar-json" accept=".json,application/json" style="display:none" onchange="restaurarBackupJSON(this)">
         <div class="settings-item" onclick="solicitarMelhoria()"><div class="settings-icon">💡</div><div style="flex:1"><div class="settings-label">Solicitar melhoria</div><div class="settings-sub">Enviar pedido ao criador</div></div><div class="settings-arrow">›</div></div>
+        
       </div>
-      <div style="text-align:center;padding:24px 0;color:var(--muted2);font-size:12px">PROSPECTARION · V10.2 Demonstração<br>Dados privados e seguros 🔒</div>
+      <div style="text-align:center;padding:24px 0;color:var(--muted2);font-size:12px">PROSPECTARION · V10.4 Demonstração<br>Dados privados e seguros 🔒</div>
     </div>
 
   </div><!-- /app-content -->
@@ -2662,6 +2844,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
     <!-- ═══════════════════════════════════════════════
          AGENDA V9.2.3
     ════════════════════════════════════════════════ -->
+    
+
     <div class="app-screen" id="as-agenda">
       <div class="ag-header">
         <div class="ag-header-titulo">📅 Agenda</div>
@@ -2722,6 +2906,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
     </div>
 
   <div class="bottom-nav">
+    <div class="nav-marca" aria-hidden="true">PROSPECTAR<em>ION</em></div>
     <button class="nav-btn active" onclick="appGoScreen('as-dash',this,'Início')"><div class="nav-btn-wrap"><div class="nav-icon">🏠</div></div>Início</button>
     <button class="nav-btn" onclick="appGoScreen('as-contacts',this,'Contatos')"><div class="nav-btn-wrap"><div class="nav-icon">👥</div><div class="nav-badge" id="badge-contacts" style="display:none">0</div></div>Contatos</button>
     <button class="nav-btn" onclick="appGoScreen('as-pipeline',this,'Pipeline')"><div class="nav-btn-wrap" style="position:relative"><div class="nav-icon">📊</div><div id="badge-pipeline" style="display:none;position:absolute;top:-3px;right:-5px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 3px;"></div></div>Pipeline</button>
@@ -3500,7 +3685,8 @@ var PUB_WA = '5551984168848';
 var PUB_WA_TXT = '(51) 98416-8848';
 var PUB_URL_DEGUSTACAO = 'teste.html';
 var PUB_URL_DEMO = '';
-var PUB_LINKS = {}; /* links de pagamento por plano; vazio = combinar pelo WhatsApp */
+var PUB_LINKS = {};
+var PUB_LEADS_URL = ''; /* planilha central dos leads (Apps Script); vazio = só neste aparelho */ /* links de pagamento por plano; vazio = combinar pelo WhatsApp */
 var __pubConfirmado = false;
 var __pubBlobs = {};
 var __pubInstalar = null;
@@ -3683,6 +3869,7 @@ function pubColarBackup() {
 /* Botão "Adicionar à tela inicial" */
 window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); __pubInstalar = e; });
 function pubInstalar() {
+  if (typeof instInstalar === 'function') { instInstalar(); return; } // V10.4.1: botão de instalar (prompt do celular ou passo a passo)
   if (__pubInstalar) { try { __pubInstalar.prompt(); } catch (e) {} __pubInstalar = null; return; }
   pubJanela('Adicionar à tela inicial',
     '<p>Assim o PROSPECTARION abre com um toque, como um aplicativo.</p>' +
@@ -3710,8 +3897,7 @@ function pubAcaoPlano() {
         [{ rotulo: 'Abrir a degustação', href: PUB_URL_DEGUSTACAO, principal: true }, { rotulo: 'Voltar' }]);
       return;
     }
-    if (APP.user.plano === 'trial') { pubAviso('Você já está na degustação. Escolha um plano para continuar depois dos 3 dias.'); return; }
-    ativarTrial();
+    pubTesteGratis(); /* V10.4: pede nome, WhatsApp e e-mail antes de liberar */
     return;
   }
   var msg = 'Olá, Anderson! Quero assinar o PROSPECTARION: ' + planoSel.nome + ' (' + planoSel.precoStr + ').';
@@ -3870,16 +4056,138 @@ function pubTextoSucesso(titulo, textoHtml) {
   if (h) h.textContent = titulo;
   if (p) p.innerHTML = textoHtml;
 }
+function pubNomeTeste() { return PROSP_EDICAO === 'degustacao' ? 'degustação' : 'teste grátis'; }
 function pubTesteGratis() {
+  var nt = pubNomeTeste();
   if (APP.user.plano === 'trial' && APP.user.codigo) {
-    if (pubPlanoAtivo()) pubAviso('Seu teste grátis já está ativo. Toque em "Voltar ao app" para continuar.');
-    else pubAviso('Seu teste grátis de 3 dias terminou. Escolha um plano para continuar.\nSeus dados continuam guardados neste aparelho.');
+    if (pubPlanoAtivo()) pubAviso('Seu ' + nt + ' já está ativo. Toque em "Voltar ao app" para continuar.');
+    else pubTesteUsado('Seu ' + nt + ' de 3 dias terminou. Seus dados continuam guardados neste aparelho.');
     return;
   }
-  if (APP.user.trialUsado) { pubAviso('O teste grátis já foi usado neste aparelho. Escolha um plano para continuar.'); return; }
+  if (APP.user.trialUsado) { pubTesteUsado('O teste grátis já foi usado neste aparelho.'); return; }
   if (APP.user.plano && APP.user.codigo) { pubAviso('Você já tem um plano neste aparelho. Para renovar, escolha o plano e toque em Pagar.'); return; }
+  pubLeadFormulario();
+}
+
+/* ═══ V10.4 — TESTE GRÁTIS COM CADASTRO (nome, WhatsApp, e-mail e aceite dos termos) ═══ */
+function pubTesteUsado(motivo) {
+  pubJanela('Seu teste já foi utilizado',
+    '<p>' + pubEsc(motivo || 'Este e-mail ou WhatsApp já usou o teste grátis de 3 dias.') + '</p>' +
+    '<p>Para continuar usando o PROSPECTARION, escolha um plano. Seus contatos continuam no seu aparelho.</p>',
+    [{ rotulo: 'Ver planos', principal: true, acao: pubIrParaPlanos }, { rotulo: 'Voltar' }]);
+}
+function pubIrParaPlanos() {
+  if (!document.getElementById('mod-pagamento').classList.contains('ativo')) showModulo('mod-pagamento');
+  var c = document.querySelector('#mod-pagamento .plan-card.popular');
+  if (c) c.click();
+  var pl = document.querySelector('#mod-pagamento .plans');
+  if (pl) { try { pl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { pl.scrollIntoView(); } }
+}
+function pubSoDigitos(v) { return String(v || '').replace(/\D/g, ''); }
+function pubMascaraZap(el) {
+  var d = pubSoDigitos(el.value);
+  if (d.length > 11 && d.indexOf('55') === 0) d = d.substr(2);
+  d = d.substr(0, 11);
+  var r = d;
+  if (d.length > 2) r = '(' + d.substr(0, 2) + ') ' + d.substr(2);
+  if (d.length > 6) r = '(' + d.substr(0, 2) + ') ' + d.substr(2, d.length === 11 ? 5 : 4) + '-' + d.substr(d.length === 11 ? 7 : 6);
+  el.value = r;
+}
+function pubZapValido(d) { return /^[1-9][1-9]\d{8,9}$/.test(d) && (d.length === 10 || d.charAt(2) === '9'); }
+function pubEmailValido(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+function pubLeadFormulario() {
+  var l = APP.user.lead || {};
+  pubJanela('Teste grátis de 3 dias',
+    '<p>Preencha para liberar seu acesso. Sem cartão.</p>' +
+    '<form class="pub-form" id="pub-lead-form" novalidate onsubmit="pubLeadEnviar(); return false;">' +
+    '<label for="pl-nome">Seu nome</label><input id="pl-nome" class="pub-campo" type="text" autocomplete="name" maxlength="80" value="' + pubEsc(l.nome || '') + '">' +
+    '<div class="pub-erro" id="pl-erro-nome" role="alert"></div>' +
+    '<label for="pl-zap">WhatsApp</label><input id="pl-zap" class="pub-campo" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="(51) 99999-9999" maxlength="16" oninput="pubMascaraZap(this)" value="' + pubEsc(l.whatsapp ? l.whatsapp : '') + '">' +
+    '<div class="pub-erro" id="pl-erro-zap" role="alert"></div>' +
+    '<label for="pl-email">E-mail</label><input id="pl-email" class="pub-campo" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="120" value="' + pubEsc(l.email || '') + '">' +
+    '<div class="pub-erro" id="pl-erro-email" role="alert"></div>' +
+    '<label class="pub-aceite"><input type="checkbox" id="pl-aceite"> <span>Li e aceito os termos de uso e privacidade.</span></label>' +
+    '<details class="pub-termos"><summary>Ler os termos</summary>' +
+    '<p><strong>O que pedimos:</strong> nome, WhatsApp e e-mail, só para liberar seu teste grátis, evitar que o teste seja repetido e para o Anderson, criador do PROSPECTARION, falar com você sobre o app.</p>' +
+    '<p><strong>O que não fazemos:</strong> não vendemos nem passamos seus dados para ninguém. Os contatos e anotações que você cadastrar no app ficam só no seu aparelho.</p>' +
+    '<p><strong>Teste:</strong> 3 dias, até 5 contatos, um teste por e-mail e por WhatsApp. Depois, para continuar, é preciso escolher um plano.</p>' +
+    '<p><strong>Seus direitos (LGPD):</strong> para corrigir ou apagar seus dados, peça pelo WhatsApp ' + PUB_WA_TXT + '.</p></details>' +
+    '<div class="pub-erro" id="pl-erro-aceite" role="alert"></div>' +
+    '<button type="submit" hidden></button></form>',
+    [{ rotulo: 'Liberar meu teste grátis', principal: true, manter: true, acao: pubLeadEnviar }, { rotulo: 'Voltar' }]);
+  try { var f = document.getElementById('pl-zap'); if (f && f.value) pubMascaraZap(f); } catch (e) {}
+}
+function pubLeadErro(id, txt) { var e = document.getElementById(id); if (e) { e.textContent = txt; e.style.display = txt ? 'block' : 'none'; } }
+function pubLeadEnviar() {
+  var nome = (document.getElementById('pl-nome').value || '').replace(/\s+/g, ' ').replace(/^\s|\s$/g, '');
+  var zap = pubSoDigitos(document.getElementById('pl-zap').value);
+  if (zap.length > 11 && zap.indexOf('55') === 0) zap = zap.substr(2);
+  var email = (document.getElementById('pl-email').value || '').replace(/\s/g, '').toLowerCase();
+  var aceite = document.getElementById('pl-aceite').checked;
+  var ok = true, primeiro = null;
+  function marca(campo, erro, txt) { pubLeadErro(erro, txt); if (txt) { ok = false; if (!primeiro) primeiro = campo; } }
+  marca('pl-nome', 'pl-erro-nome', nome.length < 2 ? 'Digite seu nome.' : '');
+  marca('pl-zap', 'pl-erro-zap', !pubZapValido(zap) ? 'Digite o WhatsApp com DDD, por exemplo (51) 99999-9999.' : '');
+  marca('pl-email', 'pl-erro-email', !pubEmailValido(email) ? 'Digite um e-mail válido, por exemplo nome@gmail.com.' : '');
+  marca('pl-aceite', 'pl-erro-aceite', !aceite ? 'Para liberar o teste, marque que aceita os termos.' : '');
+  if (!ok) { try { document.getElementById(primeiro).focus(); } catch (e) {} return; }
+  if (!APP.user.aparelho) APP.user.aparelho = 'ap-' + Math.random().toString(36).substr(2, 8);
+  var lead = { nome: nome, whatsapp: zap, email: email, aceiteEm: new Date().toISOString(), aparelho: APP.user.aparelho, origem: PROSP_EDICAO, enviado: false };
+  if (!PUB_LEADS_URL) { pubLeadAtivar(lead, null); return; }
+  var botao = document.querySelector('#pub-janela .pub-btn-principal');
+  if (botao) { botao.disabled = true; botao.textContent = 'Liberando…'; }
+  pubLeadPost({ acao: 'registrar', nome: nome, whatsapp: zap, email: email, aparelho: lead.aparelho, origem: PROSP_EDICAO }, 12000).then(function (r) {
+    if (r && r.ok && (r.situacao === 'novo' || r.situacao === 'continua')) { lead.enviado = true; pubLeadAtivar(lead, r); return; }
+    if (r && r.ok && r.situacao === 'usado') {
+      APP.user.trialUsado = true; saveAll();
+      pubTesteUsado('Este e-mail ou WhatsApp já usou o teste grátis de 3 dias.');
+      return;
+    }
+    throw new Error('resposta');
+  }).catch(function () {
+    /* Sem internet ou planilha fora do ar: libera neste aparelho e envia o cadastro depois */
+    pubLeadAtivar(lead, null);
+  });
+}
+function pubLeadPost(obj, ms) {
+  return new Promise(function (ok, falha) {
+    var t = setTimeout(function () { falha(new Error('tempo')); }, ms || 12000);
+    fetch(PUB_LEADS_URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(obj) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { clearTimeout(t); ok(j); }, function (e) { clearTimeout(t); falha(e); });
+  });
+}
+function pubLeadAtivar(lead, srv) {
+  pubFecharJanela();
   ativarTrial();
-  pubTextoSucesso('Teste grátis liberado!', 'Você tem 3 dias para conhecer o <strong>PROSPECTARION</strong>.<br>Seus dados ficam só neste aparelho.');
+  if (srv && srv.fim) { APP.user.exp = srv.fim; lead.inicio = srv.inicio; lead.fim = srv.fim; }
+  else { lead.inicio = new Date().toISOString(); lead.fim = APP.user.exp; }
+  APP.user.lead = lead;
+  if (!APP.user.nome || /^usu[aá]rio$/i.test(APP.user.nome)) APP.user.nome = lead.nome;
+  saveAll();
+  var nt = pubNomeTeste();
+  var volta = srv && srv.situacao === 'continua';
+  try { document.getElementById('suc-exp').textContent = 'Expira em: ' + new Date(APP.user.exp).toLocaleDateString('pt-BR'); } catch (e) {}
+  pubTextoSucesso(volta ? 'Bem-vindo de volta!' : (PROSP_EDICAO === 'degustacao' ? 'Degustação liberada!' : 'Teste grátis liberado!'),
+    volta ? 'Seu ' + nt + ' continua de onde parou neste outro aparelho.<br>Os contatos ficam em cada aparelho.'
+          : 'Você tem 3 dias para conhecer o <strong>PROSPECTARION</strong>.<br>Seus dados ficam só neste aparelho.');
+}
+/* Ao abrir o app: envia cadastro pendente e acerta o contador do teste pela conta */
+function pubLeadSincronizar() {
+  var l = APP.user && APP.user.lead;
+  if (!PUB_LEADS_URL || !l || APP.user.plano !== 'trial') return;
+  if (navigator.onLine === false) return;
+  var pedido = l.enviado ? { acao: 'consultar', email: l.email, whatsapp: l.whatsapp }
+                         : { acao: 'registrar', nome: l.nome, whatsapp: l.whatsapp, email: l.email, aparelho: l.aparelho, origem: l.origem };
+  pubLeadPost(pedido, 15000).then(function (r) {
+    if (!r || !r.ok || !r.fim) return;
+    var antes = APP.user.exp;
+    if (r.situacao === 'novo') { if (new Date(r.fim) < new Date(APP.user.exp)) APP.user.exp = r.fim; }
+    else APP.user.exp = r.fim;
+    l.enviado = true; l.fim = APP.user.exp;
+    saveAll();
+    if (antes !== APP.user.exp) { try { pubAtualizarFaixa(); ALERTAS.verificar(); } catch (e) {} }
+  }, function () {});
 }
 function pubAcaoPlanoClassico() {
   if (planoSel.id === 'trial') { pubTesteGratis(); return; }
@@ -3950,6 +4258,73 @@ function pubAtivarCodigo() {
 }
 
 var PUB_TELAS = [];
+/* ═══════════════════════════════════════════
+   V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
+   Android/Chrome: abre a instalação do próprio celular com um toque.
+   Sem essa opção (iPhone, outros navegadores): mostra o passo a passo.
+   Aberto pelo ícone (já instalado): os botões somem.
+═══════════════════════════════════════════ */
+var __instPedido = null;
+var __instFeito = false;
+function instJaInstalado() {
+  if (__instFeito) return true;
+  try { if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true; } catch (e) {}
+  return window.navigator.standalone === true;
+}
+function instAtualizarBotoes() {
+  var esconder = instJaInstalado();
+  var bs = document.querySelectorAll('.inst-botao');
+  for (var i = 0; i < bs.length; i++) bs[i].style.display = esconder ? 'none' : '';
+}
+function instAviso(txt) {
+  try { if (typeof showToast === 'function') { showToast(txt); return; } } catch (e) {}
+}
+function instFecharJanela() {
+  var j = document.getElementById('inst-janela');
+  if (j) j.parentNode.removeChild(j);
+}
+function instPassoAPasso() {
+  instFecharJanela();
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+  var fundo = document.createElement('div');
+  fundo.id = 'inst-janela';
+  fundo.className = 'inst-fundo';
+  fundo.innerHTML =
+    '<div class="inst-caixa" role="dialog" aria-modal="true" aria-labelledby="inst-titulo">' +
+    '<div class="inst-icone" aria-hidden="true">📲</div>' +
+    '<h2 id="inst-titulo">Instalar na tela inicial</h2>' +
+    '<p>Assim o PROSPECTARION abre com um toque, como um aplicativo, sem a barra do navegador.</p>' +
+    (ios ?
+      '<ol><li>Toque em <strong>Compartilhar</strong> (quadrado com seta para cima), embaixo da tela.</li>' +
+      '<li>Toque em <strong>Adicionar à Tela de Início</strong>.</li><li>Toque em <strong>Adicionar</strong>.</li></ol>' :
+      '<ol><li>Toque nos <strong>três pontinhos ⋮</strong>, no canto de cima do Chrome.</li>' +
+      '<li>Toque em <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</li>' +
+      '<li>Confirme em <strong>Instalar</strong> (ou <strong>Adicionar</strong>).</li></ol>') +
+    '<p class="inst-dica">Depois, abra sempre pelo ícone laranja. Seus dados continuam neste celular.</p>' +
+    '<button type="button" class="inst-ok" onclick="instFecharJanela()">Entendi</button></div>';
+  fundo.addEventListener('click', function (ev) { if (ev.target === fundo) instFecharJanela(); });
+  document.body.appendChild(fundo);
+  try { fundo.querySelector('.inst-ok').focus(); } catch (e) {}
+}
+function instInstalar() {
+  if (instJaInstalado()) { instAviso('✅ O PROSPECTARION já está na sua tela inicial'); return; }
+  var p = __instPedido;
+  if (!p) { instPassoAPasso(); return; }
+  __instPedido = null;
+  try {
+    p.prompt();
+    if (p.userChoice && p.userChoice.then) {
+      p.userChoice.then(function (r) {
+        if (r && r.outcome === 'accepted') { __instFeito = true; instAtualizarBotoes(); instAviso('🎉 PROSPECTARION instalado na tela inicial!'); }
+      }, function () {});
+    }
+  } catch (e) { instPassoAPasso(); }
+}
+try {
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); __instPedido = e; instAtualizarBotoes(); });
+  window.addEventListener('appinstalled', function () { __instPedido = null; __instFeito = true; instAtualizarBotoes(); });
+  document.addEventListener('DOMContentLoaded', instAtualizarBotoes);
+} catch (e) {}
 /* ═══════════════════════════════════════════
    CONFIG (personalize aqui)
 ═══════════════════════════════════════════ */
@@ -7340,8 +7715,8 @@ function renderActivityList() {
   if (!acts.length) {
     l.innerHTML = `<div class="activity-item">
       <div class="activity-dot" style="background:var(--accent)"></div>
-      <div class="activity-text">Bem-vindo ao PROSPECTARION!<span>Comece adicionando seus contatos</span></div>
-      <div class="activity-time">Agora</div>
+      <div class="activity-text">Nenhuma atividade ainda<span>Suas ações vão aparecer aqui</span></div>
+      <div class="activity-time"></div>
     </div>`;
     return;
   }
@@ -9153,6 +9528,91 @@ function reSalvarAtividade(id) {
 }
 
 
+/* ═══════════════════════════════════════════
+   V10.4 — CARTÃO DE BOAS-VINDAS (ES5)
+   Aparece no topo do Início só no primeiro acesso (app sem contatos, negócios
+   e tarefas). Some para sempre quando os 3 passos são concluídos ou quando
+   a pessoa fecha. Estado guardado em APP.user.boasVindas (mesma base de dados).
+═══════════════════════════════════════════ */
+function bvPrimeiroNome() {
+  var n = String((APP.user && APP.user.nome) || '').replace(/^\s+|\s+$/g, '');
+  if (!n || /^usu[aá]rio$/i.test(n)) {
+    try { if (APP.perfil && APP.perfil.nome) n = String(APP.perfil.nome).replace(/^\s+|\s+$/g, ''); } catch (e) {}
+  }
+  if (!n || /^usu[aá]rio$/i.test(n)) return '';
+  return n.split(/\s+/)[0];
+}
+function bvPassos() {
+  return [
+    { rotulo: 'Cadastre seu primeiro contato', feito: (APP.contacts || []).length > 0 },
+    { rotulo: 'Crie um negócio', feito: (APP.deals || []).length > 0 },
+    { rotulo: 'Agende uma tarefa', feito: ((APP.dashboard && APP.dashboard.prioridades) || []).length > 0 }
+  ];
+}
+function bvEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function bvRender() {
+  var el = document.getElementById('bv-cartao');
+  if (!el || !APP || !APP.user) return;
+  var bv = APP.user.boasVindas;
+  var passos = bvPassos();
+  var algum = passos[0].feito || passos[1].feito || passos[2].feito;
+  if (!bv) {
+    /* Quem já usa o app (tem dados) não é primeiro acesso: o cartão nunca aparece */
+    APP.user.boasVindas = algum ? { fim: 'ja_usava', em: new Date().toISOString() } : { inicio: new Date().toISOString() };
+    bv = APP.user.boasVindas;
+  }
+  if (bv.fim) { el.hidden = true; el.innerHTML = ''; return; }
+  var feitos = passos.filter(function (p) { return p.feito; }).length;
+  if (feitos === 3) {
+    APP.user.boasVindas.fim = 'concluido'; APP.user.boasVindas.em = new Date().toISOString();
+    el.hidden = true; el.innerHTML = '';
+    try { saveAll(); } catch (e) {}
+    try { showToast('🎉 Primeiros passos concluídos!'); } catch (e) {}
+    return;
+  }
+  var nome = bvPrimeiroNome();
+  var html = '<button type="button" class="bv-fechar" onclick="bvFechar()" aria-label="Fechar boas-vindas">✕</button>' +
+    '<div class="bv-titulo">👋 ' + (nome ? 'Olá, <em>' + bvEsc(nome) + '</em>! ' : 'Olá! ') + 'Bem-vindo ao PROSPECTARION</div>' +
+    '<div class="bv-sub">Comece em 3 passos rápidos:</div><ol class="bv-passos">';
+  for (var i = 0; i < passos.length; i++) {
+    html += '<li><button type="button" class="bv-passo' + (passos[i].feito ? ' feito' : '') + '" onclick="bvAbrirPasso(' + i + ')"' + (passos[i].feito ? ' aria-disabled="true"' : '') + '>' +
+      '<span class="bv-num">' + (passos[i].feito ? '✓' : (i + 1)) + '</span><span>' + passos[i].rotulo + '</span><span class="bv-seta">›</span></button></li>';
+  }
+  html += '</ol><button type="button" class="bv-comecar" onclick="bvComecar()">' + (feitos ? 'Continuar' : 'Começar') + '</button>' +
+    '<div class="bv-progresso">' + feitos + ' de 3 concluídos</div>';
+  el.innerHTML = html;
+  el.hidden = false;
+}
+function bvAbrirPasso(i) {
+  var p = bvPassos()[i];
+  if (!p || p.feito) return;
+  if (i === 0) { appGoScreen('as-contacts', null, 'Contatos'); openNewContact(); }
+  else if (i === 1) { appGoScreen('as-pipeline', null, 'Pipeline'); openNewDeal(); }
+  else { appGoScreen('as-agenda', null, 'Agenda'); agAbrirNovo(); }
+}
+function bvComecar() {
+  var passos = bvPassos();
+  for (var i = 0; i < passos.length; i++) { if (!passos[i].feito) { bvAbrirPasso(i); return; } }
+}
+function bvFechar() {
+  if (!APP.user.boasVindas) APP.user.boasVindas = {};
+  APP.user.boasVindas.fim = 'fechado'; APP.user.boasVindas.em = new Date().toISOString();
+  saveAll();
+  bvRender();
+}
+(function () {
+  var r360 = renderDashboard360;
+  renderDashboard360 = function () { var r = r360.apply(this, arguments); try { bvRender(); } catch (e) {} return r; };
+  var sv = saveAll;
+  saveAll = function () {
+    var r = sv.apply(this, arguments);
+    try { var el = document.getElementById('bv-cartao'); if (el && !el.hidden) bvRender(); } catch (e) {}
+    return r;
+  };
+})();
+
+
+
 /* ═══ V10.2 — ligações da edição hospedada (rodam antes da inicialização) ═══ */
 (function () {
   var selOrig = selectPlan;
@@ -9234,6 +9694,13 @@ function mostrarSplash() {
     ">
       📂 Já uso o PROSPECTARION — Restaurar meus dados
     </button>
+    <button type="button" class="inst-splash inst-botao" onclick="instInstalar()" style="
+      width:100%;max-width:320px;padding:12px;margin:-8px 0 18px;
+      background:transparent;color:#1A1A1A;border:none;border-radius:12px;
+      font-size:15px;font-weight:700;cursor:pointer;text-decoration:underline;
+    ">
+      📲 Instalar na tela inicial
+    </button>
     <div style="font-size:12px;color:#9CA3AF;display:flex;align-items:center;justify-content:center;gap:5px">
       🔒 Seguro · Privado · Seus dados ficam no seu celular
     </div>
@@ -9276,6 +9743,7 @@ if(APP.user.plano && APP.user.codigo) {
   initApp();
 }
 pubAtualizarBotaoPlano();
+setTimeout(pubLeadSincronizar, 1500);
 /* V10.2 site: funcionar sem internet e receber atualizações quando houver rede */
 try { if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1')) navigator.serviceWorker.register('sw.js'); } catch (e) {}
 </script>
