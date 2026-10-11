@@ -1953,8 +1953,7 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
   display: block; width: 100%; min-height: 52px; border: none; border-radius: 12px; cursor: pointer;
   background: #F26419; color: #fff; font-size: 17px; font-weight: 800; font-family: inherit;
 }
-/*CRIADOR-INICIO*/
-/* ── V10.4.2: cofre do criador ── */
+/* ── Telas de acesso (cofre do criador e trava dos clientes) ── */
 body.cofre-travado > *:not(#cofre) { visibility: hidden !important; }
 body.cofre-travado { overflow: hidden; }
 #cofre {
@@ -1983,13 +1982,6 @@ body.cofre-travado { overflow: hidden; }
 .cofre-principal { background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; border: none; box-shadow: 0 4px 14px rgba(242,100,25,.3); }
 .cofre-botao[disabled] { opacity: .7; cursor: wait; }
 .cofre-link { display: block; margin: 14px auto 0; background: none; border: none; color: #C2410C; font-size: 16px; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; font-family: inherit; }
-.cofre-etapas { list-style: none; display: flex; gap: 6px; padding: 0; margin: 4px 0 6px; }
-.cofre-etapas li {
-  flex: 1; text-align: center; font-size: 13px; font-weight: 900; color: #9CA3AF; border-top: 4px solid #E5E7EB; padding-top: 6px;
-}
-.cofre-etapas li span { display: block; font-size: 11px; font-weight: 700; margin-top: 2px; }
-.cofre-etapas li.feita { color: #059669; border-color: #059669; }
-.cofre-etapas li.atual { color: #F26419; border-color: #F26419; }
 .cofre-lista { list-style: none; padding: 0; margin: 0 0 6px; }
 .cofre-lista li { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; margin-bottom: 8px; background: #fff; }
 .cofre-lista li > div { flex: 1; min-width: 0; }
@@ -1998,10 +1990,6 @@ body.cofre-travado { overflow: hidden; }
 .cofre-tag { font-size: 11px; font-weight: 800; color: #059669; background: #ECFDF5; border-radius: 10px; padding: 2px 8px; }
 .cofre-mini { min-height: 40px; padding: 6px 12px; border-radius: 10px; border: 1.5px solid #FCA5A5; background: #fff; color: #B91C1C; font-weight: 800; cursor: pointer; }
 .cofre-botao:focus-visible, .cofre-link:focus-visible, .cofre-mini:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
-.cofre-mestra-nova { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 900; letter-spacing: 1px; text-align: center; color: #C2410C; background: #FFF3EC; border: 2px dashed #F26419; border-radius: 12px; padding: 14px 8px; margin: 6px 0 14px; word-break: break-all; user-select: text; -webkit-user-select: text; }
-.cofre-codigo { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
-.cofre-aviso-troca { margin-top: 14px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 14px; line-height: 1.5; }
-.cofre-aviso-troca .cofre-mini { display: block; margin-top: 8px; border-color: #F59E0B; color: #92400E; }
 /* ── V10.4.4: entrada rápida ── */
 .rap-pin { font-size: 28px !important; letter-spacing: 12px; text-align: center; font-weight: 900; }
 .rap-lista li { align-items: flex-start; }
@@ -2010,6 +1998,24 @@ body.cofre-travado { overflow: hidden; }
 .cofre-mini.rap-ligar { border-color: #F26419; color: #C2410C; }
 .rap-outras .cofre-botao { margin-top: 10px; }
 .rap-painel-botao small { display: block; font-size: 13px; font-weight: 600; color: #6B7280; margin-top: 2px; }
+/* ── V10.4.5: trava opcional dos clientes ── */
+.trava-passos { margin: 0 0 8px; padding-left: 22px; font-size: 15px; line-height: 1.6; color: #374151; }
+.cofre-botao.trava-desligar { color: #B91C1C; border-color: #FCA5A5; }
+.inst-cartao.trava-cartao { background: linear-gradient(135deg, #374151, #1F2937); }
+select.cofre-campo { appearance: auto; }
+/*CRIADOR-INICIO*/
+/* ── V10.4.2: cofre do criador (só as telas do criador) ── */
+.cofre-etapas { list-style: none; display: flex; gap: 6px; padding: 0; margin: 4px 0 6px; }
+.cofre-etapas li {
+  flex: 1; text-align: center; font-size: 13px; font-weight: 900; color: #9CA3AF; border-top: 4px solid #E5E7EB; padding-top: 6px;
+}
+.cofre-etapas li span { display: block; font-size: 11px; font-weight: 700; margin-top: 2px; }
+.cofre-etapas li.feita { color: #059669; border-color: #059669; }
+.cofre-etapas li.atual { color: #F26419; border-color: #F26419; }
+.cofre-mestra-nova { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 900; letter-spacing: 1px; text-align: center; color: #C2410C; background: #FFF3EC; border: 2px dashed #F26419; border-radius: 12px; padding: 14px 8px; margin: 6px 0 14px; word-break: break-all; user-select: text; -webkit-user-select: text; }
+.cofre-codigo { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
+.cofre-aviso-troca { margin-top: 14px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 14px; line-height: 1.5; }
+.cofre-aviso-troca .cofre-mini { display: block; margin-top: 8px; border-color: #F59E0B; color: #92400E; }
 /*CRIADOR-FIM*/
 </style>
 </head>
@@ -2738,6 +2744,7 @@ body.cofre-travado { overflow: hidden; }
       <button type="button" class="inst-cartao inst-botao" onclick="instInstalar()"><span class="inst-cartao-icone" aria-hidden="true">📲</span><span class="inst-cartao-txt"><strong>Instalar na tela inicial</strong><small>Abra o PROSPECTARION com um toque, como um app</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button>
       <div class="section-title">Configurações</div>
       <!--CRIADOR-INICIO--><button type="button" class="inst-cartao" style="background:linear-gradient(135deg,#1A1A1A,#374151)" onclick="cofrePainel()"><span class="inst-cartao-icone" aria-hidden="true">🔐</span><span class="inst-cartao-txt"><strong>Segurança do criador</strong><small>Aparelhos identificados, trocar senha, travar agora</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button><!--CRIADOR-FIM-->
+      <button type="button" id="trava-cartao" class="inst-cartao trava-cartao" onclick="travaPainel()"><span class="inst-cartao-icone" aria-hidden="true">🔒</span><span class="inst-cartao-txt"><strong>Proteger o app</strong><small id="trava-cartao-sub">Senha, PIN ou digital para abrir o app</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button>
       <div class="stat-card" style="padding:0 14px;border-radius:var(--r)">
         <div class="settings-item" onclick="editarPerfil()"><div class="settings-icon">👤</div><div style="flex:1"><div class="settings-label">Meu perfil</div><div class="settings-sub">Perfil profissional, foto e redes</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="importarContatos()"><div class="settings-icon">📲</div><div style="flex:1"><div class="settings-label">Importar contatos</div><div class="settings-sub">Do celular, com sua permissão</div></div><div class="settings-arrow">›</div></div>
@@ -3681,7 +3688,6 @@ body.cofre-travado { overflow: hidden; }
 
 
 <script>
-/*CRIADOR-INICIO*/
 /* ── V10.4.2: criptografia do cofre (SHA-256, HMAC, PBKDF2) em ES5 puro ── */
 var CF_K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
@@ -3755,6 +3761,37 @@ function cfAleatorio(n) {
 }
 function cfXor(a, b) { var r = [], i; for (i = 0; i < a.length; i++) r.push(a[i] ^ b[i]); return r; }
 function cfIgual(a, b) { if (a.length !== b.length) return false; var d = 0, i; for (i = 0; i < a.length; i++) d |= (a.charCodeAt ? a.charCodeAt(i) ^ b.charCodeAt(i) : a[i] ^ b[i]); return d === 0; }
+/* ═══════════════════════════════════════════
+   V10.4.5 — TELAS DE ACESSO (ES5), usadas pelo cofre do criador e pela trava opcional dos clientes
+═══════════════════════════════════════════ */
+function cofreNorm(t) {
+  var s = String(t || '').toLowerCase();
+  try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
+  return s.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+}
+function cofreEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+/* ── Tela ── */
+function cofreTela(conteudo) {
+  var f = document.getElementById('cofre');
+  if (!f) {
+    f = document.createElement('div'); f.id = 'cofre'; f.setAttribute('role', 'dialog'); f.setAttribute('aria-modal', 'true');
+    document.body.appendChild(f);
+  }
+  document.body.classList.add('cofre-travado');
+  f.innerHTML = '<div class="cofre-caixa"><div class="cofre-marca">PROSPECTAR<em>ION</em></div>' + conteudo + '</div>';
+  var campo = f.querySelector('input'); if (campo) { try { campo.focus(); } catch (e) {} }
+  var fs = f.querySelectorAll('input');
+  for (var i = 0; i < fs.length; i++) fs[i].addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') { var b = document.querySelector('#cofre .cofre-principal'); if (b) b.click(); }
+  });
+}
+function cofreCampo(id, rotulo, tipo, extra) {
+  return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label><input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
+}
+function cofreAviso(txt) { var e = document.getElementById('cofre-erro'); if (e) { e.textContent = txt; e.style.display = txt ? 'block' : 'none'; } }
+function cofreValor(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+function cofreOcupado(sim) { var b = document.querySelector('#cofre .cofre-principal'); if (b) { b.disabled = sim; if (sim) b.setAttribute('data-txt', b.textContent), b.textContent = 'Conferindo…'; else if (b.getAttribute('data-txt')) b.textContent = b.getAttribute('data-txt'); } }
+function cofreDepois(fn) { cofreOcupado(true); setTimeout(function () { try { fn(); } finally { cofreOcupado(false); } }, 30); }
 /* ═══════════════════════════════════════════
    V10.4.4 — ENTRADA RÁPIDA (ES5)
    Formas de entrar sem digitar a senha longa. Cada uma vale só neste aparelho, só é ligada depois de
@@ -4046,6 +4083,311 @@ function rapResumo() {
   return n.length ? 'Ligado: ' + n.join(', ') : 'PIN, digital, Google ou 30 dias conectado';
 }
 /* ═══════════════════════════════════════════
+   V10.4.5 — TRAVA OPCIONAL DO APP (clientes, ES5)
+   Perfil → "Proteger o app": o cliente cria uma senha e responde 2 perguntas pessoais. Com a trava ligada,
+   o app abre pedindo a senha ou uma forma rápida (PIN, digital, Google, 30 dias conectado).
+   Quem não liga continua abrindo direto, como sempre.
+   - A senha e as respostas nunca são guardadas: só a prova (PBKDF2).
+   - Esquecer a senha se resolve pelas perguntas. Nada aqui apaga dados.
+   - A trava vale só neste aparelho: não vai no backup (restaurar em outro celular não tranca ninguém para fora).
+   - Na versão do criador quem manda é o cofre; esta trava fica desligada.
+═══════════════════════════════════════════ */
+var TRAVA_ITER = 30000, TRAVA_ITER_RESP = 10000, TRAVA_MIN = 10;
+var TRAVA_PERGUNTAS = [
+  'Nome da sua primeira escola',
+  'Cidade onde seu pai ou sua mãe nasceu',
+  'Nome do seu primeiro animal de estimação',
+  'Apelido que você tinha na infância',
+  'Modelo do seu primeiro carro',
+  'Nome do seu melhor amigo de infância'
+];
+var __travaOk = false, __travaOculto = 0, __travaNovo = null;
+var TRAVA_ERRO = '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>';
+
+function travaDoCriador() { return typeof cofrePainel === 'function'; }
+function travaDados() { var t = APP && APP.trava; return t && t.ativa && t.senha && t.kenc && t.verif && t.selo ? t : null; }
+function travaUsuario() { return (APP.user && (APP.user.email || APP.user.nome)) || 'PROSPECTARION'; }
+function travaConteudo(t) { return JSON.stringify({ v: 1, senha: t.senha, kenc: t.kenc, verif: t.verif, perguntas: t.perguntas, krec: t.krec }); }
+function travaSeloOk(t, k) { return !!t.selo && cfIgual(cfHex(cfHmac(k, cfBytes(travaConteudo(t)))), t.selo); }
+function travaDeriva(senha, sal) { return cfPbkdf2(cfBytes(senha), cfDeHex(sal), TRAVA_ITER); }
+function travaDerivaResp(r0, r1, sal) { return cfPbkdf2(cfBytes(cofreNorm(r0) + '|' + cofreNorm(r1)), cfDeHex(sal), TRAVA_ITER_RESP); }
+function travaChaveOk(k) { var t = travaDados(); return !!(t && k && cfIgual(cfHex(cfSha256(k)), t.verif) && travaSeloOk(t, k)); }
+function travaAbrirComSenha(senha) {
+  var t = travaDados(); if (!t) return null;
+  var d = travaDeriva(senha, t.senha.sal);
+  if (!cfIgual(rapProva(d), t.senha.prova)) return null;
+  var k = cfXor(cfDeHex(t.kenc), d);
+  return travaChaveOk(k) ? k : null;
+}
+function travaAbrirComRespostas(r0, r1) {
+  var t = travaDados(); if (!t || !t.krec) return null;
+  var d = travaDerivaResp(r0, r1, t.krec.sal);
+  if (!cfIgual(rapProva(d), t.krec.prova)) return null;
+  var k = cfXor(cfDeHex(t.krec.kenc), d);
+  return travaChaveOk(k) ? k : null;
+}
+/* Grava a senha (e, na criação, as perguntas). A chave da trava (k) não muda ao trocar a senha:
+   as formas rápidas continuam valendo. */
+function travaGravar(k, senha, perguntas, r0, r1) {
+  var t = APP.trava || {}, sal = cfHex(cfAleatorio(16)), d = travaDeriva(senha, sal);
+  t.ativa = true;
+  t.senha = { sal: sal, prova: rapProva(d) };
+  t.kenc = cfHex(cfXor(k, d));
+  t.verif = cfHex(cfSha256(k));
+  if (perguntas) {
+    var s2 = cfHex(cfAleatorio(16)), d2 = travaDerivaResp(r0, r1, s2);
+    t.perguntas = perguntas;
+    t.krec = { sal: s2, prova: rapProva(d2), kenc: cfHex(cfXor(k, d2)) };
+  }
+  t.erros = 0; t.bloqueioAte = 0;
+  t.selo = cfHex(cfHmac(k, cfBytes(travaConteudo(t))));
+  APP.trava = t;
+  saveAll();
+}
+function travaBloqueado() { var t = APP.trava || {}, a = Date.now(); return t.bloqueioAte && t.bloqueioAte > a ? Math.ceil((t.bloqueioAte - a) / 60000) : 0; }
+function travaErro() {
+  var t = APP.trava; if (!t) return;
+  t.erros = (t.erros || 0) + 1;
+  if (t.erros >= 5) t.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, t.erros - 5)) * 60000;
+  try { saveAll(); } catch (e) {}
+}
+function travaSenhaFraca(s) {
+  if (String(s).length < 8) return 'A senha precisa ter pelo menos 8 caracteres.';
+  if (!/[A-Za-z]/.test(s) || !/[0-9]/.test(s)) return 'Use letras e números na senha.';
+  return '';
+}
+
+/* ── Sessão: liberado nesta aba até fechar o app ── */
+function travaSessaoOk() {
+  try { var s = JSON.parse(sessionStorage.getItem('prospectarion_sessao') || 'null'); return !!s && s.t === 'cliente:' + rapToken(); } catch (e) { return false; }
+}
+function travaLiberar() {
+  __travaOk = true; __travaNovo = null;
+  try { sessionStorage.setItem('prospectarion_sessao', JSON.stringify({ t: 'cliente:' + rapToken(), em: Date.now() })); } catch (e) {}
+  var t = APP.trava; if (t) { t.erros = 0; t.bloqueioAte = 0; }
+  try { saveAll(); } catch (e) {}
+  travaFechar();
+}
+function travaFechar() {
+  var f = document.getElementById('cofre'); if (f) f.parentNode.removeChild(f);
+  document.body.classList.remove('cofre-travado');
+  travaCartao();
+}
+function travaTravar() {
+  __travaOk = false;
+  try { sessionStorage.removeItem('prospectarion_sessao'); } catch (e) {}
+  RAP = TRAVA_RAP;
+  travaEntrar();
+}
+function travaTravarAgora() {
+  if (rapTem('conectado')) rapGuardar('conectado', null);
+  __rapGoogleTentou = true;
+  travaTravar();
+}
+
+/* ── Tela de entrada ── */
+function travaEntrar(soSenha) {
+  RAP = TRAVA_RAP;
+  if (soSenha !== true && rapEntrar()) return;
+  var b = travaBloqueado();
+  cofreTela('<div class="cofre-icone">🔒</div><h1>App protegido</h1><p class="cofre-sub">Digite a sua senha do PROSPECTARION.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    '<input id="cofre-email" type="text" autocomplete="username" value="' + cofreEsc(travaUsuario()) + '" style="display:none" aria-hidden="true" tabindex="-1">' +
+    '<div id="cofre-erro" class="cofre-erro" role="alert"' + (b ? '' : ' style="display:none"') + '>' + (b ? 'Muitas tentativas. Aguarde ' + b + ' min.' : '') + '</div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaEntrarConfere()">Entrar</button>' +
+    '<button type="button" class="cofre-link" onclick="travaEsqueci()">Esqueci a senha</button>');
+  rapExtrasSenha();
+}
+function travaEntrarConfere() {
+  var b = travaBloqueado(); if (b) { cofreAviso('Muitas tentativas. Aguarde ' + b + ' min.'); return; }
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = travaAbrirComSenha(s);
+    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'Senha não confere.'); return; }
+    rapDepoisDaSenha(k, travaUsuario(), s);
+  });
+}
+
+/* ── Esqueci a senha: as 2 perguntas pessoais ── */
+function travaEsqueci() {
+  var t = travaDados(); if (!t) { travaFechar(); return; }
+  var p = t.perguntas || ['Pergunta 1', 'Pergunta 2'];
+  cofreTela('<div class="cofre-icone">🗝️</div><h1>Esqueci a senha</h1><p class="cofre-sub">Responda as suas perguntas pessoais. Seus dados continuam todos guardados.</p>' +
+    cofreCampo('trava-r0', cofreEsc(p[0]), 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') +
+    cofreCampo('trava-r1', cofreEsc(p[1]), 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaEsqueciConfere()">Continuar</button>' +
+    '<button type="button" class="cofre-link" onclick="travaEntrar(true)">Voltar</button>');
+}
+function travaEsqueciConfere() {
+  var b = travaBloqueado(); if (b) { cofreAviso('Muitas tentativas. Aguarde ' + b + ' min.'); return; }
+  var r0 = cofreValor('trava-r0'), r1 = cofreValor('trava-r1');
+  cofreDepois(function () {
+    var k = travaAbrirComRespostas(r0, r1);
+    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'As respostas não conferem.'); return; }
+    __travaNovo = { k: k, recuperar: true };
+    travaTelaSenha();
+  });
+}
+
+/* ── Ligar a proteção: senha → perguntas → formas rápidas ── */
+function travaComecar() {
+  RAP = TRAVA_RAP;
+  __travaNovo = { k: cfAleatorio(32) };
+  cofreTela('<div class="cofre-icone">🔒</div><h1>Proteger o app</h1><p class="cofre-sub">Com a proteção ligada, o PROSPECTARION só abre com a sua senha (ou PIN, digital…). Seus contatos e dados continuam guardados como estão.</p>' +
+    '<ol class="trava-passos"><li>Crie uma senha</li><li>Responda 2 perguntas (para recuperar a senha se esquecer)</li><li>Escolha uma forma rápida de entrar (opcional)</li></ol>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaTelaSenha()">Começar</button>' +
+    '<button type="button" class="cofre-link" onclick="travaCancelar()">Agora não</button>');
+}
+function travaCancelar() { __travaNovo = null; travaFechar(); }
+function travaTelaSenha() {
+  var rec = __travaNovo && __travaNovo.recuperar;
+  cofreTela('<div class="cofre-icone">🔑</div><h1>' + (rec ? 'Senha nova' : 'Crie sua senha') + '</h1><p class="cofre-sub">Pelo menos 8 caracteres, com letras e números.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="new-password"') +
+    cofreCampo('cofre-senha2', 'Repita a senha', 'password', 'autocomplete="new-password"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaSenhaConfere()">' + (rec ? 'Salvar senha nova' : 'Continuar') + '</button>' +
+    '<button type="button" class="cofre-link" onclick="' + (rec ? 'travaEntrar(true)' : 'travaCancelar()') + '">' + (rec ? 'Voltar' : 'Cancelar') + '</button>');
+}
+function travaSenhaConfere() {
+  var s = cofreValor('cofre-senha'), f = travaSenhaFraca(s);
+  if (f) { cofreAviso(f); return; }
+  if (s !== cofreValor('cofre-senha2')) { cofreAviso('As duas senhas não são iguais.'); return; }
+  if (!__travaNovo) { travaFechar(); return; }
+  if (__travaNovo.recuperar) {
+    var k = __travaNovo.k;
+    cofreDepois(function () {
+      travaGravar(k, s);
+      if (rapTem('google') && rapGoogleDisponivel()) rapGoogleGravar(travaUsuario(), s, function () {});
+      rapAvisoOk('Senha nova salva'); travaLiberar();
+    });
+    return;
+  }
+  __travaNovo.senha = s;
+  travaTelaPerguntas();
+}
+function travaOpcoesPerguntas(id, escolhida) {
+  return '<select class="cofre-campo" id="' + id + '">' + TRAVA_PERGUNTAS.map(function (p, i) {
+    return '<option value="' + i + '"' + (i === escolhida ? ' selected' : '') + '>' + cofreEsc(p) + '</option>';
+  }).join('') + '</select>';
+}
+function travaTelaPerguntas() {
+  cofreTela('<div class="cofre-icone">❓</div><h1>Perguntas pessoais</h1><p class="cofre-sub">Servem para recuperar a senha se você esquecer. Use respostas que você lembra sempre.</p>' +
+    '<label class="cofre-rotulo" for="trava-p0">Pergunta 1</label>' + travaOpcoesPerguntas('trava-p0', 0) +
+    cofreCampo('trava-r0', 'Resposta 1', 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') +
+    '<label class="cofre-rotulo" for="trava-p1">Pergunta 2</label>' + travaOpcoesPerguntas('trava-p1', 2) +
+    cofreCampo('trava-r1', 'Resposta 2', 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaPerguntasConfere()">Ligar proteção</button>' +
+    '<button type="button" class="cofre-link" onclick="travaTelaSenha()">Voltar</button>');
+}
+function travaPerguntasConfere() {
+  var p0 = parseInt(cofreValor('trava-p0'), 10), p1 = parseInt(cofreValor('trava-p1'), 10);
+  var r0 = cofreValor('trava-r0'), r1 = cofreValor('trava-r1');
+  if (p0 === p1) { cofreAviso('Escolha duas perguntas diferentes.'); return; }
+  if (cofreNorm(r0).length < 2 || cofreNorm(r1).length < 2) { cofreAviso('Responda as duas perguntas.'); return; }
+  var n = __travaNovo; if (!n || !n.senha) { travaComecar(); return; }
+  cofreDepois(function () {
+    travaGravar(n.k, n.senha, [TRAVA_PERGUNTAS[p0], TRAVA_PERGUNTAS[p1]], r0, r1);
+    __travaOk = true;
+    try { sessionStorage.setItem('prospectarion_sessao', JSON.stringify({ t: 'cliente:' + rapToken(), em: Date.now() })); } catch (e) {}
+    rapAvisoOk('Proteção ligada');
+    rapDepoisDaSenha(n.k, travaUsuario(), n.senha);
+  });
+}
+
+/* ── Perfil → Proteger o app ── */
+function travaPainel() {
+  if (travaDoCriador()) { cofrePainel(); return; }
+  RAP = TRAVA_RAP;
+  if (!travaDados()) { travaComecar(); return; }
+  if (!__travaOk) { travaEntrar(); return; }
+  travaPainelTela();
+}
+function travaPainelTela() {
+  cofreTela('<div class="cofre-icone">🔒</div><h1>Proteger o app</h1><p class="cofre-sub">Proteção ligada neste aparelho. O app só abre com a sua senha ou uma forma rápida.</p>' +
+    '<button type="button" class="cofre-botao rap-painel-botao" onclick="rapPainel()">⚡ Entrar mais rápido<small>' + cofreEsc(rapResumo()) + '</small></button>' +
+    '<button type="button" class="cofre-botao" onclick="travaTrocarSenha()">Trocar senha</button>' +
+    '<button type="button" class="cofre-botao" onclick="travaTravarAgora()">Travar agora</button>' +
+    '<button type="button" class="cofre-botao trava-desligar" onclick="travaDesligar()">Desligar proteção</button>' +
+    TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaFechar()">Voltar ao app</button>');
+}
+function travaTrocarSenha() {
+  cofreTela('<div class="cofre-icone">🔑</div><h1>Trocar senha</h1>' +
+    cofreCampo('cofre-senha', 'Senha atual', 'password', 'autocomplete="current-password"') +
+    cofreCampo('cofre-senha-n', 'Senha nova', 'password', 'autocomplete="new-password"') +
+    cofreCampo('cofre-senha2', 'Repita a senha nova', 'password', 'autocomplete="new-password"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaTrocarConfere()">Trocar senha</button>' +
+    '<button type="button" class="cofre-link" onclick="travaPainelTela()">Voltar</button>');
+}
+function travaTrocarConfere() {
+  var a = cofreValor('cofre-senha'), n = cofreValor('cofre-senha-n');
+  var f = travaSenhaFraca(n); if (f) { cofreAviso(f); return; }
+  if (n !== cofreValor('cofre-senha2')) { cofreAviso('As duas senhas novas não são iguais.'); return; }
+  cofreDepois(function () {
+    var k = travaAbrirComSenha(a); if (!k) { travaErro(); cofreAviso('Senha atual não confere.'); return; }
+    travaGravar(k, n);
+    if (rapTem('google') && rapGoogleDisponivel()) rapGoogleGravar(travaUsuario(), n, function () {});
+    travaPainelTela(); rapAvisoOk('Senha trocada');
+  });
+}
+function travaDesligar() {
+  cofreTela('<div class="cofre-icone">🔓</div><h1>Desligar proteção</h1><p class="cofre-sub">O app volta a abrir direto, sem senha. Seus dados continuam todos guardados. Confirme com a sua senha.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaDesligarConfere()">Desligar proteção</button>' +
+    '<button type="button" class="cofre-link" onclick="travaPainelTela()">Voltar</button>');
+}
+function travaDesligarConfere() {
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = travaAbrirComSenha(s); if (!k) { travaErro(); cofreAviso('Senha não confere.'); return; }
+    if (rapTem('digital')) { try { var nv = rapNativo(); if (nv) nv.digitalApagar('cliente'); } catch (e) {} }
+    delete APP.trava; saveAll();
+    try { sessionStorage.removeItem('prospectarion_sessao'); } catch (e) {}
+    __travaOk = false;
+    travaFechar(); rapAvisoOk('Proteção desligada');
+  });
+}
+function travaCartao() {
+  var c = document.getElementById('trava-cartao-sub'); if (!c) return;
+  c.textContent = travaDados() ? 'Ligada neste aparelho' + (RAP === TRAVA_RAP && rapAlgum() ? ' · ' + rapResumo().replace('Ligado: ', '') : '') : 'Senha, PIN ou digital para abrir o app';
+}
+
+/* ── Contexto da entrada rápida para os clientes ── */
+var TRAVA_RAP = {
+  nome: 'cliente', titulo: 'App protegido', linkSenha: 'Usar a senha', googleNome: 'PROSPECTARION', oQueGoogle: 'a sua senha',
+  rec: function (criar) {
+    if (!APP.trava) { if (!criar) return null; APP.trava = {}; }
+    if (!APP.trava.rapido) { if (!criar) return null; APP.trava.rapido = {}; }
+    return APP.trava.rapido;
+  },
+  verif: function () { return (APP.trava || {}).verif; },
+  integra: function (k) { var t = travaDados(); return !!(t && travaSeloOk(t, k)); },
+  salvar: function () { try { saveAll(); } catch (e) {} },
+  liberar: function () { travaLiberar(); },
+  telaSenha: function () { travaEntrar(true); },
+  confereSenha: function () { travaEntrarConfere(); },
+  abrirComSenha: function (s) { return travaAbrirComSenha(s); },
+  erroSenha: function () { travaErro(); },
+  id: function () { return travaUsuario(); },
+  painel: function () { travaPainelTela(); }
+};
+
+/* ── Início ── */
+function travaIniciar() {
+  if (travaDoCriador()) { var c = document.getElementById('trava-cartao'); if (c) c.parentNode.removeChild(c); return; }
+  if (!travaDados()) { travaCartao(); return; }
+  RAP = TRAVA_RAP;
+  travaCartao();
+  if (travaSessaoOk()) { __travaOk = true; return; }
+  travaEntrar();
+}
+/* Trava sozinho depois de 10 minutos fora do app (menos com "30 dias conectado") */
+document.addEventListener('visibilitychange', function () {
+  if (travaDoCriador() || !travaDados()) return;
+  if (document.hidden) { __travaOculto = Date.now(); return; }
+  if (__travaOk && __travaOculto && Date.now() - __travaOculto > TRAVA_MIN * 60000 && !rapConectadoChave()) travaTravar();
+});
+/*CRIADOR-INICIO*/
+/* ═══════════════════════════════════════════
    V10.4.2 — COFRE DO CRIADOR (ES5)
    Só o Anderson entra no modo CEO:
    - aparelho já identificado: e-mail + senha criada por ele;
@@ -4069,13 +4411,7 @@ var COFRE_PERGUNTAS = [
   'Nome do seu melhor amigo de infância'
 ];
 
-function cofreNorm(t) {
-  var s = String(t || '').toLowerCase();
-  try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
-  return s.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
-}
 function cofreNormMestra(t) { return String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
-function cofreEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 function cofreEmailOk(email) {
   var h = cfHex(cfSha256(cfBytes(cofreNorm(email))));
   for (var i = 0; i < COFRE_CFG.emails.length; i++) if (cfIgual(h, COFRE_CFG.emails[i])) return true;
@@ -4145,28 +4481,6 @@ function cofreSessaoOk() {
   try { var s = JSON.parse(sessionStorage.getItem(COFRE_SESSAO) || 'null'); return s && s.t === cofreToken() && cofreAparelhoConhecido(); } catch (e) { return false; }
 }
 
-/* ── Tela ── */
-function cofreTela(conteudo) {
-  var f = document.getElementById('cofre');
-  if (!f) {
-    f = document.createElement('div'); f.id = 'cofre'; f.setAttribute('role', 'dialog'); f.setAttribute('aria-modal', 'true');
-    document.body.appendChild(f);
-  }
-  document.body.classList.add('cofre-travado');
-  f.innerHTML = '<div class="cofre-caixa"><div class="cofre-marca">PROSPECTAR<em>ION</em></div>' + conteudo + '</div>';
-  var campo = f.querySelector('input'); if (campo) { try { campo.focus(); } catch (e) {} }
-  var fs = f.querySelectorAll('input');
-  for (var i = 0; i < fs.length; i++) fs[i].addEventListener('keydown', function (ev) {
-    if (ev.key === 'Enter') { var b = document.querySelector('#cofre .cofre-principal'); if (b) b.click(); }
-  });
-}
-function cofreCampo(id, rotulo, tipo, extra) {
-  return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label><input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
-}
-function cofreAviso(txt) { var e = document.getElementById('cofre-erro'); if (e) { e.textContent = txt; e.style.display = txt ? 'block' : 'none'; } }
-function cofreValor(id) { var e = document.getElementById(id); return e ? e.value : ''; }
-function cofreOcupado(sim) { var b = document.querySelector('#cofre .cofre-principal'); if (b) { b.disabled = sim; if (sim) b.setAttribute('data-txt', b.textContent), b.textContent = 'Conferindo…'; else if (b.getAttribute('data-txt')) b.textContent = b.getAttribute('data-txt'); } }
-function cofreDepois(fn) { cofreOcupado(true); setTimeout(function () { try { fn(); } finally { cofreOcupado(false); } }, 30); }
 function cofreEtapas(n) {
   var t = ['E-mail', 'Chave Mestra', 'Senha', 'Perguntas', 'Aparelho'], h = '<ol class="cofre-etapas" aria-label="Etapa ' + n + ' de 5">';
   for (var i = 1; i <= 5; i++) h += '<li class="' + (i < n ? 'feita' : (i === n ? 'atual' : '')) + '">' + (i < n ? '✓' : i) + '<span>' + t[i - 1] + '</span></li>';
@@ -6848,6 +7162,7 @@ function exportarBackupJSON() {
       return;
     }
 
+    if (dados.trava) delete dados.trava; // V10.4.5: a trava fica só neste aparelho
     /*CRIADOR-INICIO*/if (dados.criador) delete dados.criador; // V10.4.2: credenciais do cofre não saem no backup
 /*CRIADOR-FIM*/
     // 5. Montar JSON de exportação: _meta + dados originais integralmente
@@ -6911,6 +7226,7 @@ function enviarBackupWhatsApp() {
     }
 
     if (_leituraFalhou || !dados || typeof dados !== 'object' || Array.isArray(dados)) { showToast('Dados inválidos'); return; }
+    if (dados.trava) delete dados.trava; // V10.4.5
     /*CRIADOR-INICIO*/if (dados.criador) delete dados.criador; // V10.4.2
 /*CRIADOR-FIM*/
 
@@ -10128,6 +10444,7 @@ if(APP.user.plano && APP.user.codigo) {
 }/*CRIADOR-INICIO*/
 cofreIniciar(); // V10.4.2: o cofre abre antes de qualquer tela do criador
 /*CRIADOR-FIM*/
+travaIniciar(); // V10.4.5: trava opcional (só age se o cliente ligou "Proteger o app")
 </script>
 </body>
 </html>
