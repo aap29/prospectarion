@@ -2002,6 +2002,14 @@ body.cofre-travado { overflow: hidden; }
 .cofre-codigo { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
 .cofre-aviso-troca { margin-top: 14px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 14px; line-height: 1.5; }
 .cofre-aviso-troca .cofre-mini { display: block; margin-top: 8px; border-color: #F59E0B; color: #92400E; }
+/* ── V10.4.4: entrada rápida ── */
+.rap-pin { font-size: 28px !important; letter-spacing: 12px; text-align: center; font-weight: 900; }
+.rap-lista li { align-items: flex-start; }
+.rap-ic { font-size: 26px; line-height: 1; margin-top: 2px; }
+.rap-lista .cofre-mini { align-self: center; }
+.cofre-mini.rap-ligar { border-color: #F26419; color: #C2410C; }
+.rap-outras .cofre-botao { margin-top: 10px; }
+.rap-painel-botao small { display: block; font-size: 13px; font-weight: 600; color: #6B7280; margin-top: 2px; }
 /*CRIADOR-FIM*/
 </style>
 </head>
@@ -3748,6 +3756,296 @@ function cfAleatorio(n) {
 function cfXor(a, b) { var r = [], i; for (i = 0; i < a.length; i++) r.push(a[i] ^ b[i]); return r; }
 function cfIgual(a, b) { if (a.length !== b.length) return false; var d = 0, i; for (i = 0; i < a.length; i++) d |= (a.charCodeAt ? a.charCodeAt(i) ^ b.charCodeAt(i) : a[i] ^ b[i]); return d === 0; }
 /* ═══════════════════════════════════════════
+   V10.4.4 — ENTRADA RÁPIDA (ES5)
+   Formas de entrar sem digitar a senha longa. Cada uma vale só neste aparelho, só é ligada depois de
+   uma entrada com a senha e pode ser desligada quando quiser:
+   - PIN de 6 números (5 erros desligam o PIN e voltam a pedir a senha);
+   - digital (app Android: o segredo fica no cofre do próprio celular, liberado pela biometria);
+   - senha salva no Gerenciador de Senhas do Google (Chrome);
+   - manter conectado por 30 dias.
+   Nenhuma forma guarda a senha no app: cada uma guarda a chave do cofre "embrulhada". Uma chave
+   desembrulhada só vale se for a chave verdadeira (resumo conferido) — editar os dados não abre nada.
+   O contexto (RAP) diz de quem é a trava: criador (cofre) ou cliente (trava opcional).
+═══════════════════════════════════════════ */
+var RAP_ITER_PIN = 60000, RAP_DIAS = 30, RAP_PIN_ERROS = 5;
+var RAP = null;
+var __rapDigitalVolta = null, __rapPend = null, __rapGoogleTentou = false, __rapOcupado = false;
+
+function rapToken() {
+  var t = '';
+  try { t = localStorage.getItem('prospectarion_aparelho') || ''; } catch (e) {}
+  if (!/^[0-9a-f]{32}$/.test(t)) { t = cfHex(cfAleatorio(16)); try { localStorage.setItem('prospectarion_aparelho', t); } catch (e) {} }
+  return t;
+}
+function rapR() { return RAP ? RAP.rec(false) : null; }
+function rapTem(tipo) { var r = rapR(), x = r && r[tipo]; return !!(x && x.aparelho === rapToken()); }
+function rapAlgum() { return rapTem('pin') || rapTem('digital') || rapTem('conectado') || rapTem('google'); }
+function rapGuardar(tipo, v) { var r = RAP.rec(true); if (v) r[tipo] = v; else delete r[tipo]; RAP.salvar(); }
+function rapMascara(b, rotulo) { return cfSha256(b.concat(cfBytes('|' + RAP.nome + '|' + rotulo + '|' + rapToken()))); }
+function rapProva(d) { return cfHex(cfSha256(d.concat(cfBytes('prova')))); }
+/* Uma chave só vale se for a verdadeira e se as credenciais deste aparelho estiverem íntegras */
+function rapChaveOk(k) {
+  try { return !!(k && k.length === 32 && cfIgual(cfHex(cfSha256(k)), RAP.verif()) && RAP.integra(k)); } catch (e) { return false; }
+}
+
+/* ── PIN ── */
+function rapPinDeriva(pin, sal, iter) { return cfPbkdf2(cfBytes('PIN|' + pin), cfDeHex(sal), iter); }
+function rapPinFraco(pin) {
+  if (!/^[0-9]{6}$/.test(pin)) return 'O PIN precisa ter exatamente 6 números.';
+  if (/^(\d)\1{5}$/.test(pin) || '0123456789'.indexOf(pin) >= 0 || '9876543210'.indexOf(pin) >= 0) return 'PIN fácil demais (números repetidos ou em sequência). Escolha outro.';
+  return '';
+}
+function rapPinGravar(k, pin) {
+  var sal = cfHex(cfAleatorio(16)), d = rapPinDeriva(pin, sal, RAP_ITER_PIN);
+  rapGuardar('pin', { aparelho: rapToken(), sal: sal, iter: RAP_ITER_PIN, prova: rapProva(d), kenc: cfHex(cfXor(k, d)), erros: 0 });
+}
+function rapPinAbrir(pin) {
+  if (!rapTem('pin')) return null;
+  var p = rapR().pin, d = rapPinDeriva(pin, p.sal, p.iter || RAP_ITER_PIN);
+  if (!cfIgual(rapProva(d), p.prova)) return null;
+  var k = cfXor(cfDeHex(p.kenc), d);
+  return rapChaveOk(k) ? k : null;
+}
+
+/* ── Manter conectado ── */
+function rapConectadoGravar(k) {
+  var n = cfAleatorio(32), ate = Date.now() + RAP_DIAS * 86400000;
+  rapGuardar('conectado', { aparelho: rapToken(), ate: ate, n: cfHex(n), kenc: cfHex(cfXor(k, rapMascara(n, 'conectado|' + ate))) });
+}
+function rapConectadoChave() {
+  if (!RAP || !rapTem('conectado')) return null;
+  var c = rapR().conectado; if (!(c.ate > Date.now())) return null;
+  var k = null;
+  try { k = cfXor(cfDeHex(c.kenc), rapMascara(cfDeHex(c.n), 'conectado|' + c.ate)); } catch (e) {}
+  return rapChaveOk(k) ? k : null;
+}
+
+/* ── Digital (só no app Android: a ponte nativa guarda o segredo no cofre do celular) ── */
+function rapNativo() {
+  try { return window.ProspectarionNativo && typeof window.ProspectarionNativo.digitalDisponivel === 'function' ? window.ProspectarionNativo : null; } catch (e) { return null; }
+}
+function rapDigitalEstado() { var n = rapNativo(); if (!n) return 'nao'; try { return String(n.digitalDisponivel()); } catch (e) { return 'nao'; } }
+/* Resposta da ponte nativa: "ok", "ok:<segredo>", "cancelado", "invalidada", "erro" */
+function rapidoDigitalVolta(r) { var f = __rapDigitalVolta; __rapDigitalVolta = null; if (f) f(String(r == null ? '' : r)); }
+function rapDigitalGravar(k, fim) {
+  var s = cfAleatorio(32);
+  __rapDigitalVolta = function (r) {
+    if (r !== 'ok') { fim(false, r); return; }
+    rapGuardar('digital', { aparelho: rapToken(), kenc: cfHex(cfXor(k, rapMascara(s, 'digital'))) }); fim(true);
+  };
+  try { rapNativo().digitalGuardar(RAP.nome, cfHex(s)); } catch (e) { __rapDigitalVolta = null; fim(false, 'erro'); }
+}
+function rapDigitalAbrir(fim) {
+  __rapDigitalVolta = function (r) {
+    if (r.indexOf('ok:') !== 0) { fim(null, r); return; }
+    var d = rapR() && rapR().digital, k = null;
+    try { k = cfXor(cfDeHex(d.kenc), rapMascara(cfDeHex(r.substr(3)), 'digital')); } catch (e) {}
+    fim(rapChaveOk(k) ? k : null, 'nao-confere');
+  };
+  try { rapNativo().digitalLer(RAP.nome); } catch (e) { __rapDigitalVolta = null; fim(null, 'erro'); }
+}
+function rapDigitalApagar() { rapGuardar('digital', null); try { var n = rapNativo(); if (n) n.digitalApagar(RAP.nome); } catch (e) {} }
+
+/* ── Gerenciador de Senhas do Google (Chrome no celular ou no computador) ── */
+function rapGoogleDisponivel() {
+  try { return !rapNativo() && typeof window.PasswordCredential === 'function' && !!(navigator.credentials && navigator.credentials.store && navigator.credentials.get); } catch (e) { return false; }
+}
+function rapGoogleGravar(id, senha, fim) {
+  try {
+    navigator.credentials.store(new window.PasswordCredential({ id: id, password: senha, name: RAP.googleNome }))
+      .then(function () { rapGuardar('google', { aparelho: rapToken(), em: new Date().toISOString() }); fim(true); }, function () { fim(false); });
+  } catch (e) { fim(false); }
+}
+function rapGoogleBuscar(fim) {
+  try {
+    navigator.credentials.get({ password: true, mediation: 'required' }) /* sempre mostra a escolha da conta: nunca entra sozinho em silêncio */
+      .then(function (c) { fim(c && c.type === 'password' && c.password ? c : null); }, function () { fim(null); });
+  } catch (e) { fim(null); }
+}
+
+/* ── Telas de entrada ── */
+var RAP_ERRO = '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>';
+/* Chamada antes da tela de senha: true = a entrada rápida cuidou da tela */
+function rapEntrar() {
+  if (!RAP) return false;
+  if (rapConectadoChave()) { RAP.liberar(); return true; }
+  if (rapTem('pin')) { rapTelaPin(); return true; }
+  if (rapTem('digital') && rapDigitalEstado() === 'sim') { rapTelaDigital(true); return true; }
+  return false;
+}
+/* Na tela de senha: botões das outras formas e a senha salva no Google */
+function rapExtrasSenha() {
+  var cx = document.querySelector('#cofre .cofre-caixa'); if (!cx || !RAP) return;
+  var h = '';
+  if (rapTem('pin')) h += '<button type="button" class="cofre-botao" onclick="rapTelaPin()">🔢 Entrar com PIN</button>';
+  if (rapTem('digital') && rapDigitalEstado() === 'sim') h += '<button type="button" class="cofre-botao" onclick="rapTelaDigital(true)">👆 Entrar com a digital</button>';
+  var google = rapTem('google') && rapGoogleDisponivel();
+  if (google) h += '<button type="button" class="cofre-botao" onclick="rapGoogleEntrar(true)">🔑 Usar a senha salva no Google</button>';
+  if (h) { var d = document.createElement('div'); d.className = 'rap-outras'; d.innerHTML = h; cx.insertBefore(d, cx.querySelector('.cofre-link')); }
+  /* Só oferece sozinho ao abrir o app (não depois de "Travar agora" nem de errar o PIN) */
+  if (google && !__rapGoogleTentou) { __rapGoogleTentou = true; setTimeout(function () { rapGoogleEntrar(false); }, 200); }
+}
+function rapGoogleEntrar(avisar) {
+  rapGoogleBuscar(function (c) {
+    var e = document.getElementById('cofre-email'), s = document.getElementById('cofre-senha');
+    if (!e || !s) return;
+    if (!c) { if (avisar) cofreAviso('Nenhuma senha salva foi escolhida. Digite e-mail e senha.'); return; }
+    e.value = c.id || ''; s.value = c.password; RAP.confereSenha();
+  });
+}
+function rapUsarSenha() { RAP.telaSenha(); }
+
+function rapTelaPin() {
+  var dig = rapTem('digital') && rapDigitalEstado() === 'sim';
+  cofreTela('<div class="cofre-icone">🔢</div><h1>' + RAP.titulo + '</h1><p class="cofre-sub">Digite seu PIN de 6 números.</p>' +
+    cofreCampo('cofre-pin', 'PIN', 'password', 'inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"') + RAP_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="rapPinConfere()">Entrar</button>' +
+    (dig ? '<button type="button" class="cofre-botao" onclick="rapTelaDigital(true)">👆 Entrar com a digital</button>' : '') +
+    '<button type="button" class="cofre-link" onclick="rapUsarSenha()">' + RAP.linkSenha + '</button>');
+  var c = document.getElementById('cofre-pin');
+  if (c) {
+    c.className += ' rap-pin';
+    c.addEventListener('input', function () { var v = c.value.replace(/[^0-9]/g, '').slice(0, 6); if (v !== c.value) c.value = v; if (v.length === 6) rapPinConfere(); });
+  }
+}
+function rapPinConfere() {
+  if (__rapOcupado) return;
+  var pin = cofreValor('cofre-pin');
+  if (!/^[0-9]{6}$/.test(pin)) { cofreAviso('O PIN tem 6 números.'); return; }
+  __rapOcupado = true;
+  cofreDepois(function () {
+    __rapOcupado = false;
+    var k = rapPinAbrir(pin);
+    if (k) { rapR().pin.erros = 0; RAP.liberar(); return; }
+    if (!rapTem('pin')) { RAP.telaSenha(); return; }
+    var p = rapR().pin; p.erros = (p.erros || 0) + 1;
+    if (p.erros >= RAP_PIN_ERROS) {
+      rapGuardar('pin', null); __rapGoogleTentou = true; RAP.telaSenha();
+      cofreAviso('PIN errado ' + RAP_PIN_ERROS + ' vezes. Por segurança o PIN foi desligado: entre com a senha e crie outro.'); return;
+    }
+    RAP.salvar();
+    cofreAviso('PIN não confere. Mais ' + (RAP_PIN_ERROS - p.erros) + ' tentativa(s) antes de pedir a senha.');
+    var c = document.getElementById('cofre-pin'); if (c) { c.value = ''; try { c.focus(); } catch (e) {} }
+  });
+}
+
+function rapTelaDigital(auto) {
+  cofreTela('<div class="cofre-icone">👆</div><h1>' + RAP.titulo + '</h1><p class="cofre-sub">Use a digital cadastrada neste celular.</p>' + RAP_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="rapDigitalEntrar()">👆 Entrar com a digital</button>' +
+    (rapTem('pin') ? '<button type="button" class="cofre-botao" onclick="rapTelaPin()">🔢 Entrar com PIN</button>' : '') +
+    '<button type="button" class="cofre-link" onclick="rapUsarSenha()">' + RAP.linkSenha + '</button>');
+  if (auto) setTimeout(rapDigitalEntrar, 250);
+}
+function rapDigitalEntrar() {
+  if (!document.querySelector('#cofre')) return;
+  rapDigitalAbrir(function (k, motivo) {
+    if (k) { RAP.liberar(); return; }
+    if (motivo === 'invalidada' || motivo === 'nao-confere') {
+      rapDigitalApagar(); RAP.telaSenha();
+      cofreAviso('As digitais deste celular mudaram. Por segurança a entrada com digital foi desligada: entre com a senha e ligue de novo.'); return;
+    }
+    if (motivo !== 'cancelado') cofreAviso('Não foi possível confirmar a digital. Tente de novo ou use outra forma.');
+  });
+}
+
+/* ── Escolher as formas (logo depois da senha, ou pelo painel de segurança) ── */
+function rapOpcoes() {
+  var o = [{ t: 'pin', i: '🔢', n: 'PIN de 6 números', d: 'Digite só 6 números para entrar.' }];
+  var dg = rapDigitalEstado();
+  if (dg === 'sim' || dg === 'sem-cadastro') o.push({ t: 'digital', i: '👆', n: 'Digital', d: 'Use a digital cadastrada no celular.' });
+  if (rapGoogleDisponivel()) o.push({ t: 'google', i: '🔑', n: 'Salvar no Google', d: 'O Gerenciador de Senhas do Google guarda e preenche ' + RAP.oQueGoogle + '.' });
+  o.push({ t: 'conectado', i: '📌', n: 'Manter conectado 30 dias', d: 'Não pede nada neste aparelho por 30 dias. Use só em aparelho que fica com você.' });
+  return o;
+}
+/* Depois de entrar com a senha: oferece as formas rápidas (uma vez por aparelho) */
+function rapDepoisDaSenha(k, id, senha) {
+  var r = rapR();
+  if (rapAlgum() || (r && r.naoPerguntar)) { RAP.liberar(); return; }
+  __rapPend = { k: k, id: id, senha: senha, primeira: true };
+  rapTelaEscolha();
+}
+function rapTelaEscolha() {
+  var p = __rapPend; if (!p) { RAP.telaSenha(); return; }
+  var lista = rapOpcoes().map(function (o) {
+    var lig = rapTem(o.t), extra = '';
+    if (o.t === 'conectado' && lig) extra = ' Até ' + new Date(rapR().conectado.ate).toLocaleDateString('pt-BR') + '.';
+    return '<li><span class="rap-ic" aria-hidden="true">' + o.i + '</span><div><strong>' + o.n + (lig ? ' <span class="cofre-tag">ligado</span>' : '') + '</strong><small>' + o.d + extra + '</small></div>' +
+      '<button type="button" class="cofre-mini' + (lig ? '' : ' rap-ligar') + '" data-rap="' + o.t + '" onclick="rap' + (lig ? 'Desligar' : 'Ligar') + '(\'' + o.t + '\')">' + (lig ? 'Desligar' : 'Ligar') + '</button></li>';
+  }).join('');
+  cofreTela('<div class="cofre-icone">⚡</div><h1>Entrar mais rápido</h1><p class="cofre-sub">' +
+    (p.primeira ? 'Escolha como entrar nas próximas vezes sem digitar a senha longa. Vale só neste aparelho e dá para desligar quando quiser.' : 'Formas de entrar neste aparelho sem digitar a senha longa.') + '</p>' +
+    '<ul class="cofre-lista rap-lista">' + lista + '</ul>' + RAP_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="rapConcluir()">' + (p.primeira ? (rapAlgum() ? 'Entrar no app' : 'Agora não') : 'Pronto') + '</button>' +
+    (p.primeira && !rapAlgum() ? '<button type="button" class="cofre-link" onclick="rapNaoPerguntar()">Não perguntar de novo</button>' : ''));
+}
+function rapConcluir() {
+  var p = __rapPend; __rapPend = null;
+  if (p && p.primeira) RAP.liberar(); else RAP.painel();
+}
+function rapNaoPerguntar() { RAP.rec(true).naoPerguntar = true; RAP.salvar(); rapConcluir(); }
+function rapLigar(t) {
+  var p = __rapPend; if (!p) { RAP.telaSenha(); return; }
+  if (t === 'pin') { rapTelaCriarPin(); return; }
+  if (t === 'conectado') { rapConectadoGravar(p.k); rapTelaEscolha(); rapAvisoOk('Conectado neste aparelho por 30 dias'); return; }
+  if (t === 'digital') {
+    if (rapDigitalEstado() !== 'sim') { cofreAviso('Cadastre uma digital nas configurações do celular (Segurança → Biometria) e tente de novo.'); return; }
+    rapDigitalGravar(p.k, function (ok, motivo) {
+      if (ok) { rapTelaEscolha(); rapAvisoOk('Entrada com digital ligada'); return; }
+      if (motivo !== 'cancelado') cofreAviso('Não foi possível ligar a digital neste celular.');
+    });
+    return;
+  }
+  if (t === 'google') {
+    rapGoogleGravar(p.id, p.senha, function (ok) {
+      if (ok) { rapTelaEscolha(); rapAvisoOk('Se o Google perguntar, toque em "Salvar"'); return; }
+      cofreAviso('O navegador não deixou salvar a senha. Confira se o Gerenciador de Senhas do Google está ligado no Chrome.');
+    });
+  }
+}
+function rapDesligar(t) {
+  if (t === 'digital') rapDigitalApagar();
+  else {
+    rapGuardar(t, null);
+    if (t === 'google') { try { navigator.credentials.preventSilentAccess(); } catch (e) {} }
+  }
+  rapTelaEscolha();
+  if (t === 'google') rapAvisoOk('Desligado. Para apagar a senha do Google: Chrome → Gerenciador de senhas');
+}
+function rapAvisoOk(txt) { try { showToast('✅ ' + txt); } catch (e) {} }
+function rapTelaCriarPin() {
+  cofreTela('<div class="cofre-icone">🔢</div><h1>Criar PIN</h1><p class="cofre-sub">6 números que só você sabe. Evite data de nascimento e sequências.</p>' +
+    cofreCampo('cofre-pin', 'PIN', 'password', 'inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"') +
+    cofreCampo('cofre-pin2', 'Repita o PIN', 'password', 'inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"') + RAP_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="rapCriarPinConfere()">Salvar PIN</button>' +
+    '<button type="button" class="cofre-link" onclick="rapTelaEscolha()">Voltar</button>');
+}
+function rapCriarPinConfere() {
+  var a = cofreValor('cofre-pin'), b = cofreValor('cofre-pin2');
+  var f = rapPinFraco(a); if (f) { cofreAviso(f); return; }
+  if (a !== b) { cofreAviso('Os dois PINs não são iguais.'); return; }
+  cofreDepois(function () { rapPinGravar(__rapPend.k, a); rapTelaEscolha(); rapAvisoOk('PIN criado'); });
+}
+/* Painel de segurança → "Entrar mais rápido": confirma a senha antes de mexer */
+function rapPainel() {
+  cofreTela('<div class="cofre-icone">⚡</div><h1>Entrar mais rápido</h1><p class="cofre-sub">Confirme com a sua senha para ligar ou desligar as formas rápidas.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') + RAP_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="rapPainelConfere()">Continuar</button>' +
+    '<button type="button" class="cofre-link" onclick="rapConcluir()">Voltar</button>');
+}
+function rapPainelConfere() {
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = RAP.abrirComSenha(s); if (!k) { RAP.erroSenha(); cofreAviso('Senha não confere.'); return; }
+    __rapPend = { k: k, id: RAP.id(), senha: s, primeira: false };
+    rapTelaEscolha();
+  });
+}
+/* Resumo para o painel de segurança */
+function rapResumo() {
+  var n = rapOpcoes().filter(function (o) { return rapTem(o.t); }).map(function (o) { return o.n; });
+  return n.length ? 'Ligado: ' + n.join(', ') : 'PIN, digital, Google ou 30 dias conectado';
+}
+/* ═══════════════════════════════════════════
    V10.4.2 — COFRE DO CRIADOR (ES5)
    Só o Anderson entra no modo CEO:
    - aparelho já identificado: e-mail + senha criada por ele;
@@ -3876,7 +4174,8 @@ function cofreEtapas(n) {
 }
 
 /* ── Aparelho identificado: e-mail + senha ── */
-function cofreEntrar() {
+function cofreEntrar(soSenha) {
+  if (soSenha !== true && rapEntrar()) return; // V10.4.4: PIN, digital ou conectado
   var b = cofreBloqueado();
   cofreTela('<div class="cofre-icone">🔐</div><h1>Acesso do Criador</h1><p class="cofre-sub">Aparelho identificado. Entre com seu e-mail e sua senha.</p>' +
     cofreCampo('cofre-email', 'E-mail', 'email', 'autocomplete="username" autocapitalize="off" spellcheck="false"') +
@@ -3884,6 +4183,7 @@ function cofreEntrar() {
     '<div id="cofre-erro" class="cofre-erro" role="alert"' + (b ? '' : ' style="display:none"') + '>' + (b ? 'Muitas tentativas. Aguarde ' + b + ' min.' : '') + '</div>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEntrarConfere()">Entrar</button>' +
     '<button type="button" class="cofre-link" onclick="cofreEsqueci()">Esqueci a senha</button>');
+  rapExtrasSenha();
 }
 function cofreEntrarConfere() {
   var b = cofreBloqueado(); if (b) { cofreAviso('Muitas tentativas. Aguarde ' + b + ' min.'); return; }
@@ -3891,7 +4191,8 @@ function cofreEntrarConfere() {
   cofreDepois(function () {
     var k = cofreEmailOk(email) ? cofreAbrirComSenha(senha) : null;
     if (!k || !cofreAparelhoConhecido()) { cofreErro(); var bb = cofreBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'E-mail ou senha não conferem.'); return; }
-    cofreSemErros(); cofreLiberar(email);
+    cofreSemErros(); APP.user.email = cofreNorm(email);
+    rapDepoisDaSenha(k, cofreNorm(email), senha); // V10.4.4: oferece a entrada rápida
   });
 }
 
@@ -4014,10 +4315,12 @@ function cofreNovo5() {
     var t = cofreToken();
     aparelhos = aparelhos.filter(function (a) { return a.id !== t; });
     aparelhos.push({ id: t, nome: nome, desde: new Date().toISOString() });
-    cofreGravar(k, __cofreNovo.senha, __cofreNovo.perguntas, aparelhos);
+    var senha = __cofreNovo.senha;
+    cofreGravar(k, senha, __cofreNovo.perguntas, aparelhos);
     var email = __cofreNovo.email; __cofreNovo = {};
-    cofreLiberar(email);
+    APP.user.email = cofreNorm(email);
     try { showToast('✅ Aparelho identificado: ' + nome); } catch (e) {}
+    rapDepoisDaSenha(k, cofreNorm(email), senha); // V10.4.4
   });
 }
 /* Grava as credenciais seladas (só com a chave que veio da Chave Mestra) */
@@ -4090,12 +4393,15 @@ function cofrePainel() {
   cofreTela('<div class="cofre-icone">🔐</div><h1>Segurança do criador</h1><p class="cofre-sub">Aparelhos identificados. Um aparelho removido volta a pedir o modo segurança.</p>' +
     '<ul class="cofre-lista">' + lista + '</ul>' +
     '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao rap-painel-botao" onclick="rapPainel()">⚡ Entrar mais rápido<small>' + cofreEsc(rapResumo()) + '</small></button>' +
     '<button type="button" class="cofre-botao" onclick="cofreTrocarSenha()">Trocar senha</button>' +
     '<button type="button" class="cofre-botao" onclick="cofreTrocarMestra()">Trocar Chave Mestra</button>' +
     cofreTrocaPendenteHtml() +
-    '<button type="button" class="cofre-botao" onclick="cofreTravar()">Travar agora</button>' +
+    '<button type="button" class="cofre-botao" onclick="cofreTravarAgora()">Travar agora</button>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreFecharPainel()">Voltar ao app</button>');
 }
+/* Travar agora encerra também o "manter conectado" deste aparelho */
+function cofreTravarAgora() { if (rapTem('conectado')) rapGuardar('conectado', null); __rapGoogleTentou = true; cofreTravar(); }
 function cofreFecharPainel() { var f = document.getElementById('cofre'); if (f) f.parentNode.removeChild(f); document.body.classList.remove('cofre-travado'); }
 function cofreRemoverAparelho(id) {
   cofreTela('<div class="cofre-icone">🔑</div><h1>Remover aparelho</h1><p class="cofre-sub">Confirme com a sua senha.</p>' +
@@ -4130,6 +4436,7 @@ function cofreTrocarConfere() {
     var k = cofreAbrirComSenha(a); if (!k) { cofreErro(); cofreAviso('Senha atual não confere.'); return; }
     var c = APP.criador; cofreGravar(k, n, c.perguntas, c.aparelhos);
     cofrePainel(); try { showToast('✅ Senha trocada'); } catch (e) {}
+    if (rapTem('google') && rapGoogleDisponivel()) rapGoogleGravar(APP.user.email || '', n, function () {}); // V10.4.4: atualiza a senha salva no Google
   });
 }
 
@@ -4142,7 +4449,7 @@ function cofreIniciar() {
 /* Trava sozinho depois de 10 minutos fora do app */
 document.addEventListener('visibilitychange', function () {
   if (document.hidden) { __cofreOculto = Date.now(); return; }
-  if (__cofreOk && __cofreOculto && Date.now() - __cofreOculto > COFRE_TRAVA_MIN * 60000) cofreTravar();
+  if (__cofreOk && __cofreOculto && Date.now() - __cofreOculto > COFRE_TRAVA_MIN * 60000 && !rapConectadoChave()) cofreTravar();
 });
 /* Entradas antigas do criador passam a abrir o cofre */
 verificarAcessoEmail = function () { cofreTravar(); };
@@ -4198,6 +4505,26 @@ function cofreTrocarMestraConfere() {
       '<button type="button" class="cofre-botao" onclick="cofrePainel()">Já anotei a chave nova</button>');
   });
 }
+
+/* ── V10.4.4: entrada rápida do criador (contexto do rapido.js) ── */
+RAP = {
+  nome: 'criador', titulo: 'Acesso do Criador', linkSenha: 'Usar e-mail e senha', googleNome: 'PROSPECTARION · Criador', oQueGoogle: 'seu e-mail e sua senha',
+  rec: function (criar) {
+    if (!APP.criador) { if (!criar) return null; APP.criador = {}; }
+    if (!APP.criador.rapido) { if (!criar) return null; APP.criador.rapido = {}; }
+    return APP.criador.rapido;
+  },
+  verif: function () { return COFRE_CFG.mestra.verif; },
+  integra: function (k) { var c = cofreCredencial(); return !!(c && cofreSeloOk(c, k) && cofreAparelhoConhecido()); },
+  salvar: function () { try { saveAll(); } catch (e) {} },
+  liberar: function () { cofreSemErros(); cofreLiberar(''); },
+  telaSenha: function () { cofreEntrar(true); },
+  confereSenha: function () { cofreEntrarConfere(); },
+  abrirComSenha: function (s) { return cofreAbrirComSenha(s); },
+  erroSenha: function () { cofreErro(); },
+  id: function () { return APP.user.email || ''; },
+  painel: function () { cofrePainel(); }
+};
 /*CRIADOR-FIM*/
 /* ═══════════════════════════════════════════
    V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
