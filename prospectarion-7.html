@@ -1603,17 +1603,10 @@ const ADM_USER   = 'admin';
 const ACESSO = {
 
   // ── E-mails do CRIADOR (acesso total, ilimitado, sem expiração) ──
-  CRIADOR: [
-    'andersonpinto.rs@gmail.com',
-    'kenny.alves@gmail.com'
-  ],
+  CRIADOR: [], // V10.4.2: acesso de criador fechado neste link
 
   // ── E-mails com ACESSO LIVRE garantido pelo criador ──
-  LIVRE: [
-    'corretorandersonalves.invest.rs@gmail.com',
-    'anderson.invest.consorcios@gmail.com',
-    'vendedorandersonalves@gmail.com'
-  ],
+  LIVRE: [],   // V10.4.2: acesso livre por e-mail fechado neste link
 
   // ── Verificar nível de acesso de um e-mail ──
   nivel(email) {
@@ -1621,10 +1614,6 @@ const ACESSO = {
     const e = email.trim().toLowerCase();
     if (this.CRIADOR.map(x=>x.toLowerCase()).includes(e)) return 'criador';
     if (this.LIVRE.map(x=>x.toLowerCase()).includes(e))   return 'livre';
-    // E-mails criados pelo Anderson (mesmo domínio ou padrão anderson/kenny)
-    if (e.includes('andersonpinto') || e.includes('kenny.alves') ||
-        e.includes('corretoranderson') || e.includes('anderson.invest') ||
-        e.includes('vendedoranderson')) return 'livre';
     return 'normal';
   },
 
@@ -1928,7 +1917,6 @@ function updatePlanCard() {
     document.getElementById('ps-badge').style.color = '#F26419';
     document.getElementById('ps-exp').innerHTML = `
       <strong style="color:var(--accent)">♾️ Acesso Permanente · Criador do Sistema</strong><br>
-      <span style="font-size:11px;color:var(--muted)">andersonpinto.rs@gmail.com · kenny.alves@gmail.com</span><br>
       <span style="font-size:11px;color:var(--muted)">Todas as funções desbloqueadas · Sem expiração</span>
     `;
   } else if (plano === 'livre') {
@@ -2098,7 +2086,7 @@ function editarPerfil(){const n=prompt('Seu nome:',APP.user.nome);if(n&&n.trim()
 function exportarDados(){if(!APP.contacts.length){showToast('Nenhum contato');return;}const rows=[['Nome','Telefone','E-mail','Empresa','Categoria'],...APP.contacts.map(c=>[c.nome,c.tel,c.email,c.empresa,c.categoria])];const csv=rows.map(r=>r.map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='prospectarion-contatos.csv';a.click();showToast('CSV exportado ✓');}
 function solicitarMelhoria(){openModal('modal-melhoria');}
 function enviarMelhoria(){const t=document.getElementById('melhoria-txt').value.trim();if(!t)return;const wa=(APP.adm.config.wa||'').replace(/\D/g,'');window.open(`https://wa.me/${wa}?text=${encodeURIComponent('*Melhoria – PROSPECTARION*\n\n'+t)}`);closeModal('modal-melhoria');showToast('Pedido enviado ✓');}
-function irParaAdmin(){showModulo('mod-admin');}
+function irParaAdmin(){ showToast('Área restrita.'); } // V10.4.2: painel admin fechado neste link
 
 function addActivity(html){const l=document.getElementById('activity-list');const el=document.createElement('div');el.className='activity-item';el.innerHTML=`<div class="activity-dot" style="background:var(--accent)"></div><div class="activity-text">${html}<span>Agora</span></div><div class="activity-time">Hoje</div>`;l.insertBefore(el,l.firstChild);}
 

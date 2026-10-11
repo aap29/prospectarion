@@ -4,15 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#F26419">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PROSPECTARION">
-<meta name="application-name" content="PROSPECTARION">
-<title>PROSPECTARION V9.3.6</title>
-<!-- ── PWA Manifest embutido (V9.3.6) ── -->
-<link rel="manifest" id="pwa-manifest-link">
-<link rel="apple-touch-icon" id="pwa-apple-icon">
+<title>PROSPECTARION V9.3.3</title>
 
 <!-- ── SEGURANÇA: impede cache e indexação ── -->
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
@@ -27,7 +22,7 @@
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
-  connect-src 'self' https://wa.me https://api.whatsapp.com;
+  connect-src 'self' https://wa.me https://api.whatsapp.com https://script.google.com https://script.googleusercontent.com;
   frame-ancestors 'none';
   form-action 'self';
 ">
@@ -696,8 +691,9 @@ body {
 .app-topbar .at-plan.gold { background: rgba(245,158,11,.12); color: var(--gold); border-color: rgba(245,158,11,.3); }
 
 .app-content { flex: 1; overflow: hidden; position: relative; }
-.app-screen  { display: none; height: 100%; overflow-y: auto; padding: 16px; padding-bottom: 80px; }
+.app-screen  { display: none; height: 100%; overflow-y: auto; padding: 16px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; }
 .app-screen.active { display: block; }
+#as-pipeline.active { display: flex; } /* V10 FIX01: Pipeline só aparece quando sua tela está ativa */
 
 .bottom-nav {
   background: #fff; border-top: 1px solid var(--border);
@@ -1752,109 +1748,257 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
 .re-status-btn { font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--muted); cursor:pointer; }
 .re-status-btn.ativo { border-color:var(--accent); background:var(--accent-lt,#FFF0E8); color:var(--accent); }
 
-/* ══════════════════════════════════════════
-   V9.3.5 — 6 TEMAS MONOCROMÁTICOS
-══════════════════════════════════════════ */
-[data-tema="laranja"] { --accent:#F26419; --accent-dk:#D4520E; --accent-lt:#FFF3EC; --tema-grad:linear-gradient(135deg,#F26419,#D4520E); }
-[data-tema="azul"]    { --accent:#2563EB; --accent-dk:#1D4ED8; --accent-lt:#EFF6FF; --tema-grad:linear-gradient(135deg,#60A5FA,#2563EB); }
-[data-tema="verde"]   { --accent:#059669; --accent-dk:#047857; --accent-lt:#ECFDF5; --tema-grad:linear-gradient(135deg,#34D399,#059669); }
-[data-tema="roxo"]    { --accent:#7C3AED; --accent-dk:#6D28D9; --accent-lt:#F5F3FF; --tema-grad:linear-gradient(135deg,#A78BFA,#7C3AED); }
-[data-tema="preto"]   { --accent:#334155; --accent-dk:#1E293B; --accent-lt:#F1F5F9; --tema-grad:linear-gradient(135deg,#64748B,#1E293B); }
-[data-tema="rosa"]    { --accent:#BE185D; --accent-dk:#9D174D; --accent-lt:#FDF2F8; --tema-grad:linear-gradient(135deg,#F472B6,#BE185D); }
+/* ═══════════════════════════════════════════
+   V10.1 ETAPA B — MEU PERFIL PROFISSIONAL + MINHAS REDES
+═══════════════════════════════════════════ */
+.pf-topo { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.pf-voltar { border:1px solid var(--border); background:var(--card); border-radius:var(--r-sm); padding:8px 12px; font-size:13px; font-weight:700; color:var(--text); cursor:pointer; }
+.pf-titulo { font-size:14px; font-weight:900; letter-spacing:.4px; color:var(--text); }
+.pf-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; margin-bottom:14px; }
+.pf-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.pf-card-titulo { font-size:13px; font-weight:800; color:var(--text); }
+.pf-foto-card { text-align:center; }
+.pf-av { width:104px; height:104px; border-radius:50%; margin:0 auto 10px; background:var(--accent); color:#fff; font-size:40px; font-weight:900; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; border:3px solid var(--accent-lt); }
+.pf-foto-acoes { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.pf-dica { font-size:11px; color:var(--muted2); margin-top:8px; line-height:1.4; }
+.pf-msg { border-radius:var(--r-sm); padding:10px 12px; font-size:12px; font-weight:600; margin-bottom:14px; line-height:1.4; }
+.pf-msg.ok { background:rgba(16,185,129,.1); color:#047857; border:1px solid rgba(16,185,129,.3); }
+.pf-msg.erro { background:rgba(239,68,68,.08); color:#B91C1C; border:1px solid rgba(239,68,68,.35); }
+.pf-textarea { min-height:84px; resize:vertical; font-family:inherit; }
+.pf-rede-item { display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:8px; background:var(--card2); }
+.pf-rede-item.inativa { opacity:.55; }
+.pf-rede-ic { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+.pf-rede-info { flex:1; min-width:0; }
+.pf-rede-nome { font-size:13px; font-weight:800; }
+.pf-rede-sub { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pf-rede-acoes { display:flex; gap:6px; flex-shrink:0; }
+.pf-mini { border:1px solid var(--border); background:var(--card); border-radius:8px; padding:6px 8px; font-size:12px; cursor:pointer; color:var(--text); }
+.pf-mini.perigo { color:var(--red); }
+.pf-mini.confirmar { background:var(--red); color:#fff; border-color:var(--red); }
+.pf-form { border:1px dashed var(--accent); border-radius:var(--r-sm); padding:12px; margin-top:6px; background:var(--accent-lt); }
+.pf-check { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; margin-bottom:12px; }
+.pf-form-acoes { display:flex; gap:8px; }
+.pf-form-acoes .btn { flex:1; }
+.d360-redes-wrap { display:flex; flex-wrap:wrap; gap:8px; }
+.d360-rede-chip { display:flex; align-items:center; gap:8px; max-width:100%; min-width:0; flex:1 1 140px; padding:9px 10px; background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm); cursor:pointer; text-align:left; font-family:inherit; color:var(--text); }
+.d360-rede-chip:hover { border-color:var(--accent); }
+.d360-rede-chip .ic { font-size:18px; flex-shrink:0; }
+.d360-rede-chip .tx { min-width:0; }
+.d360-rede-chip .nm { font-size:12px; font-weight:800; }
+.d360-rede-chip .us { font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.d360-rede-chip.sem-link { cursor:default; }
 
-/* ── Perfil Visual V9.3.5 ── */
-.pv-hero { border-radius:20px; padding:24px 16px 20px; margin-bottom:14px; position:relative; overflow:hidden; background:var(--tema-grad,linear-gradient(135deg,#F26419,#D4520E)); }
-.pv-foto-wrap { position:relative; width:84px; height:84px; margin:0 auto 12px; cursor:pointer; }
-.pv-foto { width:84px; height:84px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.7); display:block; }
-.pv-foto-placeholder { width:84px; height:84px; border-radius:50%; background:rgba(255,255,255,.25); border:3px solid rgba(255,255,255,.5); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; color:#fff; }
-.pv-foto-edit { position:absolute; bottom:0; right:0; background:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
-.pv-nome { font-size:20px; font-weight:900; color:#fff; text-align:center; margin-bottom:2px; }
-.pv-prof { font-size:12px; color:rgba(255,255,255,.85); text-align:center; margin-bottom:6px; }
-.pv-frase { font-size:11px; color:rgba(255,255,255,.75); text-align:center; font-style:italic; padding:0 12px; line-height:1.5; }
-.pv-email-chip { display:inline-block; background:rgba(255,255,255,.2); border-radius:20px; padding:3px 10px; font-size:10px; color:rgba(255,255,255,.9); margin-top:8px; }
+/* ═══════════════════════════════════════════
+   V10.4 — CARTÃO DE BOAS-VINDAS (topo do Início, só no primeiro acesso)
+═══════════════════════════════════════════ */
+.bv-cartao {
+  position: relative; background: #fff; border: 1.5px solid rgba(242,100,25,.35);
+  border-radius: var(--r); padding: 16px 16px 14px; margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(242,100,25,.10);
+}
+.bv-cartao[hidden] { display: none !important; }
+.bv-titulo { font-size: 18px; font-weight: 900; color: var(--text); padding-right: 40px; line-height: 1.25; }
+.bv-titulo em { font-style: normal; color: var(--accent); }
+.bv-sub { font-size: 13px; color: var(--muted); margin: 4px 0 12px; line-height: 1.5; }
+.bv-fechar {
+  position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 50%;
+  border: none; background: transparent; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1;
+}
+.bv-fechar:hover { background: var(--accent-lt); color: var(--accent); }
+.bv-passos { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.bv-passo {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; text-align: left;
+  background: var(--bg, #F5F6F7); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; cursor: pointer; font: inherit; color: var(--text); font-size: 14px; font-weight: 700;
+}
+.bv-passo:hover { border-color: var(--accent); }
+.bv-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: #fff; font-size: 13px; font-weight: 900;
+}
+.bv-passo.feito { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.35); color: #047857; cursor: default; }
+.bv-passo.feito .bv-num { background: #10B981; }
+.bv-passo .bv-seta { margin-left: auto; color: var(--accent); font-size: 18px; }
+.bv-passo.feito .bv-seta { display: none; }
+.bv-comecar {
+  width: 100%; min-height: 48px; border: none; border-radius: 12px; cursor: pointer;
+  background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; font-size: 16px; font-weight: 800;
+  box-shadow: 0 4px 14px rgba(242,100,25,.3);
+}
+.bv-progresso { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; }
+.bv-passo:focus-visible, .bv-comecar:focus-visible, .bv-fechar:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
 
-/* ── Seletor de Temas ── */
-.tema-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
-.tema-card { border-radius:14px; padding:16px 8px 10px; text-align:center; cursor:pointer; border:2.5px solid transparent; transition:all .2s; position:relative; }
-.tema-card.selecionado { border-color:#fff; box-shadow:0 0 0 2px var(--accent); }
-.tema-card-bola { width:28px; height:28px; border-radius:50%; margin:0 auto 6px; }
-.tema-card-nome { font-size:10px; font-weight:700; color:var(--text); }
-.tema-check { position:absolute; top:6px; right:6px; font-size:12px; display:none; }
-.tema-card.selecionado .tema-check { display:block; }
+/* ═══════════════════════════════════════════
+   V10.4 — TABLET (768–1023px): 2 colunas, conteúdo centralizado
+═══════════════════════════════════════════ */
+.nav-marca { display: none; }
+@media (min-width: 768px) {
+  .app-screen { padding-left: max(20px, calc((100% - 960px) / 2)); padding-right: max(20px, calc((100% - 960px) / 2)); }
+  #as-dash.active { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; align-content: start; }
+  #as-dash > * { grid-column: 1 / -1; min-width: 0; }
+  #as-dash > .d360-section { grid-column: auto; }
+  #as-dash > .d360-section:has(#d360-radar),
+  #as-dash > .d360-section:has(.d360-atalhos),
+  #as-dash > .d360-section:has(#d360-orientador) { grid-column: 1 / -1; }
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .d360-radar-grid { grid-template-columns: repeat(3, 1fr); }
+  .d360-atalhos { grid-template-columns: repeat(6, 1fr); }
+  #contacts-list, #notes-list, #pc-lista { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+  #contacts-list > *, #notes-list > *, #pc-lista > * { margin-bottom: 0 !important; min-width: 0; }
+  #contacts-list > :not(.contact-card), #pc-lista > :not(.pc-card) { grid-column: 1 / -1; }
+  .bv-passos { grid-template-columns: repeat(3, 1fr); }
+  .modal-overlay { align-items: center; }
+  .modal-sheet { border-radius: var(--r-lg); padding-bottom: 24px; }
+}
 
-/* ── Marketing Canais V9.3.5 ── */
-.mk-canal-header { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-.mk-canal-list { display:flex; flex-direction:column; gap:8px; }
-.mk-canal-card { background:var(--card); border-radius:12px; padding:12px 14px; border-left:4px solid var(--accent); }
-.mk-canal-topo { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-.mk-canal-icone { font-size:18px; }
-.mk-canal-nome { font-size:13px; font-weight:800; flex:1; color:var(--text); }
-.mk-canal-handle { font-size:11px; color:var(--muted); }
-.mk-canal-acoes { display:flex; flex-direction:column; gap:5px; }
-.mk-acao-item { display:flex; align-items:flex-start; gap:8px; padding:6px 8px; background:var(--bg,#F5F6F7); border-radius:8px; cursor:pointer; transition:opacity .15s; }
-.mk-acao-check { width:18px; height:18px; border-radius:50%; border:2px solid var(--border2); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; font-size:10px; }
-.mk-acao-check.feita { background:var(--accent); border-color:var(--accent); color:#fff; }
-.mk-acao-texto { font-size:11px; color:var(--text); line-height:1.4; }
-.mk-acao-item.feita .mk-acao-texto { text-decoration:line-through; color:var(--muted); }
-.mk-canal-empty { font-size:11px; color:var(--muted); text-align:center; padding:8px 0; }
-.mk-tipo-btn { font-size:20px; padding:10px; background:var(--card); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; text-align:center; }
-.mk-tipo-btn.ativo { border-color:var(--accent); background:var(--accent-lt); }
-.mk-tipo-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
-.mk-canal-stats { display:flex; gap:8px; margin-top:8px; }
-.mk-stat-mini { font-size:10px; background:var(--bg); border-radius:6px; padding:3px 7px; color:var(--muted); font-weight:600; }
-.mk-stat-mini span { color:var(--accent); font-weight:800; }
+/* ═══════════════════════════════════════════
+   V10.4 — COMPUTADOR (a partir de 1024px): menu lateral fixo, largura máxima 1200px
+═══════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  #mod-app.ativo { padding-left: 232px; }
+  #mod-app .bottom-nav {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 232px; z-index: 60;
+    flex-direction: column; align-items: stretch; gap: 2px; padding: 0 12px 16px;
+    border-top: none; border-right: 1px solid var(--border); overflow-y: auto;
+  }
+  #mod-app .nav-marca {
+    display: flex; align-items: center; height: 58px; padding: 0 8px; margin-bottom: 8px;
+    border-bottom: 2px solid var(--accent); font-size: 17px; font-weight: 900; letter-spacing: -.5px; color: var(--text);
+    flex-shrink: 0;
+  }
+  #mod-app .nav-marca em { font-style: normal; color: var(--accent); }
+  #mod-app .bottom-nav .nav-btn {
+    flex: 0 0 auto; flex-direction: row; justify-content: flex-start; gap: 12px;
+    min-height: 44px; padding: 8px 12px; border-radius: 10px; font-size: 14px; font-weight: 700; text-align: left;
+  }
+  #mod-app .bottom-nav .nav-btn:hover { background: var(--bg, #F5F6F7); color: var(--text); }
+  #mod-app .bottom-nav .nav-btn.active { background: var(--accent-lt); color: var(--accent); }
+  #mod-app .bottom-nav .nav-icon { font-size: 20px; width: 24px; text-align: center; }
+  #mod-app .app-topbar .brand-logo { display: none; }
+  #mod-app .app-topbar .at-title { text-align: left; font-size: 17px; }
+  .app-screen { padding-left: max(28px, calc((100% - 1200px) / 2)); padding-right: max(28px, calc((100% - 1200px) / 2)); padding-top: 24px; padding-bottom: 40px; }
+  #as-dash.active { column-gap: 20px; }
+  #as-dash > .d360-section:has(#d360-orientador) { grid-column: auto; }
+  .d360-radar-grid { gap: 12px; }
+  #contacts-list, #notes-list { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  #as-perfil > *, #as-perfil-pro > * { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .pl-board { padding: 16px max(16px, calc((100% - 1400px) / 2)); }
+  .pl-col { flex: 1 1 0; min-width: 150px; max-width: none; }
+  .ld-lista { grid-template-columns: repeat(2, 1fr); }
+}
 
-/* ── Perfil Visual V9.3.5 — classes adicionais ── */
-.pv-foto-wrap { border:3px solid rgba(255,255,255,.6); border-radius:50%; overflow:hidden; }
-.pv-foto-overlay { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.4); text-align:center; font-size:13px; padding:3px 0; color:#fff; border-radius:0 0 50% 50%; }
-.pv-info { text-align:center; margin-bottom:14px; }
-.pv-profissao { font-size:12px; color:rgba(255,255,255,.8); margin-bottom:5px; }
-.pv-edit-btn { display:block; margin:0 auto; background:rgba(255,255,255,.25); border:1.5px solid rgba(255,255,255,.55); border-radius:20px; padding:7px 22px; font-size:12px; font-weight:700; color:#fff; cursor:pointer; }
-.pv-section-label { font-size:11px; font-weight:800; color:var(--muted2); text-transform:uppercase; letter-spacing:.8px; margin:18px 0 8px; }
-.pv-temas-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
-.tema-chip { background:var(--card); border:2px solid var(--border); border-radius:14px; padding:10px 6px 8px; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; transition:.18s; }
-.tema-chip.ativo { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-lt); }
-.tema-chip-swatch { width:32px; height:32px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,.18); }
-.tema-chip span { font-size:10px; font-weight:700; color:var(--text); }
-
-/* ── Mk canais — novos seletores usados no HTML ── */
-.mk-canal-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-.mk-canal-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-.mk-canal-info { flex:1; min-width:0; }
-.mk-canal-sub { font-size:10px; color:var(--muted); margin-top:1px; }
-.mk-canal-del { background:none; border:none; color:var(--muted2); font-size:14px; cursor:pointer; padding:4px 6px; flex-shrink:0; }
-.mk-acoes-lista { display:flex; flex-direction:column; gap:5px; }
-.mk-acao-item.mk-acao-feita .mk-acao-texto { text-decoration:line-through; color:var(--muted); opacity:.7; }
-.mk-acao-item.mk-acao-feita .mk-acao-check { background:var(--accent); border-color:var(--accent); color:#fff; }
-
-/* ── Wallpaper V9.3.6 ── */
-.wp-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:4px; }
-.wp-chip { border:2px solid var(--border); border-radius:12px; aspect-ratio:1; cursor:pointer; overflow:hidden; position:relative; transition:.18s; }
-.wp-chip.ativo { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-lt); }
-.wp-chip .wp-check { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.35); font-size:18px; }
-.wp-chip.ativo .wp-check { display:flex; }
-.wp-chip-upload { border-style:dashed; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:10px; color:var(--muted); background:var(--card2); }
-/* App background (wallpaper) */
-#mod-app { transition: background .3s ease; }
-
-/* ── Meus Links V9.3.6 ── */
-.links-grid { display:flex; flex-direction:column; gap:0; background:var(--card); border-radius:var(--r); overflow:hidden; margin-bottom:4px; }
-.link-item { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .1s; }
-.link-item:last-child { border-bottom:none; }
-.link-item:active { background:var(--card2); }
-.link-item-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-.link-item-info { flex:1; min-width:0; }
-.link-item-label { font-size:13px; font-weight:700; color:var(--text); }
-.link-item-url { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
-.link-item-arrow { font-size:16px; color:var(--muted2); }
-.link-empty { font-size:11px; color:var(--muted2); font-style:italic; }
-
-/* ── Home screen instructions modal ── */
-#modal-homescreen .modal-box { max-height:88vh; overflow-y:auto; }
-.hs-step { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
-.hs-step:last-child { border-bottom:none; }
-.hs-step-num { width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-weight:900; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
-.hs-step-text { font-size:13px; color:var(--text); line-height:1.5; }
+/* ═══════════════════════════════════════════
+   V10.4 — LEADS DO TESTE (tela do proprietário)
+═══════════════════════════════════════════ */
+.ld-topo h2 { font-size: 20px; font-weight: 900; margin: 0; }
+.ld-sub { font-size: 13px; color: var(--muted); margin: 4px 0 12px; line-height: 1.5; }
+.ld-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ld-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 14px;
+  border-radius: 10px; border: 1.5px solid var(--border); background: #fff; color: var(--text);
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;
+}
+.ld-btn-pri { background: var(--accent); border-color: var(--accent); color: #fff; margin-top: 10px; }
+.ld-btn-wa { background: #25D366; border-color: #25D366; color: #fff; }
+.ld-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.ld-chip { min-height: 36px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: #fff; color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.ld-chip.ativo { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ld-aviso { background: var(--accent-lt); border: 1px solid rgba(242,100,25,.3); border-radius: var(--r); padding: 14px; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+.ld-aviso .ld-btn { display: flex; width: 100%; }
+.ld-lista { display: grid; gap: 10px; }
+.ld-card { background: #fff; border: 1px solid var(--border); border-radius: var(--r); padding: 14px; min-width: 0; }
+.ld-card-topo { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.ld-nome { font-size: 16px; font-weight: 800; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.ld-tag { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 10px; white-space: nowrap; }
+.ld-tag-ativo { background: rgba(16,185,129,.12); color: #047857; }
+.ld-tag-fim { background: #F3F4F6; color: #4B5563; }
+.ld-linha { font-size: 14px; margin-top: 3px; overflow-wrap: anywhere; }
+.ld-cinza { color: var(--muted); font-size: 12px; }
+.ld-botoes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.ld-botoes .ld-btn { flex: 1 1 140px; }
+.ld-vazio { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 28px 12px; font-size: 14px; background: #fff; border: 1px dashed var(--border); border-radius: var(--r); }
+.ld-cfg label { display: block; font-size: 13px; font-weight: 700; margin: 12px 0 6px; }
+.ld-cfg .input { width: 100%; font-size: 16px; }
+.ld-cfg p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+/* ── V10.4.1: botão "Instalar na tela inicial" ── */
+.inst-cartao {
+  display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box;
+  margin: 0 0 14px; padding: 14px 16px; border: none; border-radius: 14px; cursor: pointer; text-align: left;
+  background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; font-family: inherit;
+  box-shadow: 0 4px 16px rgba(242,100,25,.3);
+}
+.inst-cartao .inst-cartao-icone { font-size: 26px; line-height: 1; flex: 0 0 auto; }
+.inst-cartao .inst-cartao-txt { flex: 1; min-width: 0; }
+.inst-cartao strong { display: block; font-size: 16px; font-weight: 800; }
+.inst-cartao small { display: block; font-size: 13px; opacity: .92; margin-top: 2px; }
+.inst-cartao .inst-cartao-seta { font-size: 22px; opacity: .9; }
+.inst-cartao:focus-visible, .inst-splash:focus-visible, .inst-ok:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+.inst-fundo {
+  position: fixed; inset: 0; z-index: 100002; background: rgba(17,24,39,.55);
+  display: flex; align-items: flex-end; justify-content: center; padding: 16px;
+}
+@media (min-width: 768px) { .inst-fundo { align-items: center; } }
+.inst-caixa {
+  width: 100%; max-width: 440px; max-height: 90%; overflow-y: auto; box-sizing: border-box;
+  background: #fff; color: #1A1A1A; border-radius: 18px; padding: 22px 20px 18px; box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  font-size: 16px; line-height: 1.55;
+}
+.inst-caixa .inst-icone { font-size: 40px; text-align: center; margin-bottom: 4px; }
+.inst-caixa h2 { margin: 0 0 8px; font-size: 20px; font-weight: 900; text-align: center; }
+.inst-caixa p { margin: 0 0 10px; }
+.inst-caixa ol { margin: 0 0 12px; padding-left: 22px; }
+.inst-caixa li { margin-bottom: 8px; }
+.inst-caixa .inst-dica { font-size: 14px; color: #6B7280; }
+.inst-ok {
+  display: block; width: 100%; min-height: 52px; border: none; border-radius: 12px; cursor: pointer;
+  background: #F26419; color: #fff; font-size: 17px; font-weight: 800; font-family: inherit;
+}
+/*CRIADOR-INICIO*/
+/* ── V10.4.2: cofre do criador ── */
+body.cofre-travado > *:not(#cofre) { visibility: hidden !important; }
+body.cofre-travado { overflow: hidden; }
+#cofre {
+  position: fixed; inset: 0; z-index: 2147483000; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: linear-gradient(160deg, #fff 55%, #FFF3EC 100%); color: #1A1A1A;
+  display: flex; align-items: flex-start; justify-content: center; padding: 28px 16px 40px; box-sizing: border-box;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.cofre-caixa { width: 100%; max-width: 440px; }
+.cofre-marca { font-size: 20px; font-weight: 900; letter-spacing: -.5px; text-align: center; margin-bottom: 18px; }
+.cofre-marca em { font-style: normal; color: #F26419; }
+.cofre-icone { font-size: 44px; text-align: center; margin-bottom: 6px; }
+#cofre h1 { font-size: 24px; font-weight: 900; text-align: center; margin: 0 0 6px; }
+.cofre-sub { font-size: 16px; line-height: 1.5; color: #4B5563; text-align: center; margin: 0 0 16px; }
+.cofre-rotulo { display: block; font-size: 15px; font-weight: 800; margin: 14px 0 6px; }
+.cofre-campo {
+  display: block; width: 100%; box-sizing: border-box; min-height: 52px; padding: 12px 14px; font-size: 17px;
+  border: 1.5px solid #D1D5DB; border-radius: 12px; background: #fff; color: #1A1A1A; font-family: inherit;
+}
+.cofre-campo:focus { outline: none; border-color: #F26419; box-shadow: 0 0 0 3px rgba(242,100,25,.18); }
+.cofre-erro { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #FEF2F2; color: #B91C1C; font-size: 15px; font-weight: 700; }
+.cofre-botao {
+  display: block; width: 100%; min-height: 54px; margin-top: 14px; border-radius: 12px; cursor: pointer; font-family: inherit;
+  font-size: 17px; font-weight: 800; background: #fff; color: #1A1A1A; border: 1.5px solid #D1D5DB;
+}
+.cofre-principal { background: linear-gradient(135deg, #F26419, #D4520E); color: #fff; border: none; box-shadow: 0 4px 14px rgba(242,100,25,.3); }
+.cofre-botao[disabled] { opacity: .7; cursor: wait; }
+.cofre-link { display: block; margin: 14px auto 0; background: none; border: none; color: #C2410C; font-size: 16px; font-weight: 800; text-decoration: underline; cursor: pointer; min-height: 44px; font-family: inherit; }
+.cofre-etapas { list-style: none; display: flex; gap: 6px; padding: 0; margin: 4px 0 6px; }
+.cofre-etapas li {
+  flex: 1; text-align: center; font-size: 13px; font-weight: 900; color: #9CA3AF; border-top: 4px solid #E5E7EB; padding-top: 6px;
+}
+.cofre-etapas li span { display: block; font-size: 11px; font-weight: 700; margin-top: 2px; }
+.cofre-etapas li.feita { color: #059669; border-color: #059669; }
+.cofre-etapas li.atual { color: #F26419; border-color: #F26419; }
+.cofre-lista { list-style: none; padding: 0; margin: 0 0 6px; }
+.cofre-lista li { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; margin-bottom: 8px; background: #fff; }
+.cofre-lista li > div { flex: 1; min-width: 0; }
+.cofre-lista strong { display: block; font-size: 16px; }
+.cofre-lista small { display: block; font-size: 13px; color: #6B7280; margin-top: 2px; }
+.cofre-tag { font-size: 11px; font-weight: 800; color: #059669; background: #ECFDF5; border-radius: 10px; padding: 2px 8px; }
+.cofre-mini { min-height: 40px; padding: 6px 12px; border-radius: 10px; border: 1.5px solid #FCA5A5; background: #fff; color: #B91C1C; font-weight: 800; cursor: pointer; }
+.cofre-botao:focus-visible, .cofre-link:focus-visible, .cofre-mini:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+/*CRIADOR-FIM*/
 </style>
 </head>
 <body>
@@ -2124,6 +2268,9 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
     ═══════════════════════════════════════════ -->
     <div class="app-screen active" id="as-dash">
 
+      <!-- ── V10.4: BOAS-VINDAS (só no primeiro acesso) ── -->
+      <section class="bv-cartao" id="bv-cartao" aria-label="Boas-vindas" hidden></section>
+
       <!-- ── CABEÇALHO 360° ── -->
       <div class="d360-header">
         <div class="d360-avatar-wrap">
@@ -2164,6 +2311,15 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
         <div id="d360-prioridades-list">
           <div class="d360-empty-mini">Toque em + para definir até 3 prioridades do dia</div>
         </div>
+      </div>
+
+      <!-- ── MINHAS REDES (V10.1) ── -->
+      <div class="d360-section">
+        <div class="d360-section-head">
+          <span class="d360-section-title">🌐 Minhas Redes</span>
+          <button class="d360-add-btn" onclick="abrirPerfilProfissional()">⚙ Gerenciar</button>
+        </div>
+        <div id="d360-redes-list"></div>
       </div>
 
       <!-- ── RADAR COMERCIAL ── -->
@@ -2207,7 +2363,7 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
         </div>
       </div>
 
-      <!-- ── MARKETING PESSOAL + CANAIS V9.3.5 ── -->
+      <!-- ── MARKETING PESSOAL ── -->
       <div class="d360-section">
         <div class="d360-section-head">
           <span class="d360-section-title">📣 Marketing Pessoal</span>
@@ -2215,48 +2371,6 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
         </div>
         <div id="d360-marketing-list">
           <div class="d360-empty-mini">Registre suas ações de marketing hoje</div>
-        </div>
-      </div>
-
-      <!-- ── CANAIS DE MARKETING V9.3.5 ── -->
-      <div class="d360-section">
-        <div class="d360-section-head">
-          <span class="d360-section-title">📡 Canais de Prospecção</span>
-          <button class="d360-add-btn" onclick="mkAbrirAddCanal()">＋ Canal</button>
-        </div>
-        <div id="mk-canais-lista">
-          <div class="d360-empty-mini">Adicione seus canais de venda e comunicação</div>
-        </div>
-      </div>
-
-      <!-- Modal: Adicionar Canal de Marketing -->
-      <div class="modal-overlay" id="modal-mk-canal" style="display:none;z-index:9100">
-        <div class="modal-box">
-          <div class="modal-title">📡 Novo Canal</div>
-          <label class="form-label">Nome do Canal</label>
-          <input class="input" id="mk-canal-nome" placeholder="Ex: Instagram @meuperfil" style="margin-bottom:10px">
-          <label class="form-label">Tipo</label>
-          <select class="input" id="mk-canal-tipo" style="margin-bottom:10px">
-            <option value="instagram">📸 Instagram</option>
-            <option value="whatsapp">💬 WhatsApp / Grupo</option>
-            <option value="linkedin">💼 LinkedIn</option>
-            <option value="youtube">▶️ YouTube</option>
-            <option value="tiktok">🎵 TikTok</option>
-            <option value="facebook">👥 Facebook</option>
-            <option value="email">📧 E-mail Marketing</option>
-            <option value="google">🔍 Google Meu Negócio</option>
-            <option value="blog">📝 Blog / Site</option>
-            <option value="indicacao">🤝 Indicações Pessoais</option>
-            <option value="outro">📌 Outro</option>
-          </select>
-          <label class="form-label">Meta de Ações/Semana</label>
-          <input class="input" type="number" id="mk-canal-meta" placeholder="Ex: 5" min="1" max="100" style="margin-bottom:10px">
-          <label class="form-label">Observação (opcional)</label>
-          <input class="input" id="mk-canal-obs" placeholder="Ex: Foco em vídeos Reels" style="margin-bottom:16px">
-          <div class="modal-btns">
-            <button class="btn btn-full" onclick="closeModal('modal-mk-canal')">Cancelar</button>
-            <button class="btn btn-primary btn-full" onclick="mkSalvarCanal()">Adicionar</button>
-          </div>
         </div>
       </div>
 
@@ -2318,8 +2432,8 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
       <div class="stat-card" style="padding:6px 14px;border-radius:var(--r)" id="activity-list">
         <div class="activity-item">
           <div class="activity-dot" style="background:var(--accent)"></div>
-          <div class="activity-text">Bem-vindo ao PROSPECTARION!<span>Comece adicionando seus contatos</span></div>
-          <div class="activity-time">Agora</div>
+          <div class="activity-text">Nenhuma atividade ainda<span>Suas ações vão aparecer aqui</span></div>
+          <div class="activity-time"></div>
         </div>
       </div>
 
@@ -2458,7 +2572,7 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
     </div>
 
     <!-- Pipeline V9.3.0 -->
-    <div class="app-screen" id="as-pipeline" style="display:flex;flex-direction:column;height:100%;overflow:hidden;padding:0">
+    <div class="app-screen" id="as-pipeline" style="flex-direction:column;height:100%;overflow:hidden;padding:0">
 
       <!-- Cabeçalho -->
       <div class="pl-header">
@@ -2590,69 +2704,13 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
       <div id="notes-list"></div>
     </div>
 
-    <!-- Perfil V9.3.5 — visual profile + themes -->
+    <!-- Perfil -->
     <div class="app-screen" id="as-perfil">
-
-      <!-- ── Hero visual do perfil ── -->
-      <div class="pv-hero" id="pv-hero-card">
-        <div class="pv-foto-wrap" onclick="pvTrocarFoto()">
-          <img id="pv-foto-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
-          <div id="pv-foto-iniciais" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#fff;letter-spacing:-1px">U</div>
-          <div class="pv-foto-overlay">📷</div>
-        </div>
-        <div class="pv-info">
-          <div class="pv-nome" id="pv-nome-exibir">Meu Perfil</div>
-          <div class="pv-profissao" id="pv-profissao-exibir">Corretor de Imóveis</div>
-          <div class="pv-frase" id="pv-frase-exibir">Toque para editar sua frase do dia ✨</div>
-        </div>
-        <button class="pv-edit-btn" onclick="editarPerfil()">✏️ Editar Perfil</button>
+      <div class="profile-hero">
+        <div class="avatar av-lg" style="background:var(--accent);margin:0 auto" id="app-perfil-av">U</div>
+        <h2 id="app-perfil-nome">Meu Perfil</h2>
+        <div class="ph-sub" id="app-perfil-sub">Plano Anual · ativo</div>
       </div>
-
-      <!-- ── Seletor de Tema (6 paletas monocromáticas) ── -->
-      <div class="pv-section-label">🎨 Tema do Aplicativo</div>
-      <div class="pv-temas-grid">
-        <button class="tema-chip" data-tema-btn="laranja" onclick="aplicarTema('laranja',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#F26419,#D4520E)"></div>
-          <span>Laranja</span>
-        </button>
-        <button class="tema-chip" data-tema-btn="azul" onclick="aplicarTema('azul',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#60A5FA,#2563EB)"></div>
-          <span>Azul</span>
-        </button>
-        <button class="tema-chip" data-tema-btn="verde" onclick="aplicarTema('verde',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#34D399,#059669)"></div>
-          <span>Verde</span>
-        </button>
-        <button class="tema-chip" data-tema-btn="roxo" onclick="aplicarTema('roxo',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)"></div>
-          <span>Roxo</span>
-        </button>
-        <button class="tema-chip" data-tema-btn="preto" onclick="aplicarTema('preto',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#64748B,#1E293B)"></div>
-          <span>Dark</span>
-        </button>
-        <button class="tema-chip" data-tema-btn="rosa" onclick="aplicarTema('rosa',this)">
-          <div class="tema-chip-swatch" style="background:linear-gradient(135deg,#F472B6,#BE185D)"></div>
-          <span>Rosa</span>
-        </button>
-      </div>
-
-      <!-- ── Papel de Parede V9.3.6 ── -->
-      <div class="pv-section-label">🖼️ Papel de Parede</div>
-      <div class="wp-grid" id="wp-grid-temas">
-        <!-- gerado por wpRenderizarGrid() -->
-      </div>
-
-      <!-- ── Meus Links V9.3.6 ── -->
-      <div class="pv-section-label" style="display:flex;align-items:center;justify-content:space-between">
-        <span>🔗 Meus Links</span>
-        <button onclick="abrirEditarLinks()" style="background:var(--accent);color:#fff;border:none;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">✏️ Editar</button>
-      </div>
-      <div class="links-grid" id="pv-links-lista">
-        <!-- gerado por pvRenderizarLinks() -->
-      </div>
-
-      <!-- ── Card de plano ── -->
       <div class="plan-status-card" id="plan-card">
         <div class="ps-top">
           <div class="ps-name" id="ps-nome">Plano Anual</div>
@@ -2665,146 +2723,126 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
         <div class="ps-bar"><div class="ps-bar-fill" id="ps-fill" style="width:0%"></div></div>
         <div class="ps-exp" id="ps-exp">Plano ativo</div>
       </div>
-
-      <!-- ── Configurações ── -->
-      <div class="pv-section-label">⚙️ Configurações</div>
+      <button type="button" class="inst-cartao inst-botao" onclick="instInstalar()"><span class="inst-cartao-icone" aria-hidden="true">📲</span><span class="inst-cartao-txt"><strong>Instalar na tela inicial</strong><small>Abra o PROSPECTARION com um toque, como um app</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button>
+      <div class="section-title">Configurações</div>
+      <!--CRIADOR-INICIO--><button type="button" class="inst-cartao" style="background:linear-gradient(135deg,#1A1A1A,#374151)" onclick="cofrePainel()"><span class="inst-cartao-icone" aria-hidden="true">🔐</span><span class="inst-cartao-txt"><strong>Segurança do criador</strong><small>Aparelhos identificados, trocar senha, travar agora</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button><!--CRIADOR-FIM-->
       <div class="stat-card" style="padding:0 14px;border-radius:var(--r)">
-        <div class="settings-item" onclick="editarPerfil()"><div class="settings-icon">👤</div><div style="flex:1"><div class="settings-label">Meu perfil</div><div class="settings-sub">Foto, nome, profissão, frase do dia</div></div><div class="settings-arrow">›</div></div>
+        <div class="settings-item" onclick="editarPerfil()"><div class="settings-icon">👤</div><div style="flex:1"><div class="settings-label">Meu perfil</div><div class="settings-sub">Perfil profissional, foto e redes</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="importarContatos()"><div class="settings-icon">📲</div><div style="flex:1"><div class="settings-label">Importar contatos</div><div class="settings-sub">Do celular, com sua permissão</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="exportarDados()"><div class="settings-icon">📤</div><div style="flex:1"><div class="settings-label">Exportar dados</div><div class="settings-sub">Baixar contatos em CSV</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="exportarBackupJSON()"><div class="settings-icon">💾</div><div style="flex:1"><div class="settings-label">Exportar Backup Completo</div><div class="settings-sub">JSON com todos os dados do CRM</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="document.getElementById('input-restaurar-json').click()"><div class="settings-icon">📂</div><div style="flex:1"><div class="settings-label">Restaurar Backup Completo</div><div class="settings-sub">Importar arquivo JSON do PROSPECTARION</div></div><div class="settings-arrow">›</div></div>
         <input type="file" id="input-restaurar-json" accept=".json,application/json" style="display:none" onchange="restaurarBackupJSON(this)">
-        <div class="settings-item" onclick="mostrarInstrucoesHomeScreen()"><div class="settings-icon">📲</div><div style="flex:1"><div class="settings-label">Adicionar à Tela Inicial</div><div class="settings-sub">Instalar ícone no celular/tablet</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="solicitarMelhoria()"><div class="settings-icon">💡</div><div style="flex:1"><div class="settings-label">Solicitar melhoria</div><div class="settings-sub">Enviar pedido ao criador</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="irParaAdmin()"><div class="settings-icon">⚙️</div><div style="flex:1"><div class="settings-label">Painel Admin</div><div class="settings-sub">Acesso restrito ao criador</div></div><div class="settings-arrow">›</div></div>
+        <!--CRIADOR-INICIO--><div class="settings-item" id="set-leads" style="display:none" onclick="abrirLeadsTeste()"><div class="settings-icon">📋</div><div style="flex:1"><div class="settings-label">Leads do teste</div><div class="settings-sub">Quem pediu o teste grátis · só você vê</div></div><div class="settings-arrow">›</div></div><!--CRIADOR-FIM-->
       </div>
-      <div style="text-align:center;padding:24px 0;color:var(--muted2);font-size:12px">PROSPECTARION · V9.3.6<br>Agenda pessoal · Agentes IA offline 🔒</div>
-    </div>
-
-    <!-- Modal Editar Perfil V9.3.5 -->
-    <div class="modal-overlay" id="modal-editar-perfil" style="display:none;z-index:9000">
-      <div class="modal-box" style="max-height:90vh;overflow-y:auto">
-        <div class="modal-title">✏️ Editar Perfil</div>
-
-        <!-- Foto -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:16px">
-          <div id="pv-modal-foto-wrap" style="width:90px;height:90px;border-radius:50%;overflow:hidden;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;cursor:pointer;position:relative" onclick="document.getElementById('pv-foto-input').click()">
-            <img id="pv-modal-foto-img" src="" style="display:none;width:100%;height:100%;object-fit:cover">
-            <span id="pv-modal-foto-init">U</span>
-            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.45);text-align:center;font-size:11px;color:#fff;padding:3px">📷 Foto</div>
-          </div>
-          <input type="file" id="pv-foto-input" accept="image/*" style="display:none" onchange="pvProcessarFoto(this)">
-          <button style="background:none;border:1px solid var(--muted2);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--muted2);cursor:pointer" onclick="pvRemoverFoto()">Remover foto</button>
-        </div>
-
-        <label class="form-label">Nome / Apelido</label>
-        <input class="input" id="pv-input-apelido" placeholder="Como quer ser chamado?" style="margin-bottom:10px">
-
-        <label class="form-label">Nome completo</label>
-        <input class="input" id="pv-input-nome" placeholder="Seu nome completo" style="margin-bottom:10px">
-
-        <label class="form-label">Profissão</label>
-        <input class="input" id="pv-input-profissao" placeholder="Ex: Corretor de Imóveis" style="margin-bottom:10px">
-
-        <label class="form-label">Frase do Dia</label>
-        <textarea class="input" id="pv-input-frase" placeholder="Sua frase motivacional de hoje..." rows="2" style="resize:none;margin-bottom:16px"></textarea>
-
-        <div class="modal-btns">
-          <button class="btn btn-full" onclick="closeModal('modal-editar-perfil')">Cancelar</button>
-          <button class="btn btn-primary btn-full" onclick="pvSalvarPerfil()">Salvar</button>
-        </div>
-      </div>
+      <div style="text-align:center;padding:24px 0;color:var(--muted2);font-size:12px">PROSPECTARION · Versão 1.0.0<br>Dados privados e seguros 🔒</div>
     </div>
 
   </div><!-- /app-content -->
 
-    <!-- Modal Editar Links V9.3.6 -->
-    <div class="modal-overlay" id="modal-editar-links" style="display:none;z-index:9001">
-      <div class="modal-box" style="max-height:90vh;overflow-y:auto">
-        <div class="modal-title">🔗 Meus Links</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Suas redes sociais para o PROSPECTARION trabalhar com você</div>
-
-        <label class="form-label">📸 Instagram</label>
-        <input class="input" id="ml-instagram" placeholder="@seuinstagram ou URL" style="margin-bottom:10px">
-
-        <label class="form-label">💼 LinkedIn</label>
-        <input class="input" id="ml-linkedin" placeholder="linkedin.com/in/seuperfil" style="margin-bottom:10px">
-
-        <label class="form-label">▶️ YouTube</label>
-        <input class="input" id="ml-youtube" placeholder="youtube.com/@seucanal" style="margin-bottom:10px">
-
-        <label class="form-label">🎵 TikTok</label>
-        <input class="input" id="ml-tiktok" placeholder="@seutiktok" style="margin-bottom:10px">
-
-        <label class="form-label">💬 WhatsApp Business</label>
-        <input class="input" id="ml-whatsapp" placeholder="55 51 99999-9999" style="margin-bottom:10px" type="tel">
-
-        <label class="form-label">🌐 Website / Blog</label>
-        <input class="input" id="ml-website" placeholder="www.seusite.com.br" style="margin-bottom:10px">
-
-        <label class="form-label">📘 Facebook</label>
-        <input class="input" id="ml-facebook" placeholder="facebook.com/seuperfil" style="margin-bottom:10px">
-
-        <label class="form-label">🐦 Twitter / X</label>
-        <input class="input" id="ml-twitter" placeholder="@seutwitter" style="margin-bottom:10px">
-
-        <label class="form-label">✈️ Telegram</label>
-        <input class="input" id="ml-telegram" placeholder="@seutelegram ou link" style="margin-bottom:10px">
-
-        <label class="form-label">📌 Pinterest</label>
-        <input class="input" id="ml-pinterest" placeholder="pinterest.com/seuperfil" style="margin-bottom:16px">
-
-        <div class="modal-btns">
-          <button class="btn btn-full" onclick="closeModal('modal-editar-links')">Cancelar</button>
-          <button class="btn btn-primary btn-full" onclick="pvSalvarLinks()">Salvar Links</button>
-        </div>
+    <!-- ═══════════════════════════════════════════════
+         MEU PERFIL PROFISSIONAL — V10.1 ETAPA B
+    ════════════════════════════════════════════════ -->
+    <div class="app-screen" id="as-perfil-pro">
+      <div class="pf-topo">
+        <button class="pf-voltar" onclick="appGoScreen('as-perfil',null,'Meu Perfil')">‹ Voltar</button>
+        <div class="pf-titulo">MEU PERFIL PROFISSIONAL</div>
       </div>
-    </div>
 
-    <!-- Modal Adicionar à Tela Inicial V9.3.6 -->
-    <div class="modal-overlay" id="modal-homescreen" style="display:none;z-index:9002">
-      <div class="modal-box">
-        <div class="modal-title">📲 Adicionar à Tela Inicial</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Instale o PROSPECTARION como ícone no seu Android ou iPhone — sem app store!</div>
+      <div class="pf-msg" id="pf-msg" style="display:none"></div>
 
-        <div style="background:var(--accent-lt);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#F26419,#D4520E);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0">P</div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text)">PROSPECTARION</div>
-            <div style="font-size:11px;color:var(--muted)">Aparece assim na tela inicial</div>
+      <div class="pf-card pf-foto-card">
+        <div class="pf-av" id="pf-av" onclick="pfEscolherFoto()" title="Escolher foto">U</div>
+        <div class="pf-foto-acoes">
+          <button class="btn btn-sm" id="pf-btn-foto" onclick="pfEscolherFoto()">📷 Adicionar foto</button>
+          <button class="btn btn-sm" id="pf-btn-remover-foto" onclick="pfRemoverFoto()" style="display:none;color:var(--red)">Remover foto</button>
+        </div>
+        <div class="pf-dica">Toque na foto para escolher uma imagem da galeria. Ela é recortada e reduzida automaticamente.</div>
+        <input type="file" id="pf-foto-input" accept="image/*" style="display:none" onchange="pfFotoSelecionada(this)">
+      </div>
+
+      <div class="pf-card">
+        <div class="pf-card-head"><span class="pf-card-titulo">👤 Dados profissionais</span></div>
+        <div class="form-group"><label class="label">Nome completo *</label><input class="input" id="pf-nome" maxlength="80" placeholder="Seu nome completo"></div>
+        <div class="form-group"><label class="label">Nome profissional</label><input class="input" id="pf-nome-prof" maxlength="60" placeholder="Como você é conhecido profissionalmente"></div>
+        <div class="form-group"><label class="label">Profissão / especialidade</label><input class="input" id="pf-profissao" maxlength="60" placeholder="Ex.: Consultor, Corretor, Advogado"></div>
+        <div class="form-group"><label class="label">Empresa</label><input class="input" id="pf-empresa" maxlength="80" placeholder="Empresa ou marca"></div>
+        <div class="form-group"><label class="label">Cidade / Região</label><input class="input" id="pf-cidade" maxlength="80" placeholder="Ex.: Porto Alegre - RS"></div>
+        <div class="form-group"><label class="label">Telefone / WhatsApp</label><input class="input" id="pf-telefone" type="tel" maxlength="30" placeholder="(51) 99999-9999"></div>
+        <div class="form-group"><label class="label">E-mail profissional</label><input class="input" id="pf-email" type="email" maxlength="100" placeholder="voce@email.com"></div>
+        <div class="form-group"><label class="label">Bio profissional</label><textarea class="input pf-textarea" id="pf-bio" maxlength="300" placeholder="Em poucas linhas: o que você faz e para quem"></textarea></div>
+        <button class="btn btn-primary btn-full" onclick="pfSalvarPerfil()">SALVAR PERFIL</button>
+      </div>
+
+      <div class="pf-card" id="pf-redes-card">
+        <div class="pf-card-head">
+          <span class="pf-card-titulo">🌐 Minhas Redes</span>
+          <button class="d360-add-btn" onclick="pfNovaRede()">＋ Adicionar rede</button>
+        </div>
+        <div id="pf-redes-lista"></div>
+        <div class="pf-form" id="pf-rede-form" style="display:none">
+          <input type="hidden" id="pf-rede-id">
+          <div class="form-group"><label class="label">Rede</label>
+            <select class="input select-field" id="pf-rede-tipo">
+              <option value="instagram">📸 Instagram</option>
+              <option value="facebook">📘 Facebook</option>
+              <option value="linkedin">💼 LinkedIn</option>
+              <option value="youtube">▶️ YouTube</option>
+              <option value="tiktok">🎵 TikTok</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+              <option value="site">🌐 Site</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="label">@usuário ou identificação</label><input class="input" id="pf-rede-usuario" maxlength="120" placeholder="@seuperfil, número ou nome do canal"></div>
+          <div class="form-group"><label class="label">Link (opcional)</label><input class="input" id="pf-rede-url" maxlength="300" placeholder="https://..."></div>
+          <label class="pf-check"><input type="checkbox" id="pf-rede-ativo" checked> Ativa (aparece na Home)</label>
+          <div class="pf-form-acoes">
+            <button class="btn" onclick="pfCancelarRede()">Cancelar</button>
+            <button class="btn btn-primary" onclick="pfSalvarRede()">Salvar rede</button>
           </div>
         </div>
-
-        <div style="font-weight:800;font-size:13px;color:var(--text);margin-bottom:10px">🤖 Android (Chrome):</div>
-        <div style="background:var(--card2);border-radius:var(--r-sm);padding:12px">
-          <div class="hs-step"><div class="hs-step-num">1</div><div class="hs-step-text">Abra este arquivo no <strong>Chrome</strong> (não Samsung Internet)</div></div>
-          <div class="hs-step"><div class="hs-step-num">2</div><div class="hs-step-text">Toque nos <strong>3 pontos ⋮</strong> no canto superior direito</div></div>
-          <div class="hs-step"><div class="hs-step-num">3</div><div class="hs-step-text">Toque em <strong>"Adicionar à tela inicial"</strong></div></div>
-          <div class="hs-step"><div class="hs-step-num">4</div><div class="hs-step-text">Confirme tocando em <strong>"Adicionar"</strong> — pronto! 🎉</div></div>
-        </div>
-
-        <div style="font-weight:800;font-size:13px;color:var(--text);margin:14px 0 10px">🍎 iPhone (Safari):</div>
-        <div style="background:var(--card2);border-radius:var(--r-sm);padding:12px">
-          <div class="hs-step"><div class="hs-step-num">1</div><div class="hs-step-text">Abra este arquivo no <strong>Safari</strong></div></div>
-          <div class="hs-step"><div class="hs-step-num">2</div><div class="hs-step-text">Toque no ícone de <strong>compartilhar ⬆️</strong> (barra inferior)</div></div>
-          <div class="hs-step"><div class="hs-step-num">3</div><div class="hs-step-text">Role e toque em <strong>"Adicionar à Tela de Início"</strong></div></div>
-          <div class="hs-step"><div class="hs-step-num">4</div><div class="hs-step-text">Toque em <strong>"Adicionar"</strong> — pronto! 🎉</div></div>
-        </div>
-
-        <div style="margin-top:14px;padding:10px;background:#FEF3C7;border-radius:var(--r-sm);font-size:12px;color:#92400E">
-          💡 <strong>Dica:</strong> No Samsung Tab A8, certifique-se de usar o <strong>Chrome</strong> (baixe pela Play Store se necessário) e não o Samsung Internet.
-        </div>
-
-        <div style="margin-top:14px">
-          <button class="btn btn-primary btn-full" onclick="closeModal('modal-homescreen')">Entendi ✓</button>
-        </div>
+        <div class="pf-dica">Cadastro manual. O PROSPECTARION abre os links cadastrados, mas não publica nem lê métricas das redes.</div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════
          AGENDA V9.2.3
     ════════════════════════════════════════════════ -->
+    <!--CRIADOR-INICIO-->
+    <!-- ── V10.4: LEADS DO TESTE (só do proprietário) ── -->
+    <div class="app-screen" id="as-leads">
+      <div class="ld-topo"><h2>📋 Leads do teste</h2><p class="ld-sub" id="ld-sub"></p></div>
+      <div class="ld-acoes">
+        <button type="button" class="ld-btn" onclick="ldAtualizar()">🔄 Atualizar</button>
+        <button type="button" class="ld-btn" onclick="ldExportarCSV()">⬇️ Exportar CSV</button>
+        <button type="button" class="ld-btn" onclick="ldConfigurar()">⚙ Planilha</button>
+        <span id="ld-status" class="ld-cinza" role="status"></span>
+      </div>
+      <div class="ld-chips">
+        <button type="button" class="ld-chip ativo" data-f="todos" onclick="ldSetFiltro('todos')">Todos</button>
+        <button type="button" class="ld-chip" data-f="ativos" onclick="ldSetFiltro('ativos')">Em teste</button>
+        <button type="button" class="ld-chip" data-f="encerrados" onclick="ldSetFiltro('encerrados')">Encerrados</button>
+      </div>
+      <div id="ld-aviso"></div>
+      <div class="ld-lista" id="ld-lista"></div>
+    </div>
+    <div class="modal-overlay" id="modal-ld-config">
+      <div class="modal-sheet ld-cfg">
+        <div class="modal-handle"></div>
+        <div class="modal-title">⚙ Planilha de leads</div>
+        <p>Cole aqui o endereço do Apps Script (termina em <strong>/exec</strong>) e a senha que está no começo do código da planilha.</p>
+        <label for="ld-cfg-url">Endereço do Apps Script</label>
+        <input class="input" id="ld-cfg-url" type="url" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec">
+        <label for="ld-cfg-token">Senha de leitura</label>
+        <input class="input" id="ld-cfg-token" type="text" autocomplete="off" spellcheck="false">
+        <button type="button" class="btn btn-primary btn-full" style="margin-top:16px" onclick="ldSalvarConfig()">Salvar e buscar leads</button>
+        <button type="button" class="btn btn-full" style="margin-top:8px" onclick="closeModal('modal-ld-config')">Cancelar</button>
+      </div>
+    </div>
+    <!--CRIADOR-FIM-->
+
     <div class="app-screen" id="as-agenda">
       <div class="ag-header">
         <div class="ag-header-titulo">📅 Agenda</div>
@@ -2865,6 +2903,7 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
     </div>
 
   <div class="bottom-nav">
+    <div class="nav-marca" aria-hidden="true">PROSPECTAR<em>ION</em></div>
     <button class="nav-btn active" onclick="appGoScreen('as-dash',this,'Início')"><div class="nav-btn-wrap"><div class="nav-icon">🏠</div></div>Início</button>
     <button class="nav-btn" onclick="appGoScreen('as-contacts',this,'Contatos')"><div class="nav-btn-wrap"><div class="nav-icon">👥</div><div class="nav-badge" id="badge-contacts" style="display:none">0</div></div>Contatos</button>
     <button class="nav-btn" onclick="appGoScreen('as-pipeline',this,'Pipeline')"><div class="nav-btn-wrap" style="position:relative"><div class="nav-icon">📊</div><div id="badge-pipeline" style="display:none;position:absolute;top:-3px;right:-5px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 3px;"></div></div>Pipeline</button>
@@ -3630,6 +3669,540 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
 
 
 <script>
+/*CRIADOR-INICIO*/
+/* ── V10.4.2: criptografia do cofre (SHA-256, HMAC, PBKDF2) em ES5 puro ── */
+var CF_K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+ 0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+ 0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+ 0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+var CF_W = new Array(64);
+function cfBloco(h, b, o) {
+  var w = CF_W, i, a, bb, c, d, e, f, g, hh, t1, t2, s0, s1;
+  for (i = 0; i < 16; i++) w[i] = (b[o + 4 * i] << 24) | (b[o + 4 * i + 1] << 16) | (b[o + 4 * i + 2] << 8) | b[o + 4 * i + 3];
+  for (i = 16; i < 64; i++) {
+    s0 = ((w[i - 15] >>> 7) | (w[i - 15] << 25)) ^ ((w[i - 15] >>> 18) | (w[i - 15] << 14)) ^ (w[i - 15] >>> 3);
+    s1 = ((w[i - 2] >>> 17) | (w[i - 2] << 15)) ^ ((w[i - 2] >>> 19) | (w[i - 2] << 13)) ^ (w[i - 2] >>> 10);
+    w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+  }
+  a = h[0]; bb = h[1]; c = h[2]; d = h[3]; e = h[4]; f = h[5]; g = h[6]; hh = h[7];
+  for (i = 0; i < 64; i++) {
+    t1 = (hh + (((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7))) + ((e & f) ^ (~e & g)) + CF_K[i] + w[i]) | 0;
+    t2 = ((((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10))) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0;
+    hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+  }
+  h[0] = (h[0] + a) | 0; h[1] = (h[1] + bb) | 0; h[2] = (h[2] + c) | 0; h[3] = (h[3] + d) | 0;
+  h[4] = (h[4] + e) | 0; h[5] = (h[5] + f) | 0; h[6] = (h[6] + g) | 0; h[7] = (h[7] + hh) | 0;
+}
+function cfIni() { return [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19]; }
+function cfFinal(h, resto, totalBytes) {
+  var m = resto.slice(0), i, bits = totalBytes * 8;
+  m.push(0x80); while ((m.length % 64) !== 56) m.push(0);
+  for (i = 7; i >= 0; i--) m.push(i >= 4 ? 0 : (bits >>> (8 * i)) & 0xff);
+  for (i = 0; i < m.length; i += 64) cfBloco(h, m, i);
+  var out = [];
+  for (i = 0; i < 8; i++) out.push((h[i] >>> 24) & 0xff, (h[i] >>> 16) & 0xff, (h[i] >>> 8) & 0xff, h[i] & 0xff);
+  return out;
+}
+function cfSha256(bytes) {
+  var h = cfIni(), n = bytes.length - (bytes.length % 64), i;
+  for (i = 0; i < n; i += 64) cfBloco(h, bytes, i);
+  return cfFinal(h, bytes.slice(n), bytes.length);
+}
+function cfBytes(txt) {
+  var s = unescape(encodeURIComponent(String(txt))), a = [], i;
+  for (i = 0; i < s.length; i++) a.push(s.charCodeAt(i));
+  return a;
+}
+function cfHex(b) { var s = '', i; for (i = 0; i < b.length; i++) s += (b[i] < 16 ? '0' : '') + b[i].toString(16); return s; }
+function cfDeHex(s) { var a = [], i; for (i = 0; i + 1 < s.length; i += 2) a.push(parseInt(s.substr(i, 2), 16)); return a; }
+function cfPreparaHmac(chave) {
+  if (chave.length > 64) chave = cfSha256(chave);
+  var ip = [], op = [], i;
+  for (i = 0; i < 64; i++) { var k = i < chave.length ? chave[i] : 0; ip.push(k ^ 0x36); op.push(k ^ 0x5c); }
+  var hi = cfIni(), ho = cfIni(); cfBloco(hi, ip, 0); cfBloco(ho, op, 0);
+  return { hi: hi, ho: ho };
+}
+function cfHmacPre(pre, msg) {
+  var h = pre.hi.slice(0), n = msg.length - (msg.length % 64), i;
+  for (i = 0; i < n; i += 64) cfBloco(h, msg, i);
+  var interno = cfFinal(h, msg.slice(n), 64 + msg.length);
+  return cfFinal(pre.ho.slice(0), interno, 96);
+}
+function cfHmac(chave, msg) { return cfHmacPre(cfPreparaHmac(chave), msg); }
+/* PBKDF2-HMAC-SHA256, 32 bytes */
+function cfPbkdf2(senha, sal, iter) {
+  var pre = cfPreparaHmac(senha);
+  var u = cfHmacPre(pre, sal.concat([0, 0, 0, 1])), t = u.slice(0), i, j;
+  for (i = 1; i < iter; i++) { u = cfHmacPre(pre, u); for (j = 0; j < 32; j++) t[j] ^= u[j]; }
+  return t;
+}
+function cfAleatorio(n) {
+  var a = [], i;
+  try { var r = new Uint8Array(n); (window.crypto || window.msCrypto).getRandomValues(r); for (i = 0; i < n; i++) a.push(r[i]); return a; }
+  catch (e) { for (i = 0; i < n; i++) a.push(Math.floor(Math.random() * 256)); return a; }
+}
+function cfXor(a, b) { var r = [], i; for (i = 0; i < a.length; i++) r.push(a[i] ^ b[i]); return r; }
+function cfIgual(a, b) { if (a.length !== b.length) return false; var d = 0, i; for (i = 0; i < a.length; i++) d |= (a.charCodeAt ? a.charCodeAt(i) ^ b.charCodeAt(i) : a[i] ^ b[i]); return d === 0; }
+/* ═══════════════════════════════════════════
+   V10.4.2 — COFRE DO CRIADOR (ES5)
+   Só o Anderson entra no modo CEO:
+   - aparelho já identificado: e-mail + senha criada por ele;
+   - aparelho novo (modo segurança): e-mail → Chave Mestra → senha → perguntas pessoais → nome do aparelho.
+   A senha e as respostas nunca são guardadas: só a prova (PBKDF2). As credenciais são seladas
+   com uma chave que só nasce da Chave Mestra; editar os dados não abre o cofre.
+   Nada aqui apaga dados: com o cofre fechado, os dados ficam guardados e escondidos.
+═══════════════════════════════════════════ */
+var COFRE_CFG = {"emails": ["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e", "65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc", "577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a", "a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c", "136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c", "004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"], "mestra": {"sal": "191ae0cfce820c2f315e4692be8f1544", "iter": 60000, "verif": "d624b73fdaffd8099185c64ffbcd638a2fa4e49424ef50d4308735d229e1cd2e"}};
+var COFRE_ITER_SENHA = 30000, COFRE_ITER_RESP = 10000;
+var COFRE_TOKEN = 'prospectarion_aparelho';
+var COFRE_SESSAO = 'prospectarion_sessao';
+var COFRE_TRAVA_MIN = 10;
+var __cofreOk = false, __cofreAppIniciado = false, __cofreNovo = {}, __cofreOculto = 0;
+var COFRE_PERGUNTAS = [
+  'Nome da sua primeira escola',
+  'Cidade onde seu pai ou sua mãe nasceu',
+  'Nome do seu primeiro animal de estimação',
+  'Apelido que você tinha na infância',
+  'Modelo do seu primeiro carro',
+  'Nome do seu melhor amigo de infância'
+];
+
+function cofreNorm(t) {
+  var s = String(t || '').toLowerCase();
+  try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
+  return s.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+}
+function cofreNormMestra(t) { return String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function cofreEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function cofreEmailOk(email) {
+  var h = cfHex(cfSha256(cfBytes(cofreNorm(email))));
+  for (var i = 0; i < COFRE_CFG.emails.length; i++) if (cfIgual(h, COFRE_CFG.emails[i])) return true;
+  return false;
+}
+function cofreChaveDaMestra(mestra) {
+  var k = cfPbkdf2(cfBytes(cofreNormMestra(mestra)), cfDeHex(COFRE_CFG.mestra.sal), COFRE_CFG.mestra.iter);
+  return cfIgual(cfHex(cfSha256(k)), COFRE_CFG.mestra.verif) ? k : null;
+}
+function cofreToken() {
+  var t = '';
+  try { t = localStorage.getItem(COFRE_TOKEN) || ''; } catch (e) {}
+  if (!/^[0-9a-f]{32}$/.test(t)) { t = cfHex(cfAleatorio(16)); try { localStorage.setItem(COFRE_TOKEN, t); } catch (e) {} }
+  return t;
+}
+function cofreConteudo(c) {
+  var ap = (c.aparelhos || []).slice(0).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+  return JSON.stringify({ v: 1, senha: c.senha, kenc: c.kenc, perguntas: c.perguntas,
+    aparelhos: ap.map(function (a) { return [a.id, a.nome, a.desde]; }) });
+}
+function cofreSelar(c, k) { c.selo = cfHex(cfHmac(k, cfBytes(cofreConteudo(c)))); }
+function cofreSeloOk(c, k) { return !!c.selo && cfIgual(cfHex(cfHmac(k, cfBytes(cofreConteudo(c)))), c.selo); }
+/* Deriva da senha: prova da senha + chave do cofre */
+function cofreDerivaSenha(senha, sal) { return cfPbkdf2(cfBytes(senha), cfDeHex(sal), COFRE_ITER_SENHA); }
+function cofreProvaSenha(d) { return cfHex(cfSha256(d.concat(cfBytes('prova')))); }
+function cofreResposta(r, sal) { return cfHex(cfPbkdf2(cfBytes(cofreNorm(r)), cfDeHex(sal), COFRE_ITER_RESP)); }
+function cofreCredencial() { var c = APP && APP.criador; return c && c.senha && c.kenc && c.selo ? c : null; }
+/* Abre com a senha: devolve a chave do cofre (prova de que as credenciais vieram da Chave Mestra) */
+function cofreAbrirComSenha(senha) {
+  var c = cofreCredencial(); if (!c) return null;
+  var d = cofreDerivaSenha(senha, c.senha.sal);
+  if (!cfIgual(cofreProvaSenha(d), c.senha.prova)) return null;
+  var k = cfXor(cfDeHex(c.kenc), d);
+  if (!cfIgual(cfHex(cfSha256(k)), COFRE_CFG.mestra.verif)) return null;
+  if (!cofreSeloOk(c, k)) return null;
+  return k;
+}
+function cofreAparelhoConhecido() {
+  var c = cofreCredencial(); if (!c) return false;
+  var t = cofreToken();
+  return (c.aparelhos || []).some(function (a) { return a.id === t; });
+}
+function cofreBloqueado() {
+  var c = APP.criador || {}, agora = Date.now();
+  return c.bloqueioAte && c.bloqueioAte > agora ? Math.ceil((c.bloqueioAte - agora) / 60000) : 0;
+}
+function cofreErro() {
+  if (!APP.criador) APP.criador = {};
+  var c = APP.criador;
+  c.erros = (c.erros || 0) + 1;
+  if (c.erros >= 5) { c.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, c.erros - 5)) * 60000; }
+  try { saveAll(); } catch (e) {}
+}
+function cofreSemErros() { if (APP.criador) { APP.criador.erros = 0; APP.criador.bloqueioAte = 0; } }
+function cofreSessaoOk() {
+  try { var s = JSON.parse(sessionStorage.getItem(COFRE_SESSAO) || 'null'); return s && s.t === cofreToken() && cofreAparelhoConhecido(); } catch (e) { return false; }
+}
+
+/* ── Tela ── */
+function cofreTela(conteudo) {
+  var f = document.getElementById('cofre');
+  if (!f) {
+    f = document.createElement('div'); f.id = 'cofre'; f.setAttribute('role', 'dialog'); f.setAttribute('aria-modal', 'true');
+    document.body.appendChild(f);
+  }
+  document.body.classList.add('cofre-travado');
+  f.innerHTML = '<div class="cofre-caixa"><div class="cofre-marca">PROSPECTAR<em>ION</em></div>' + conteudo + '</div>';
+  var campo = f.querySelector('input'); if (campo) { try { campo.focus(); } catch (e) {} }
+  var fs = f.querySelectorAll('input');
+  for (var i = 0; i < fs.length; i++) fs[i].addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') { var b = document.querySelector('#cofre .cofre-principal'); if (b) b.click(); }
+  });
+}
+function cofreCampo(id, rotulo, tipo, extra) {
+  return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label><input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
+}
+function cofreAviso(txt) { var e = document.getElementById('cofre-erro'); if (e) { e.textContent = txt; e.style.display = txt ? 'block' : 'none'; } }
+function cofreValor(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+function cofreOcupado(sim) { var b = document.querySelector('#cofre .cofre-principal'); if (b) { b.disabled = sim; if (sim) b.setAttribute('data-txt', b.textContent), b.textContent = 'Conferindo…'; else if (b.getAttribute('data-txt')) b.textContent = b.getAttribute('data-txt'); } }
+function cofreDepois(fn) { cofreOcupado(true); setTimeout(function () { try { fn(); } finally { cofreOcupado(false); } }, 30); }
+function cofreEtapas(n) {
+  var t = ['E-mail', 'Chave Mestra', 'Senha', 'Perguntas', 'Aparelho'], h = '<ol class="cofre-etapas" aria-label="Etapa ' + n + ' de 5">';
+  for (var i = 1; i <= 5; i++) h += '<li class="' + (i < n ? 'feita' : (i === n ? 'atual' : '')) + '">' + (i < n ? '✓' : i) + '<span>' + t[i - 1] + '</span></li>';
+  return h + '</ol>';
+}
+
+/* ── Aparelho identificado: e-mail + senha ── */
+function cofreEntrar() {
+  var b = cofreBloqueado();
+  cofreTela('<div class="cofre-icone">🔐</div><h1>Acesso do Criador</h1><p class="cofre-sub">Aparelho identificado. Entre com seu e-mail e sua senha.</p>' +
+    cofreCampo('cofre-email', 'E-mail', 'email', 'autocomplete="username" autocapitalize="off" spellcheck="false"') +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert"' + (b ? '' : ' style="display:none"') + '>' + (b ? 'Muitas tentativas. Aguarde ' + b + ' min.' : '') + '</div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEntrarConfere()">Entrar</button>' +
+    '<button type="button" class="cofre-link" onclick="cofreEsqueci()">Esqueci a senha</button>');
+}
+function cofreEntrarConfere() {
+  var b = cofreBloqueado(); if (b) { cofreAviso('Muitas tentativas. Aguarde ' + b + ' min.'); return; }
+  var email = cofreValor('cofre-email'), senha = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = cofreEmailOk(email) ? cofreAbrirComSenha(senha) : null;
+    if (!k || !cofreAparelhoConhecido()) { cofreErro(); var bb = cofreBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'E-mail ou senha não conferem.'); return; }
+    cofreSemErros(); cofreLiberar(email);
+  });
+}
+
+/* ── Modo segurança (aparelho novo) ── */
+function cofreNovo() {
+  __cofreNovo = {};
+  cofreTela('<div class="cofre-icone">🛡️</div><h1>Modo segurança</h1><p class="cofre-sub">Este aparelho ainda não está identificado. Vamos confirmar que é você em 5 etapas.</p>' + cofreEtapas(1) +
+    cofreCampo('cofre-email', 'Seu e-mail de criador', 'email', 'autocomplete="username" autocapitalize="off" spellcheck="false"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo1()">Continuar</button>');
+}
+function cofreNovo1() {
+  var email = cofreValor('cofre-email');
+  if (!cofreEmailOk(email)) { cofreErroNovo(); cofreAviso('Este e-mail não é de criador.'); return; }
+  __cofreNovo.email = cofreNorm(email);
+  cofreTela('<div class="cofre-icone">🗝️</div><h1>Chave Mestra</h1><p class="cofre-sub">Digite a Chave Mestra que só você tem (20 letras e números, no arquivo PROSPECTARION_CHAVE_MESTRA).</p>' + cofreEtapas(2) +
+    cofreCampo('cofre-mestra', 'Chave Mestra', 'text', 'autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo2()">Continuar</button>');
+}
+function cofreErroNovo() {
+  var n = 0; try { n = parseInt(sessionStorage.getItem('prospectarion_cofre_erros') || '0', 10) + 1; sessionStorage.setItem('prospectarion_cofre_erros', String(n)); } catch (e) {}
+  return n;
+}
+function cofreNovo2() {
+  var m = cofreValor('cofre-mestra');
+  cofreDepois(function () {
+    var k = cofreChaveDaMestra(m);
+    if (!k) { cofreErroNovo(); cofreAviso('Chave Mestra não confere.'); return; }
+    __cofreNovo.k = k;
+    var c = cofreCredencial(), temSenha = !!c && cofreSeloOk(c, k);
+    __cofreNovo.temSenha = temSenha;
+    cofreTela('<div class="cofre-icone">🔑</div><h1>' + (temSenha ? 'Sua senha' : 'Crie sua senha') + '</h1><p class="cofre-sub">' +
+      (temSenha ? 'Digite a senha de criador que você já usa.' : 'Mínimo de 8 caracteres, com letras e números. Só você vai saber.') + '</p>' + cofreEtapas(3) +
+      cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="' + (temSenha ? 'current' : 'new') + '-password"') +
+      (temSenha ? '' : cofreCampo('cofre-senha2', 'Repita a senha', 'password', 'autocomplete="new-password"')) +
+      '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+      '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo3()">Continuar</button>' +
+      (temSenha ? '<button type="button" class="cofre-link" onclick="cofreNovoTrocarSenha()">Não lembro: criar senha nova</button>' : ''));
+  });
+}
+function cofreSenhaFraca(s) {
+  if (s.length < 8) return 'A senha precisa ter pelo menos 8 caracteres.';
+  if (!/[A-Za-z]/.test(s) || !/[0-9]/.test(s)) return 'Use letras e números na senha.';
+  return '';
+}
+function cofreNovoTrocarSenha() { __cofreNovo.temSenha = false; __cofreNovo.trocandoSenha = true;
+  cofreTela('<div class="cofre-icone">🔑</div><h1>Crie uma senha nova</h1><p class="cofre-sub">Depois você confirma com as suas perguntas pessoais.</p>' + cofreEtapas(3) +
+    cofreCampo('cofre-senha', 'Senha nova', 'password', 'autocomplete="new-password"') + cofreCampo('cofre-senha2', 'Repita a senha', 'password', 'autocomplete="new-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div><button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo3()">Continuar</button>');
+}
+function cofreNovo3() {
+  var s = cofreValor('cofre-senha');
+  if (__cofreNovo.temSenha) {
+    cofreDepois(function () {
+      var k = cofreAbrirComSenha(s);
+      if (!k) { cofreErro(); cofreAviso('Senha não confere.'); return; }
+      __cofreNovo.senha = s; cofreNovoPerguntas();
+    });
+    return;
+  }
+  var f = cofreSenhaFraca(s); if (f) { cofreAviso(f); return; }
+  if (s !== cofreValor('cofre-senha2')) { cofreAviso('As duas senhas não são iguais.'); return; }
+  __cofreNovo.senha = s; cofreNovoPerguntas();
+}
+function cofreNovoPerguntas() {
+  var c = cofreCredencial();
+  var existentes = c && c.perguntas && c.perguntas.length === 2 && cofreSeloOk(c, __cofreNovo.k);
+  __cofreNovo.respondendo = existentes;
+  var h = '<div class="cofre-icone">🧩</div><h1>Perguntas pessoais</h1><p class="cofre-sub">' +
+    (existentes ? 'Responda as suas perguntas pessoais.' : 'Escolha 2 perguntas e responda. Elas protegem a troca de aparelho e a troca de senha.') + '</p>' + cofreEtapas(4);
+  for (var i = 0; i < 2; i++) {
+    if (existentes) h += cofreCampo('cofre-r' + i, cofreEsc(c.perguntas[i].texto), 'text', 'autocomplete="off" spellcheck="false"');
+    else {
+      h += '<label class="cofre-rotulo" for="cofre-p' + i + '">Pergunta ' + (i + 1) + '</label><select class="cofre-campo" id="cofre-p' + i + '">' +
+        COFRE_PERGUNTAS.map(function (p, j) { return '<option' + (j === i * 2 ? ' selected' : '') + '>' + cofreEsc(p) + '</option>'; }).join('') + '</select>' +
+        cofreCampo('cofre-r' + i, 'Resposta ' + (i + 1), 'text', 'autocomplete="off" spellcheck="false"');
+    }
+  }
+  cofreTela(h + '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div><button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo4()">Continuar</button>');
+}
+function cofreNovo4() {
+  var r0 = cofreValor('cofre-r0'), r1 = cofreValor('cofre-r1');
+  if (cofreNorm(r0).length < 2 || cofreNorm(r1).length < 2) { cofreAviso('Responda as duas perguntas.'); return; }
+  if (__cofreNovo.respondendo) {
+    cofreDepois(function () {
+      var p = APP.criador.perguntas;
+      if (!cfIgual(cofreResposta(r0, p[0].sal), p[0].hash) || !cfIgual(cofreResposta(r1, p[1].sal), p[1].hash)) { cofreErro(); cofreAviso('As respostas não conferem.'); return; }
+      __cofreNovo.perguntas = p; cofreNovoAparelho();
+    });
+    return;
+  }
+  var p0 = cofreValor('cofre-p0'), p1 = cofreValor('cofre-p1');
+  if (p0 === p1) { cofreAviso('Escolha duas perguntas diferentes.'); return; }
+  cofreDepois(function () {
+    var s0 = cfHex(cfAleatorio(16)), s1 = cfHex(cfAleatorio(16));
+    __cofreNovo.perguntas = [{ texto: p0, sal: s0, hash: cofreResposta(r0, s0) }, { texto: p1, sal: s1, hash: cofreResposta(r1, s1) }];
+    cofreNovoAparelho();
+  });
+}
+function cofreNomeSugerido() {
+  var ua = navigator.userAgent || '';
+  var m = /Android[^;]*;\s*([^;)]+)/.exec(ua);
+  if (m && m[1] && !/wv|Build/i.test(m[1])) return 'Celular ' + m[1].replace(/\s+Build.*$/, '');
+  if (/iPhone/.test(ua)) return 'iPhone';
+  if (/Windows|Macintosh|Linux x86/.test(ua)) return 'Computador';
+  return 'Meu celular';
+}
+function cofreNovoAparelho() {
+  cofreTela('<div class="cofre-icone">📱</div><h1>Nome deste aparelho</h1><p class="cofre-sub">Assim você reconhece este aparelho na lista de aparelhos identificados.</p>' + cofreEtapas(5) +
+    cofreCampo('cofre-aparelho', 'Nome do aparelho', 'text', 'maxlength="40" value="' + cofreEsc(cofreNomeSugerido()) + '"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo5()">Identificar aparelho e entrar</button>');
+}
+function cofreNovo5() {
+  var nome = cofreValor('cofre-aparelho').replace(/^\s+|\s+$/g, '') || 'Meu aparelho';
+  cofreDepois(function () {
+    var k = __cofreNovo.k, anterior = cofreCredencial();
+    var aparelhos = (anterior && cofreSeloOk(anterior, k)) ? (anterior.aparelhos || []).slice(0) : [];
+    var t = cofreToken();
+    aparelhos = aparelhos.filter(function (a) { return a.id !== t; });
+    aparelhos.push({ id: t, nome: nome, desde: new Date().toISOString() });
+    cofreGravar(k, __cofreNovo.senha, __cofreNovo.perguntas, aparelhos);
+    var email = __cofreNovo.email; __cofreNovo = {};
+    cofreLiberar(email);
+    try { showToast('✅ Aparelho identificado: ' + nome); } catch (e) {}
+  });
+}
+/* Grava as credenciais seladas (só com a chave que veio da Chave Mestra) */
+function cofreGravar(k, senha, perguntas, aparelhos) {
+  var sal = cfHex(cfAleatorio(16)), d = cofreDerivaSenha(senha, sal);
+  var c = APP.criador || {};
+  c.senha = { sal: sal, prova: cofreProvaSenha(d) };
+  c.kenc = cfHex(cfXor(k, d));
+  c.perguntas = perguntas;
+  c.aparelhos = aparelhos;
+  c.erros = 0; c.bloqueioAte = 0;
+  cofreSelar(c, k);
+  APP.criador = c;
+  saveAll();
+}
+
+/* ── Esqueci a senha: Chave Mestra + perguntas ── */
+function cofreEsqueci() {
+  if (!cofreCredencial()) { cofreNovo(); return; }
+  cofreTela('<div class="cofre-icone">🗝️</div><h1>Esqueci a senha</h1><p class="cofre-sub">Confirme com seu e-mail, a Chave Mestra e as suas perguntas pessoais. Seus dados continuam todos guardados.</p>' +
+    cofreCampo('cofre-email', 'E-mail', 'email', 'autocapitalize="off" spellcheck="false"') +
+    cofreCampo('cofre-mestra', 'Chave Mestra', 'text', 'autocomplete="off" autocapitalize="characters" spellcheck="false"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEsqueci1()">Continuar</button>' +
+    '<button type="button" class="cofre-link" onclick="cofreEntrar()">Voltar</button>');
+}
+function cofreEsqueci1() {
+  var email = cofreValor('cofre-email'), m = cofreValor('cofre-mestra');
+  cofreDepois(function () {
+    var k = cofreEmailOk(email) ? cofreChaveDaMestra(m) : null;
+    if (!k) { cofreErroNovo(); cofreAviso('E-mail ou Chave Mestra não conferem.'); return; }
+    __cofreNovo = { email: cofreNorm(email), k: k };
+    cofreNovoTrocarSenha();
+  });
+}
+
+/* ── Liberar o app ── */
+function cofreLiberar(email) {
+  __cofreOk = true;
+  try { sessionStorage.setItem(COFRE_SESSAO, JSON.stringify({ t: cofreToken(), em: Date.now() })); } catch (e) {}
+  var c = APP.criador, t = cofreToken();
+  if (c && c.aparelhos) c.aparelhos.forEach(function (a) { if (a.id === t) a.ultimo = new Date().toISOString(); });
+  APP.user.plano = 'criador'; APP.user.codigo = 'CREATOR-MASTER-001'; APP.user.exp = '';
+  if (email) APP.user.email = cofreNorm(email);
+  saveAll();
+  var f = document.getElementById('cofre'); if (f) f.parentNode.removeChild(f);
+  document.body.classList.remove('cofre-travado');
+  var sp = document.getElementById('splash-screen'); if (sp) sp.parentNode.removeChild(sp);
+  if (!__cofreAppIniciado || !document.getElementById('mod-app').classList.contains('ativo')) {
+    __cofreAppIniciado = true;
+    showModulo('mod-app'); initApp();
+  }
+}
+function cofreTravar() {
+  __cofreOk = false;
+  try { sessionStorage.removeItem(COFRE_SESSAO); } catch (e) {}
+  if (cofreAparelhoConhecido()) cofreEntrar(); else cofreNovo();
+}
+
+/* ── Segurança do criador (Perfil) ── */
+function cofrePainel() {
+  if (!__cofreOk) { cofreTravar(); return; }
+  var c = APP.criador || {}, t = cofreToken();
+  var lista = (c.aparelhos || []).map(function (a) {
+    var este = a.id === t;
+    return '<li><div><strong>' + cofreEsc(a.nome) + (este ? ' <span class="cofre-tag">este aparelho</span>' : '') + '</strong>' +
+      '<small>Identificado em ' + new Date(a.desde).toLocaleDateString('pt-BR') + (a.ultimo ? ' · último acesso ' + new Date(a.ultimo).toLocaleDateString('pt-BR') : '') + '</small></div>' +
+      (este ? '' : '<button type="button" class="cofre-mini" onclick="cofreRemoverAparelho(\'' + a.id + '\')">Remover</button>') + '</li>';
+  }).join('');
+  cofreTela('<div class="cofre-icone">🔐</div><h1>Segurança do criador</h1><p class="cofre-sub">Aparelhos identificados. Um aparelho removido volta a pedir o modo segurança.</p>' +
+    '<ul class="cofre-lista">' + lista + '</ul>' +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao" onclick="cofreTrocarSenha()">Trocar senha</button>' +
+    '<button type="button" class="cofre-botao" onclick="cofreTravar()">Travar agora</button>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreFecharPainel()">Voltar ao app</button>');
+}
+function cofreFecharPainel() { var f = document.getElementById('cofre'); if (f) f.parentNode.removeChild(f); document.body.classList.remove('cofre-travado'); }
+function cofreRemoverAparelho(id) {
+  cofreTela('<div class="cofre-icone">🔑</div><h1>Remover aparelho</h1><p class="cofre-sub">Confirme com a sua senha.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreRemoverConfere(\'' + id + '\')">Remover</button>' +
+    '<button type="button" class="cofre-link" onclick="cofrePainel()">Voltar</button>');
+}
+function cofreRemoverConfere(id) {
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = cofreAbrirComSenha(s); if (!k) { cofreErro(); cofreAviso('Senha não confere.'); return; }
+    var c = APP.criador;
+    cofreGravar(k, s, c.perguntas, c.aparelhos.filter(function (a) { return a.id !== id; }));
+    cofrePainel();
+  });
+}
+function cofreTrocarSenha() {
+  cofreTela('<div class="cofre-icone">🔑</div><h1>Trocar senha</h1>' +
+    cofreCampo('cofre-senha', 'Senha atual', 'password', 'autocomplete="current-password"') +
+    cofreCampo('cofre-senha-n', 'Senha nova', 'password', 'autocomplete="new-password"') +
+    cofreCampo('cofre-senha2', 'Repita a senha nova', 'password', 'autocomplete="new-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreTrocarConfere()">Trocar senha</button>' +
+    '<button type="button" class="cofre-link" onclick="cofrePainel()">Voltar</button>');
+}
+function cofreTrocarConfere() {
+  var a = cofreValor('cofre-senha'), n = cofreValor('cofre-senha-n');
+  var f = cofreSenhaFraca(n); if (f) { cofreAviso(f); return; }
+  if (n !== cofreValor('cofre-senha2')) { cofreAviso('As duas senhas novas não são iguais.'); return; }
+  cofreDepois(function () {
+    var k = cofreAbrirComSenha(a); if (!k) { cofreErro(); cofreAviso('Senha atual não confere.'); return; }
+    var c = APP.criador; cofreGravar(k, n, c.perguntas, c.aparelhos);
+    cofrePainel(); try { showToast('✅ Senha trocada'); } catch (e) {}
+  });
+}
+
+/* ── Início: o cofre abre antes de qualquer tela do criador ── */
+function cofreIniciar() {
+  try { if (sessionStorage.getItem(COFRE_SESSAO) && cofreSessaoOk()) { cofreLiberar(''); return; } } catch (e) {}
+  var sp = document.getElementById('splash-screen'); if (sp) sp.parentNode.removeChild(sp);
+  if (cofreAparelhoConhecido()) cofreEntrar(); else cofreNovo();
+}
+/* Trava sozinho depois de 10 minutos fora do app */
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) { __cofreOculto = Date.now(); return; }
+  if (__cofreOk && __cofreOculto && Date.now() - __cofreOculto > COFRE_TRAVA_MIN * 60000) cofreTravar();
+});
+/* Entradas antigas do criador passam a abrir o cofre */
+verificarAcessoEmail = function () { cofreTravar(); };
+admLogin = function () {
+  if (!__cofreOk) { cofreTravar(); return; }
+  document.getElementById('adm-login').style.display = 'none';
+  document.getElementById('adm-painel').style.display = 'block';
+  try { admInit(); } catch (e) {}
+};
+/*CRIADOR-FIM*/
+/* ═══════════════════════════════════════════
+   V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
+   Android/Chrome: abre a instalação do próprio celular com um toque.
+   Sem essa opção (iPhone, outros navegadores): mostra o passo a passo.
+   Aberto pelo ícone (já instalado): os botões somem.
+═══════════════════════════════════════════ */
+var __instPedido = null;
+var __instFeito = false;
+function instJaInstalado() {
+  if (__instFeito) return true;
+  try { if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true; } catch (e) {}
+  return window.navigator.standalone === true;
+}
+function instAtualizarBotoes() {
+  var esconder = instJaInstalado();
+  var bs = document.querySelectorAll('.inst-botao');
+  for (var i = 0; i < bs.length; i++) bs[i].style.display = esconder ? 'none' : '';
+}
+function instAviso(txt) {
+  try { if (typeof showToast === 'function') { showToast(txt); return; } } catch (e) {}
+}
+function instFecharJanela() {
+  var j = document.getElementById('inst-janela');
+  if (j) j.parentNode.removeChild(j);
+}
+function instPassoAPasso() {
+  instFecharJanela();
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+  var fundo = document.createElement('div');
+  fundo.id = 'inst-janela';
+  fundo.className = 'inst-fundo';
+  fundo.innerHTML =
+    '<div class="inst-caixa" role="dialog" aria-modal="true" aria-labelledby="inst-titulo">' +
+    '<div class="inst-icone" aria-hidden="true">📲</div>' +
+    '<h2 id="inst-titulo">Instalar na tela inicial</h2>' +
+    '<p>Assim o PROSPECTARION abre com um toque, como um aplicativo, sem a barra do navegador.</p>' +
+    (ios ?
+      '<ol><li>Toque em <strong>Compartilhar</strong> (quadrado com seta para cima), embaixo da tela.</li>' +
+      '<li>Toque em <strong>Adicionar à Tela de Início</strong>.</li><li>Toque em <strong>Adicionar</strong>.</li></ol>' :
+      '<ol><li>Toque nos <strong>três pontinhos ⋮</strong>, no canto de cima do Chrome.</li>' +
+      '<li>Toque em <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</li>' +
+      '<li>Confirme em <strong>Instalar</strong> (ou <strong>Adicionar</strong>).</li></ol>') +
+    '<p class="inst-dica">Depois, abra sempre pelo ícone laranja. Seus dados continuam neste celular.</p>' +
+    '<button type="button" class="inst-ok" onclick="instFecharJanela()">Entendi</button></div>';
+  fundo.addEventListener('click', function (ev) { if (ev.target === fundo) instFecharJanela(); });
+  document.body.appendChild(fundo);
+  try { fundo.querySelector('.inst-ok').focus(); } catch (e) {}
+}
+function instInstalar() {
+  if (instJaInstalado()) { instAviso('✅ O PROSPECTARION já está na sua tela inicial'); return; }
+  var p = __instPedido;
+  if (!p) { instPassoAPasso(); return; }
+  __instPedido = null;
+  try {
+    p.prompt();
+    if (p.userChoice && p.userChoice.then) {
+      p.userChoice.then(function (r) {
+        if (r && r.outcome === 'accepted') { __instFeito = true; instAtualizarBotoes(); instAviso('🎉 PROSPECTARION instalado na tela inicial!'); }
+      }, function () {});
+    }
+  } catch (e) { instPassoAPasso(); }
+}
+try {
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); __instPedido = e; instAtualizarBotoes(); });
+  window.addEventListener('appinstalled', function () { __instPedido = null; __instFeito = true; instAtualizarBotoes(); });
+  document.addEventListener('DOMContentLoaded', instAtualizarBotoes);
+} catch (e) {}
 /* ═══════════════════════════════════════════
    CONFIG (personalize aqui)
 ═══════════════════════════════════════════ */
@@ -3646,15 +4219,12 @@ const ACESSO = {
 
   // ── E-mails do CRIADOR (acesso total, ilimitado, sem expiração) ──
   CRIADOR: [
-    'andersonpinto.rs@gmail.com',
-    'kenny.alves@gmail.com'
+    /* V10.4.2: acesso do criador só pelo cofre (e-mail + senha + aparelho identificado) */
   ],
 
   // ── E-mails com ACESSO LIVRE garantido pelo criador ──
   LIVRE: [
-    'corretorandersonalves.invest.rs@gmail.com',
-    'anderson.invest.consorcios@gmail.com',
-    'vendedorandersonalves@gmail.com'
+    /* V10.4.2: acesso livre por e-mail desativado */
   ],
 
   // ── Verificar nível de acesso de um e-mail ──
@@ -3663,10 +4233,6 @@ const ACESSO = {
     const e = email.trim().toLowerCase();
     if (this.CRIADOR.map(x=>x.toLowerCase()).includes(e)) return 'criador';
     if (this.LIVRE.map(x=>x.toLowerCase()).includes(e))   return 'livre';
-    // E-mails criados pelo Anderson (mesmo domínio ou padrão anderson/kenny)
-    if (e.includes('andersonpinto') || e.includes('kenny.alves') ||
-        e.includes('corretoranderson') || e.includes('anderson.invest') ||
-        e.includes('vendedoranderson')) return 'livre';
     return 'normal';
   },
 
@@ -3709,13 +4275,16 @@ const ACESSO = {
 ═══════════════════════════════════════════ */
 const APP = {
   // Dados do usuário do app
-  user: { nome:'Usuário', plano:'anual', exp:'', codigo:'', email:'', apelido:'', profissao:'Corretor de Imóveis', fraseDia:'', foto:'', tema:'laranja', autoLogin:false, wallpaper:'', links:{ instagram:'', linkedin:'', youtube:'', tiktok:'', whatsapp:'', website:'', facebook:'', twitter:'', telegram:'', pinterest:'' } },
+  user: { nome:'Usuário', plano:'anual', exp:'', codigo:'' },
   contacts: [],
   deals: [],
   notes: [],
   interactions:  [],   // V9 — histórico de relacionamento por contactId
   relationships: [],   // V9 — relacionamentos entre contatos (reservado para futuro)
   rendaExtra:    [],   // V9.3.4 — prospects do módulo Renda Extra (GMN, site, social, caricatura, consórcio)
+  perfil:   { foto:'', nomeProfissional:'', empresa:'', cidade:'', telefone:'', email:'', bio:'' }, // V10.1 — perfil profissional (fora de APP.user)
+  redes:    [],   // V10.1 — redes profissionais (cadastro manual, integrationStatus:'manual')
+  conteudo: [],   // V10.1 — reservado para a Agenda de Conteúdo (etapa futura)
   contactFilter: 'todos',
   editingContactId: null,
   // Admin
@@ -3775,7 +4344,80 @@ function _dec(str) {
   }
 }
 
+/* ═══════════════════════════════════════════
+   FASE 0A — PROTEÇÃO CONTRA PERDA DE DADOS (V9.3.4)
+   _leituraFalhou: trava SOMENTE em memória. Fica true quando existe
+   conteúdo em 'prospectarionAll' que não pôde ser interpretado.
+   Enquanto true, saveAll() não grava — a base existente nunca é
+   sobrescrita por um APP vazio ou incompleto. Só é liberada por
+   uma restauração de backup validada e confirmada.
+═══════════════════════════════════════════ */
+var _leituraFalhou = false;
+var _p0aUltimoAvisoGravacao = 0;
+
+// Leitor único da base: JSON legado primeiro, depois o formato oficial (_dec).
+// Ordem necessária: _dec() devolve o próprio texto quando recebe JSON puro.
+function _p0aLerBase() {
+  var raw;
+  try { raw = localStorage.getItem('prospectarionAll'); } catch (e) { return { ok: false, existe: false }; }
+  if (!raw) return { ok: false, existe: false };
+  var d = null;
+  try {
+    d = JSON.parse(raw);
+    if (d && typeof d === 'object' && !Array.isArray(d)) return { ok: true, existe: true, formato: 'legado', data: d };
+  } catch (e) {}
+  try {
+    d = JSON.parse(_dec(raw));
+    if (d && typeof d === 'object' && !Array.isArray(d)) return { ok: true, existe: true, formato: 'ofuscado', data: d };
+  } catch (e) {}
+  return { ok: false, existe: true };
+}
+
+// Formatos de código gerados pelo próprio aplicativo
+function _p0aCodigoValido(codigo) {
+  if (/^XK[A-Z0-9]{3,8}$/.test(codigo)) return true;          // pagamento
+  if (codigo === 'CREATOR-MASTER-001') return true;            // criador
+  if (/^LIVRE-\S{1,6}$/.test(codigo)) return true;             // acesso livre
+  if (/^TRIAL-[A-Z0-9]{1,10}$/.test(codigo)) return true;      // período de teste
+  return false;
+}
+
+// Aviso não bloqueante, com botão "Entendi"
+function _p0aAviso(id, titulo, texto, posicao) {
+  try {
+    var montar = function () {
+      var el = document.getElementById(id);
+      if (!el) { el = document.createElement('div'); el.id = id; document.body.appendChild(el); }
+      el.style.cssText = 'position:fixed;left:8px;right:8px;' + (posicao === 'baixo' ? 'bottom:8px;' : 'top:8px;') +
+        'z-index:100000;background:#7F1D1D;color:#fff;border:2px solid #FCA5A5;border-radius:14px;' +
+        'padding:14px 16px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.35)';
+      el.innerHTML = '<div style="font-weight:800;font-size:14px;margin-bottom:4px">\u26A0\uFE0F ' + titulo + '</div>' +
+        '<div>' + texto + '</div>' +
+        '<button type="button" style="margin-top:10px;padding:8px 16px;border:none;border-radius:10px;background:#fff;color:#7F1D1D;font-weight:800;cursor:pointer" ' +
+        'onclick="this.parentNode.style.display=\'none\'">Entendi</button>';
+    };
+    if (document.body) montar(); else document.addEventListener('DOMContentLoaded', montar);
+  } catch (e) {}
+}
+
+function _marcarFalhaLeitura(motivo) {
+  _leituraFalhou = true;
+  try { console.warn('[FASE 0A] Base existente n\u00e3o p\u00f4de ser lida (' + motivo + '). Grava\u00e7\u00e3o bloqueada.'); } catch (e) {}
+  _p0aAviso('p0a-aviso-leitura', 'N\u00e3o foi poss\u00edvel ler seus dados salvos',
+    'Nada foi apagado. Para proteger sua base, o aplicativo <strong>n\u00e3o vai gravar por cima dela</strong>. ' +
+    'Restaure um backup em <strong>Perfil \u2192 Restaurar Backup</strong> ou fale com o suporte antes de continuar.', 'topo');
+}
+
 function saveAll() {
+  // FASE 0A: base existente ilegível → não sobrescrever
+  if (_leituraFalhou) {
+    var _agora = Date.now();
+    if (_agora - _p0aUltimoAvisoGravacao > 8000) {
+      _p0aUltimoAvisoGravacao = _agora;
+      try { showToast('\u26A0\uFE0F Grava\u00e7\u00e3o bloqueada: restaure um backup para proteger seus dados'); } catch (e) {}
+    }
+    return false;
+  }
   try {
     const raw = JSON.stringify(APP);
     localStorage.setItem('prospectarionAll', _enc(raw));
@@ -3783,6 +4425,7 @@ function saveAll() {
 }
 
 function loadAll() {
+  _leituraFalhou = false; // FASE 0A: reavaliado a cada leitura
   try {
     const stored = localStorage.getItem('prospectarionAll');
     if (!stored) return;
@@ -3792,8 +4435,10 @@ function loadAll() {
       parsed = JSON.parse(_dec(stored));
     } catch(e) {
       // Fallback: tenta ler sem ofuscação (migração de versão antiga)
-      try { parsed = JSON.parse(stored); } catch(e2) { return; }
+      try { parsed = JSON.parse(stored); } catch(e2) { _marcarFalhaLeitura('conte\u00fado ileg\u00edvel'); return; }
     }
+    // FASE 0A: conteúdo interpretado, mas não é um objeto de dados válido
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) { _marcarFalhaLeitura('formato inv\u00e1lido'); return; }
     const d = parsed;
     if (d.user)     Object.assign(APP.user, d.user);
     if (d.contacts) APP.contacts = d.contacts;
@@ -3808,11 +4453,12 @@ function loadAll() {
     if (Array.isArray(d.interactions))  APP.interactions  = d.interactions;
     if (Array.isArray(d.relationships)) APP.relationships = d.relationships;
     if (Array.isArray(d.rendaExtra))    APP.rendaExtra    = d.rendaExtra;
-    // ── Restaurar canaisMarketing (V9.3.5) ──
-    if (d.dashboard && Array.isArray(d.dashboard.canaisMarketing))
-      APP.dashboard.canaisMarketing = d.dashboard.canaisMarketing;
-    // ── Restaurar campos de perfil visual (V9.3.5) — user já coberto pelo Object.assign acima ──
-    // tema aplicado em aplicarTema() depois do loadAll()
+    // ── V10.1 Etapa B: perfil, redes e conteúdo (ausentes → mantém estrutura vazia) ──
+    if (d.perfil && typeof d.perfil === 'object' && !Array.isArray(d.perfil)) APP.perfil = Object.assign(_pfPerfilPadrao(), d.perfil);
+    if (Array.isArray(d.redes))         APP.redes         = d.redes;
+    if (Array.isArray(d.conteudo))      APP.conteudo      = d.conteudo;
+    /* V10.4.2: campos que esta versão não conhece continuam guardados */
+    for (var _pk in d) { if (Object.prototype.hasOwnProperty.call(d, _pk) && !(_pk in APP)) APP[_pk] = d[_pk]; }
     // ── Restaurar APP.dashboard completo (metas, prioridades, marketing, activities) ──
     // Estratégia: substituição direta de cada campo salvo.
     // initDashboard() rodará depois e apenas preencherá campos AUSENTES — nunca sobrescreverá.
@@ -3842,7 +4488,7 @@ function loadAll() {
         });
       }
     }
-  } catch(e){}
+  } catch(e){ _marcarFalhaLeitura('erro durante a leitura'); } // FASE 0A: leitura parcial nunca é gravada por cima
 }
 
 /* ═══════════════════════════════════════════
@@ -3919,9 +4565,6 @@ function confirmarPagamento() {
 }
 
 function entrarNoApp() {
-  // V9.3.5 — marcar auto-login ativo para identificação permanente do usuário
-  APP.user.autoLogin = true;
-  saveAll();
   document.getElementById('tela-sucesso-pag').classList.remove('open');
   showModulo('mod-app');
   initApp();
@@ -3963,7 +4606,9 @@ function initApp() {
   const h = new Date().getHours();
   document.getElementById('app-greeting').textContent = h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
   const n = APP.user.nome || 'usuário';
-  document.getElementById('app-username').textContent   = (APP.user.apelido||n).split(' ')[0];
+  document.getElementById('app-username').textContent   = n.split(' ')[0];
+  _pfAplicarAvatar(document.getElementById('app-perfil-av'), n); // V10.1: foto ou inicial
+  document.getElementById('app-perfil-nome').textContent= n;
 
   const plano  = APP.user.plano;
   const planEl = document.getElementById('app-top-plan');
@@ -3975,16 +4620,20 @@ function initApp() {
     planEl.style.color      = '#F26419';
     planEl.style.borderColor= 'rgba(242,100,25,.35)';
     planEl.textContent      = '👑 CEO';
+    document.getElementById('app-perfil-av').style.background = '#F26419';
+    document.getElementById('app-perfil-sub').textContent = '👑 Criador & Programador · Acesso Total';
   } else if (plano === 'livre') {
     planEl.className = 'at-plan';
     planEl.style.background = 'rgba(16,185,129,.12)';
     planEl.style.color      = '#059669';
     planEl.style.borderColor= 'rgba(16,185,129,.3)';
     planEl.textContent      = '🔓 Livre';
+    document.getElementById('app-perfil-sub').textContent = '🔓 Acesso Livre autorizado pelo criador';
   } else {
     const pl = PLANO_LABEL[plano] || 'Plano Anual';
     planEl.textContent  = pl;
     planEl.className    = 'at-plan' + (plano==='vitalicio'?' gold':(plano==='trial'?' trial':''));
+    document.getElementById('app-perfil-sub').textContent = pl + ' · ativo';
   }
 
   updatePlanCard();
@@ -3993,13 +4642,6 @@ function initApp() {
   // ── Iniciar sistema de alertas e trial ──
   ALERTAS.iniciarMonitor();
   atualizarBarraTrial();
-  // ── Perfil visual e tema V9.3.5 ──
-  aplicarTema(APP.user.tema || 'laranja', null);
-  pvRenderizarPerfil();
-  // ── Wallpaper e Links V9.3.6 ──
-  wpAplicarCSS();
-  wpRenderizarGrid();
-  pvRenderizarLinks();
   // Verificar a cada vez que entra no perfil
   setTimeout(() => renderAlertaPerfil(), 200);
   // ── Iniciar Dashboard 360° ──
@@ -4008,15 +4650,13 @@ function initApp() {
   renderDashboard360();
   // Atualizar avatar do dashboard com nome
   const _av360 = document.getElementById('d360-avatar');
-  if (_av360 && APP.user.nome) _av360.textContent = APP.user.nome[0].toUpperCase();
+  if (_av360 && APP.user.nome) _pfAplicarAvatar(_av360, APP.user.nome); // V10.1: foto ou inicial
   // ── Agenda V9.2.3 ──
   agRenderDashBloco();
   agAtualizarBadge();
   // ── Pendências V9.2.4 ──
   pcRenderDashResumo();
   pcAtualizarBadge();
-  // ── Canais Marketing V9.3.5 ──
-  mkRenderizarCanais();
 }
 
 function updatePlanCard() {
@@ -4040,7 +4680,6 @@ function updatePlanCard() {
     document.getElementById('ps-badge').style.color = '#F26419';
     document.getElementById('ps-exp').innerHTML = `
       <strong style="color:var(--accent)">♾️ Acesso Permanente · Criador do Sistema</strong><br>
-      <span style="font-size:11px;color:var(--muted)">andersonpinto.rs@gmail.com · kenny.alves@gmail.com</span><br>
       <span style="font-size:11px;color:var(--muted)">Todas as funções desbloqueadas · Sem expiração</span>
     `;
   } else if (plano === 'livre') {
@@ -4057,6 +4696,338 @@ function updatePlanCard() {
   }
 }
 
+/* ═══════════════════════════════════════════
+   V10.1 ETAPA B — MEU PERFIL PROFISSIONAL + MINHAS REDES
+   Dados aditivos: APP.perfil, APP.redes, APP.conteudo (fora de APP.user).
+   Cadastro 100% manual — nenhuma integração com APIs de redes sociais.
+═══════════════════════════════════════════ */
+var PF_REDES = {
+  instagram: { rotulo:'Instagram', icone:'📸' },
+  facebook:  { rotulo:'Facebook',  icone:'📘' },
+  linkedin:  { rotulo:'LinkedIn',  icone:'💼' },
+  youtube:   { rotulo:'YouTube',   icone:'▶️' },
+  tiktok:    { rotulo:'TikTok',    icone:'🎵' },
+  whatsapp:  { rotulo:'WhatsApp',  icone:'💬' },
+  site:      { rotulo:'Site',      icone:'🌐' }
+};
+var _pfExcluirPendente = null;
+
+function _pfPerfilPadrao() {
+  return { foto:'', nomeProfissional:'', empresa:'', cidade:'', telefone:'', email:'', bio:'' };
+}
+function _pfGarantir() {
+  if (!APP.perfil || typeof APP.perfil !== 'object' || Array.isArray(APP.perfil)) APP.perfil = _pfPerfilPadrao();
+  else APP.perfil = Object.assign(_pfPerfilPadrao(), APP.perfil);
+  if (!Array.isArray(APP.redes)) APP.redes = [];
+  if (!Array.isArray(APP.conteudo)) APP.conteudo = [];
+}
+function _pfEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function _pfMsg(texto, tipo) {
+  var el = document.getElementById('pf-msg');
+  if (!el) return;
+  el.className = 'pf-msg ' + (tipo === 'erro' ? 'erro' : 'ok');
+  el.textContent = texto;
+  el.style.display = 'block';
+  if (tipo !== 'erro') { setTimeout(function(){ if (el.textContent === texto) el.style.display = 'none'; }, 4000); }
+}
+
+/* Foto ou inicial, em qualquer avatar */
+function _pfAplicarAvatar(el, nome) {
+  if (!el) return;
+  var foto = (APP.perfil && typeof APP.perfil.foto === 'string') ? APP.perfil.foto : '';
+  if (foto && foto.indexOf('data:image/') === 0) {
+    el.textContent = '';
+    var img = document.createElement('img');
+    img.src = foto; img.alt = '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;display:block';
+    el.appendChild(img);
+    el.style.overflow = 'hidden';
+  } else {
+    var n = (nome || APP.user.nome || 'U');
+    el.textContent = String(n).charAt(0).toUpperCase();
+  }
+}
+function _pfAtualizarIdentidade() {
+  var n = APP.user.nome || 'usuário';
+  var u = document.getElementById('app-username'); if (u) u.textContent = n.split(' ')[0];
+  var pn = document.getElementById('app-perfil-nome'); if (pn) pn.textContent = n;
+  _pfAplicarAvatar(document.getElementById('app-perfil-av'), n);
+  _pfAplicarAvatar(document.getElementById('d360-avatar'), n);
+  _pfAplicarAvatar(document.getElementById('pf-av'), n);
+  try { renderCabecalho360(); } catch (e) {}
+  try { renderMinhasRedesHome(); } catch (e) {}
+  var bf = document.getElementById('pf-btn-foto'), br = document.getElementById('pf-btn-remover-foto');
+  var temFoto = !!(APP.perfil && APP.perfil.foto);
+  if (bf) bf.textContent = temFoto ? '📷 Trocar foto' : '📷 Adicionar foto';
+  if (br) br.style.display = temFoto ? '' : 'none';
+}
+
+/* Grava e CONFIRMA lendo a base de volta (saveAll não informa falhas) */
+function _pfSnapshot() {
+  return JSON.stringify({ perfil: APP.perfil, redes: APP.redes, conteudo: APP.conteudo,
+    profissao: APP.dashboard ? APP.dashboard.profissao : undefined, nome: APP.user.nome });
+}
+function _pfRestaurarSnapshot(s) {
+  var o = JSON.parse(s);
+  APP.perfil = o.perfil; APP.redes = o.redes; APP.conteudo = o.conteudo; APP.user.nome = o.nome;
+  if (APP.dashboard) { if (o.profissao === undefined) delete APP.dashboard.profissao; else APP.dashboard.profissao = o.profissao; }
+}
+function _pfPersistir() {
+  if (typeof _leituraFalhou !== 'undefined' && _leituraFalhou) return { ok:false, motivo:'bloqueado' };
+  var esperado = _pfSnapshot();
+  saveAll();
+  var lida = _p0aLerBase();
+  if (!lida.ok) return { ok:false, motivo:'leitura' };
+  var d = lida.data;
+  var gravado = JSON.stringify({ perfil: d.perfil, redes: d.redes, conteudo: d.conteudo,
+    profissao: d.dashboard ? d.dashboard.profissao : undefined, nome: d.user ? d.user.nome : undefined });
+  return gravado === esperado ? { ok:true } : { ok:false, motivo:'armazenamento' };
+}
+function _pfMotivo(r) {
+  if (r.motivo === 'bloqueado') return 'Gravação bloqueada pela proteção de dados. Restaure um backup antes de editar o perfil. Nada foi alterado.';
+  if (r.motivo === 'armazenamento') return 'Não foi possível salvar: o armazenamento do navegador está cheio ou indisponível. Nada foi alterado.';
+  return 'Não foi possível confirmar a gravação. Nada foi alterado.';
+}
+function _pfAplicarComConfirmacao(alterar, msgOk) {
+  _pfGarantir();
+  var antes = _pfSnapshot();
+  alterar();
+  var r = _pfPersistir();
+  if (!r.ok) { _pfRestaurarSnapshot(antes); _pfAtualizarIdentidade(); renderRedesPerfil(); _pfMsg(_pfMotivo(r), 'erro'); return false; }
+  _pfAtualizarIdentidade(); renderRedesPerfil();
+  if (msgOk) { _pfMsg(msgOk, 'ok'); try { showToast(msgOk); } catch (e) {} }
+  return true;
+}
+
+/* Tela */
+function abrirPerfilProfissional() {
+  _pfGarantir();
+  var p = APP.perfil;
+  var set = function(id, v){ var el = document.getElementById(id); if (el) el.value = v || ''; };
+  set('pf-nome', APP.user.nome && APP.user.nome !== 'Usuário' ? APP.user.nome : '');
+  set('pf-nome-prof', p.nomeProfissional);
+  set('pf-profissao', APP.dashboard && APP.dashboard.profissao ? APP.dashboard.profissao : '');
+  set('pf-empresa', p.empresa);
+  set('pf-cidade', p.cidade);
+  set('pf-telefone', p.telefone);
+  set('pf-email', p.email || APP.user.email || '');
+  set('pf-bio', p.bio);
+  var m = document.getElementById('pf-msg'); if (m) m.style.display = 'none';
+  pfCancelarRede();
+  appGoScreen('as-perfil-pro', null, 'Meu Perfil Profissional');
+  _pfAtualizarIdentidade();
+  renderRedesPerfil();
+  var tela = document.getElementById('as-perfil-pro'); if (tela) tela.scrollTop = 0;
+}
+function pfSalvarPerfil() {
+  var v = function(id){ var el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
+  var nome = v('pf-nome');
+  if (!nome) { _pfMsg('Informe o nome completo.', 'erro'); return; }
+  var email = v('pf-email');
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { _pfMsg('E-mail inválido. Confira o endereço.', 'erro'); return; }
+  _pfAplicarComConfirmacao(function(){
+    APP.user.nome = nome;
+    APP.perfil.nomeProfissional = v('pf-nome-prof');
+    APP.perfil.empresa  = v('pf-empresa');
+    APP.perfil.cidade   = v('pf-cidade');
+    APP.perfil.telefone = v('pf-telefone');
+    APP.perfil.email    = email;
+    APP.perfil.bio      = v('pf-bio');
+    if (!APP.dashboard) APP.dashboard = {};
+    APP.dashboard.profissao = v('pf-profissao'); // reaproveita o campo existente
+  }, 'Perfil salvo ✓');
+}
+
+/* Foto */
+function pfEscolherFoto() {
+  var i = document.getElementById('pf-foto-input');
+  if (!i) return;
+  i.value = '';
+  i.click();
+}
+function pfFotoSelecionada(input) {
+  var f = input && input.files && input.files[0];
+  if (!f) return;
+  if (f.type && f.type.indexOf('image/') !== 0) { _pfMsg('Escolha um arquivo de imagem.', 'erro'); return; }
+  _pfMsg('Processando foto...', 'ok');
+  var leitor = new FileReader();
+  leitor.onerror = function(){ _pfMsg('Não foi possível ler a imagem escolhida.', 'erro'); };
+  leitor.onload = function(){
+    var img = new Image();
+    img.onerror = function(){ _pfMsg('Formato de imagem não suportado. Tente uma foto JPG ou PNG.', 'erro'); };
+    img.onload = function(){
+      var url = _pfRecortarFoto(img);
+      if (!url) { _pfMsg('Não foi possível processar a imagem.', 'erro'); return; }
+      _pfAplicarComConfirmacao(function(){ APP.perfil.foto = url; }, 'Foto salva ✓');
+    };
+    img.src = leitor.result;
+  };
+  leitor.readAsDataURL(f);
+}
+function _pfRecortarFoto(img) {
+  try {
+    var L = 256;
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    if (!w || !h) return '';
+    var lado = Math.min(w, h), sx = (w - lado) / 2, sy = (h - lado) / 2;
+    var c = document.createElement('canvas'); c.width = L; c.height = L;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, L, L);
+    ctx.drawImage(img, sx, sy, lado, lado, 0, 0, L, L);
+    var q = 0.82, url = c.toDataURL('image/jpeg', q);
+    while (url.length > 60000 && q > 0.4) { q -= 0.12; url = c.toDataURL('image/jpeg', q); }
+    return url.indexOf('data:image/jpeg') === 0 ? url : '';
+  } catch (e) { return ''; }
+}
+function pfRemoverFoto() {
+  _pfAplicarComConfirmacao(function(){ APP.perfil.foto = ''; }, 'Foto removida ✓');
+}
+
+/* Redes */
+function _pfUrlRede(tipo, usuario, url) {
+  var u = String(usuario || '').trim(), l = String(url || '').trim();
+  if (!l && /^https?:\/\//i.test(u)) l = u;
+  if (l) {
+    if (!/^https?:\/\//i.test(l)) l = 'https://' + l;
+    return /^https?:\/\/[^\s\/]+\.[^\s]+/i.test(l) ? l : '';
+  }
+  var id = u.replace(/^@+/, '').replace(/\s+/g, '');
+  if (!id) return '';
+  if (tipo === 'whatsapp') {
+    var dig = u.replace(/\D/g, '');
+    if (dig.length === 10 || dig.length === 11) dig = '55' + dig;
+    return dig.length >= 12 ? 'https://wa.me/' + dig : '';
+  }
+  if (tipo === 'instagram') return 'https://www.instagram.com/' + id + '/';
+  if (tipo === 'facebook')  return 'https://www.facebook.com/' + id;
+  if (tipo === 'linkedin')  return 'https://www.linkedin.com/in/' + id;
+  if (tipo === 'youtube')   return 'https://www.youtube.com/@' + id;
+  if (tipo === 'tiktok')    return 'https://www.tiktok.com/@' + id;
+  if (tipo === 'site')      return /\./.test(id) ? 'https://' + id : '';
+  return '';
+}
+function _pfRedesOrdenadas() {
+  _pfGarantir();
+  return APP.redes.slice().sort(function(a, b){ return (a.ordem || 0) - (b.ordem || 0); });
+}
+function renderRedesPerfil() {
+  var el = document.getElementById('pf-redes-lista');
+  if (!el) return;
+  var lista = _pfRedesOrdenadas();
+  if (!lista.length) { el.innerHTML = '<div class="d360-empty-mini">Nenhuma rede cadastrada</div>'; return; }
+  el.innerHTML = lista.map(function(r){
+    var t = PF_REDES[r.tipo] || { rotulo: r.nome || 'Rede', icone:'🔗' };
+    var sub = r.usuario || r.url || '—';
+    var conf = (_pfExcluirPendente === r.id);
+    return '<div class="pf-rede-item' + (r.ativo ? '' : ' inativa') + '">' +
+      '<div class="pf-rede-ic">' + t.icone + '</div>' +
+      '<div class="pf-rede-info"><div class="pf-rede-nome">' + _pfEsc(t.rotulo) + (r.ativo ? '' : ' · inativa') + '</div>' +
+      '<div class="pf-rede-sub">' + _pfEsc(sub) + '</div></div>' +
+      '<div class="pf-rede-acoes">' +
+        (r.url ? '<button class="pf-mini" onclick="pfAbrirRede(\'' + r.id + '\')" title="Abrir">↗</button>' : '') +
+        '<button class="pf-mini" onclick="pfAlternarRede(\'' + r.id + '\')" title="Ativar/desativar">' + (r.ativo ? '⏸' : '▶') + '</button>' +
+        '<button class="pf-mini" onclick="pfEditarRede(\'' + r.id + '\')" title="Editar">✏️</button>' +
+        '<button class="pf-mini ' + (conf ? 'confirmar' : 'perigo') + '" onclick="pfExcluirRede(\'' + r.id + '\')" title="Excluir">' + (conf ? 'Confirmar' : '🗑') + '</button>' +
+      '</div></div>';
+  }).join('');
+}
+function pfNovaRede() {
+  document.getElementById('pf-rede-id').value = '';
+  document.getElementById('pf-rede-tipo').value = 'instagram';
+  document.getElementById('pf-rede-usuario').value = '';
+  document.getElementById('pf-rede-url').value = '';
+  document.getElementById('pf-rede-ativo').checked = true;
+  document.getElementById('pf-rede-form').style.display = 'block';
+  document.getElementById('pf-rede-usuario').focus();
+}
+function pfEditarRede(id) {
+  _pfGarantir();
+  var r = null; for (var i = 0; i < APP.redes.length; i++) if (APP.redes[i].id === id) r = APP.redes[i];
+  if (!r) return;
+  document.getElementById('pf-rede-id').value = r.id;
+  document.getElementById('pf-rede-tipo').value = PF_REDES[r.tipo] ? r.tipo : 'site';
+  document.getElementById('pf-rede-usuario').value = r.usuario || '';
+  // link gerado automaticamente a partir do @usuário não é pré-preenchido: assim, ao editar o @usuário, o link acompanha
+  document.getElementById('pf-rede-url').value = (r.url && r.url !== _pfUrlRede(r.tipo, r.usuario, '')) ? r.url : '';
+  document.getElementById('pf-rede-ativo').checked = !!r.ativo;
+  document.getElementById('pf-rede-form').style.display = 'block';
+}
+function pfCancelarRede() {
+  var f = document.getElementById('pf-rede-form'); if (f) f.style.display = 'none';
+  _pfExcluirPendente = null;
+}
+function pfSalvarRede() {
+  var id   = document.getElementById('pf-rede-id').value;
+  var tipo = document.getElementById('pf-rede-tipo').value;
+  var usuario = String(document.getElementById('pf-rede-usuario').value || '').trim();
+  var urlDig  = String(document.getElementById('pf-rede-url').value || '').trim();
+  var ativo = !!document.getElementById('pf-rede-ativo').checked;
+  if (!usuario && !urlDig) { _pfMsg('Informe o @usuário/identificação ou o link da rede.', 'erro'); return; }
+  var url = _pfUrlRede(tipo, usuario, urlDig);
+  if (urlDig && !url) { _pfMsg('O link informado não parece válido. Confira o endereço.', 'erro'); return; }
+  var agora = new Date().toISOString();
+  var ok = _pfAplicarComConfirmacao(function(){
+    if (id) {
+      for (var i = 0; i < APP.redes.length; i++) if (APP.redes[i].id === id) {
+        Object.assign(APP.redes[i], { tipo: tipo, nome: PF_REDES[tipo].rotulo, usuario: usuario, url: url, ativo: ativo, atualizadoEm: agora });
+      }
+    } else {
+      var maxOrdem = 0; APP.redes.forEach(function(r){ if ((r.ordem || 0) > maxOrdem) maxOrdem = r.ordem || 0; });
+      APP.redes.push({ id: 'rd_' + Date.now() + '_' + Math.floor(Math.random() * 1000), tipo: tipo, nome: PF_REDES[tipo].rotulo,
+        usuario: usuario, url: url, ativo: ativo, ordem: maxOrdem + 1, criadoEm: agora, atualizadoEm: agora, integrationStatus: 'manual' });
+    }
+  }, id ? 'Rede atualizada ✓' : 'Rede adicionada ✓');
+  if (ok) pfCancelarRede();
+}
+function pfAlternarRede(id) {
+  _pfAplicarComConfirmacao(function(){
+    APP.redes.forEach(function(r){ if (r.id === id) { r.ativo = !r.ativo; r.atualizadoEm = new Date().toISOString(); } });
+  }, 'Rede atualizada ✓');
+}
+function pfExcluirRede(id) {
+  if (_pfExcluirPendente !== id) { _pfExcluirPendente = id; renderRedesPerfil(); return; } // 1º toque: pede confirmação
+  _pfExcluirPendente = null;
+  _pfAplicarComConfirmacao(function(){
+    APP.redes = APP.redes.filter(function(r){ return r.id !== id; });
+  }, 'Rede excluída ✓');
+}
+function pfAbrirRede(id) {
+  _pfGarantir();
+  var r = null; for (var i = 0; i < APP.redes.length; i++) if (APP.redes[i].id === id) r = APP.redes[i];
+  if (!r || !r.url || !/^https?:\/\//i.test(r.url)) { try { showToast('Esta rede não tem link cadastrado'); } catch (e) {} return; }
+  window.open(r.url, '_blank');
+}
+
+/* Home — Minhas Redes */
+function renderMinhasRedesHome() {
+  var el = document.getElementById('d360-redes-list');
+  if (!el) return;
+  var ativas = _pfRedesOrdenadas().filter(function(r){ return r.ativo; });
+  if (!ativas.length) {
+    el.innerHTML = '<div class="d360-empty-mini">Nenhuma rede cadastrada<br>' +
+      '<button class="d360-add-btn" style="margin-top:8px" onclick="abrirPerfilProfissional()">＋ Configurar redes</button></div>';
+    return;
+  }
+  el.innerHTML = '<div class="d360-redes-wrap">' + ativas.map(function(r){
+    var t = PF_REDES[r.tipo] || { rotulo: r.nome || 'Rede', icone:'🔗' };
+    return '<button class="d360-rede-chip' + (r.url ? '' : ' sem-link') + '" onclick="pfAbrirRede(\'' + r.id + '\')">' +
+      '<span class="ic">' + t.icone + '</span><span class="tx"><div class="nm">' + _pfEsc(t.rotulo) + '</div>' +
+      '<div class="us">' + _pfEsc(r.usuario || r.url || '') + '</div></span></button>';
+  }).join('') + '</div>';
+}
+
+/* Orientador 360° — leitura preparada para etapas futuras (não altera as regras atuais) */
+function getContextoPerfilOrientador() {
+  _pfGarantir();
+  return {
+    nome: APP.user.nome || '', nomeProfissional: APP.perfil.nomeProfissional || '',
+    profissao: (APP.dashboard && APP.dashboard.profissao) || '', bio: APP.perfil.bio || '',
+    redesAtivas: APP.redes.filter(function(r){ return r.ativo; }).map(function(r){ return { tipo: r.tipo, usuario: r.usuario, integrationStatus: r.integrationStatus || 'manual' }; })
+  };
+}
+
 function appGoScreen(id, btn, title) {
   document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -4066,8 +5037,8 @@ function appGoScreen(id, btn, title) {
   if (id==='as-contacts') renderContacts();
   if (id==='as-pipeline') buildKanban();
   if (id==='as-notas')    renderNotes();
-  if (id==='as-dash')     { renderStats(); renderDashboard360(); agRenderDashBloco(); agAtualizarBadge(); pcRenderDashResumo(); pcAtualizarBadge(); renderPainelDia(); plAtualizarBadge(); reRenderDashWidget(); mkRenderizarCanais(); }
-  if (id==='as-perfil')   { renderAlertaPerfil(); atualizarBarraTrial(); pvRenderizarPerfil(); wpRenderizarGrid(); pvRenderizarLinks(); }
+  if (id==='as-dash')     { renderStats(); renderDashboard360(); agRenderDashBloco(); agAtualizarBadge(); pcRenderDashResumo(); pcAtualizarBadge(); renderPainelDia(); plAtualizarBadge(); reRenderDashWidget(); }
+  if (id==='as-perfil')   { renderAlertaPerfil(); atualizarBarraTrial(); }
   if (id==='as-agenda')   { agRenderizar(); }
   if (id==='as-pendencias')  { pcRenderizar('ativas'); }
   if (id==='as-renda-extra') { reRenderizar(); }
@@ -5459,323 +6430,7 @@ function simularImporte(){
 }
 
 /* Perfil */
-/* ═══════════════════════════════════════════
-   PERFIL VISUAL V9.3.5
-═══════════════════════════════════════════ */
-function editarPerfil() {
-  // Preencher modal com dados atuais
-  document.getElementById('pv-input-nome').value    = APP.user.nome    || '';
-  document.getElementById('pv-input-apelido').value = APP.user.apelido || '';
-  document.getElementById('pv-input-profissao').value= APP.user.profissao|| 'Corretor de Imóveis';
-  document.getElementById('pv-input-frase').value   = APP.user.fraseDia|| '';
-  // Foto no modal
-  const mfImg  = document.getElementById('pv-modal-foto-img');
-  const mfInit = document.getElementById('pv-modal-foto-init');
-  if (APP.user.foto) {
-    mfImg.src = APP.user.foto; mfImg.style.display='block'; mfInit.style.display='none';
-  } else {
-    mfImg.style.display='none'; mfInit.style.display='block';
-    mfInit.textContent = (APP.user.apelido||APP.user.nome||'U').charAt(0).toUpperCase();
-  }
-  openModal('modal-editar-perfil');
-}
-
-function pvSalvarPerfil() {
-  APP.user.nome     = (document.getElementById('pv-input-nome').value     || '').trim() || APP.user.nome;
-  APP.user.apelido  = (document.getElementById('pv-input-apelido').value  || '').trim();
-  APP.user.profissao= (document.getElementById('pv-input-profissao').value|| '').trim() || 'Corretor de Imóveis';
-  APP.user.fraseDia = (document.getElementById('pv-input-frase').value    || '').trim();
-  saveAll();
-  pvRenderizarPerfil();
-  pvRenderizarLinks();
-  initApp();
-  closeModal('modal-editar-perfil');
-  showToast('Perfil salvo ✓');
-}
-
-function pvRenderizarPerfil() {
-  const u = APP.user;
-  const apelido = u.apelido || u.nome || 'Meu Perfil';
-  // Hero card
-  const nEl = document.getElementById('pv-nome-exibir');
-  const pEl = document.getElementById('pv-profissao-exibir');
-  const fEl = document.getElementById('pv-frase-exibir');
-  if (nEl) nEl.textContent = apelido;
-  if (pEl) pEl.textContent = u.profissao || 'Corretor de Imóveis';
-  if (fEl) fEl.textContent = u.fraseDia || 'Toque ✏️ para adicionar sua frase do dia';
-  // Foto / iniciais
-  const fotoImg  = document.getElementById('pv-foto-img');
-  const fotoInit = document.getElementById('pv-foto-iniciais');
-  if (fotoImg && fotoInit) {
-    if (u.foto) {
-      fotoImg.src = u.foto; fotoImg.style.display='block'; fotoInit.style.display='none';
-    } else {
-      fotoImg.style.display='none'; fotoInit.style.display='flex';
-      fotoInit.textContent = apelido.charAt(0).toUpperCase();
-    }
-  }
-  // Hero background com tema
-  const hero = document.getElementById('pv-hero-card');
-  if (hero) hero.style.background = 'var(--tema-grad,linear-gradient(135deg,#F26419,#D4520E))';
-  // Marcar tema ativo no seletor
-  document.querySelectorAll('[data-tema-btn]').forEach(function(btn) {
-    btn.classList.toggle('ativo', btn.getAttribute('data-tema-btn') === (u.tema || 'laranja'));
-  });
-}
-
-function pvTrocarFoto() {
-  document.getElementById('pv-foto-input') && document.getElementById('pv-foto-input').click();
-}
-
-function pvProcessarFoto(input) {
-  const file = input.files && input.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { showToast('Foto muito grande — use menos de 2MB'); return; }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
-    // Atualizar no modal
-    const mfImg  = document.getElementById('pv-modal-foto-img');
-    const mfInit = document.getElementById('pv-modal-foto-init');
-    if (mfImg)  { mfImg.src = dataUrl; mfImg.style.display='block'; }
-    if (mfInit) mfInit.style.display = 'none';
-    // Guardar temporariamente no APP.user para pvSalvarPerfil capturar
-    APP.user.foto = dataUrl;
-    pvRenderizarPerfil();
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-
-function pvRemoverFoto() {
-  APP.user.foto = '';
-  const mfImg  = document.getElementById('pv-modal-foto-img');
-  const mfInit = document.getElementById('pv-modal-foto-init');
-  if (mfImg)  { mfImg.src=''; mfImg.style.display='none'; }
-  if (mfInit) { mfInit.style.display='block'; mfInit.textContent = (APP.user.apelido||APP.user.nome||'U').charAt(0).toUpperCase(); }
-  pvRenderizarPerfil();
-}
-
-/* ── Aplicar tema monocromático V9.3.5 ── */
-function aplicarTema(tema, btn) {
-  const validos = ['laranja','azul','verde','roxo','preto','rosa'];
-  if (!validos.includes(tema)) tema = 'laranja';
-  APP.user.tema = tema;
-  // Aplicar no elemento raiz
-  document.documentElement.setAttribute('data-tema', tema);
-  // Marcar chip ativo
-  document.querySelectorAll('[data-tema-btn]').forEach(function(b) {
-    b.classList.toggle('ativo', b.getAttribute('data-tema-btn') === tema);
-  });
-  // Atualizar hero do perfil
-  const hero = document.getElementById('pv-hero-card');
-  if (hero) hero.style.background = 'var(--tema-grad)';
-  saveAll();
-  showToast('Tema ' + tema + ' aplicado ✓');
-}
-
-/* ═══════════════════════════════════════════
-   WALLPAPER V9.3.6
-═══════════════════════════════════════════ */
-const WP_OPCOES = [
-  { id:'nenhum',  label:'Padrão',  css:'', preview:'var(--bg)' },
-  { id:'grad1',   label:'Pôr do Sol',  css:'linear-gradient(160deg,#FFECD2 0%,#FCB69F 100%)', preview:'linear-gradient(160deg,#FFECD2,#FCB69F)' },
-  { id:'grad2',   label:'Oceano',  css:'linear-gradient(135deg,#667EEA 0%,#764BA2 100%)', preview:'linear-gradient(135deg,#667EEA,#764BA2)' },
-  { id:'grad3',   label:'Floresta',css:'linear-gradient(160deg,#A8EDEA 0%,#FED6E3 100%)', preview:'linear-gradient(160deg,#A8EDEA,#FED6E3)' },
-  { id:'grad4',   label:'Noite',   css:'linear-gradient(135deg,#0F0C29 0%,#302B63 50%,#24243E 100%)', preview:'linear-gradient(135deg,#0F0C29,#302B63,#24243E)' },
-  { id:'grad5',   label:'Aurora',  css:'linear-gradient(135deg,#43E97B 0%,#38F9D7 100%)', preview:'linear-gradient(135deg,#43E97B,#38F9D7)' },
-  { id:'grad6',   label:'Rosa',    css:'linear-gradient(135deg,#F093FB 0%,#F5576C 100%)', preview:'linear-gradient(135deg,#F093FB,#F5576C)' },
-  { id:'pat1',    label:'Pontos',  css:'radial-gradient(circle,#D1D5DB 1px,transparent 1px) 0 0/24px 24px,#F5F6F7', preview:'radial-gradient(circle,#D1D5DB 1px,transparent 1px) 0 0/14px 14px,#F5F6F7' },
-  { id:'pat2',    label:'Grade',   css:'linear-gradient(#E8EAED 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#E8EAED 1px,transparent 1px) 0 0/24px 24px,#F9FAFB', preview:'linear-gradient(#E8EAED 1px,transparent 1px) 0 0/12px 12px,linear-gradient(90deg,#E8EAED 1px,transparent 1px) 0 0/12px 12px,#F9FAFB' },
-  { id:'pat3',    label:'Losango', css:'linear-gradient(45deg,#E5E7EB 25%,transparent 25%) -12px 0,linear-gradient(-45deg,#E5E7EB 25%,transparent 25%) -12px 0,linear-gradient(45deg,transparent 75%,#E5E7EB 75%),linear-gradient(-45deg,transparent 75%,#E5E7EB 75%),#F9FAFB; background-size:24px 24px', preview:'linear-gradient(45deg,#E5E7EB 25%,transparent 25%) -6px 0,linear-gradient(-45deg,#E5E7EB 25%,transparent 25%) -6px 0,#F9FAFB' },
-  { id:'custom',  label:'Imagem',  css:'', preview:'' }
-];
-
-function wpRenderizarGrid() {
-  const grid = document.getElementById('wp-grid-temas');
-  if (!grid) return;
-  const atual = APP.user.wallpaper || 'nenhum';
-  var html = '';
-  WP_OPCOES.forEach(function(wp) {
-    var ativo = atual === wp.id ? ' ativo' : '';
-    if (wp.id === 'custom') {
-      var customBg = (APP.user.wallpaper && APP.user.wallpaper.indexOf('data:') === 0) ? 'background-image:url(' + APP.user.wallpaper + ');background-size:cover;background-position:center' : '';
-      var isCustomAtivo = (APP.user.wallpaper && APP.user.wallpaper.indexOf('data:') === 0) ? ' ativo' : '';
-      html += '<div class="wp-chip wp-chip-upload' + isCustomAtivo + '" onclick="document.getElementById(\'wp-foto-input\').click()">' +
-        (customBg ? '<div style="width:100%;height:100%;' + customBg + '"></div>' : '<span style="font-size:20px">🖼️</span><span>Imagem</span>') +
-        '<div class="wp-check">✓</div>' +
-        '</div>';
-    } else {
-      var bgStyle = wp.preview ? 'background:' + wp.preview : 'background:var(--bg)';
-      html += '<div class="wp-chip' + ativo + '" onclick="wpAplicar(\'' + wp.id + '\')" title="' + wp.label + '">' +
-        '<div style="width:100%;height:100%;' + bgStyle + ';border-radius:10px"></div>' +
-        '<div class="wp-check">✓</div>' +
-        '</div>';
-    }
-  });
-  grid.innerHTML = html + '<input type="file" id="wp-foto-input" accept="image/*" style="display:none" onchange="wpCarregarImagem(this)">';
-}
-
-function wpAplicar(id) {
-  APP.user.wallpaper = id;
-  wpAplicarCSS();
-  wpRenderizarGrid();
-  saveAll();
-  showToast('Papel de parede aplicado ✓');
-}
-
-function wpAplicarCSS() {
-  const modApp = document.getElementById('mod-app');
-  if (!modApp) return;
-  const wp = APP.user.wallpaper || '';
-  if (!wp || wp === 'nenhum') {
-    modApp.style.background = '';
-    modApp.style.backgroundImage = '';
-    return;
-  }
-  if (wp.indexOf('data:') === 0) {
-    modApp.style.background = '';
-    modApp.style.backgroundImage = 'url(' + wp + ')';
-    modApp.style.backgroundSize = 'cover';
-    modApp.style.backgroundPosition = 'center';
-    modApp.style.backgroundAttachment = 'local';
-    return;
-  }
-  const opcao = WP_OPCOES.filter(function(o) { return o.id === wp; })[0];
-  if (opcao && opcao.css) {
-    // Se o css tem ponto-e-vírgula (background-size separado), precisamos separar
-    var parts = opcao.css.split('; background-size:');
-    modApp.style.background = parts[0];
-    if (parts[1]) modApp.style.backgroundSize = parts[1];
-  } else {
-    modApp.style.background = '';
-  }
-}
-
-function wpCarregarImagem(input) {
-  const file = input.files && input.files[0];
-  if (!file) return;
-  if (file.size > 3 * 1024 * 1024) { showToast('Imagem grande — use até 3MB'); return; }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    APP.user.wallpaper = e.target.result;
-    wpAplicarCSS();
-    wpRenderizarGrid();
-    saveAll();
-    showToast('Papel de parede personalizado aplicado ✓');
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-
-/* ═══════════════════════════════════════════
-   MEUS LINKS V9.3.6
-═══════════════════════════════════════════ */
-const LINKS_CONFIG = [
-  { key:'instagram', icon:'📸', label:'Instagram', cor:'#E1306C', prefix:'https://instagram.com/' },
-  { key:'linkedin',  icon:'💼', label:'LinkedIn',  cor:'#0A66C2', prefix:'https://linkedin.com/in/' },
-  { key:'youtube',   icon:'▶️', label:'YouTube',   cor:'#FF0000', prefix:'https://youtube.com/@' },
-  { key:'tiktok',    icon:'🎵', label:'TikTok',    cor:'#010101', prefix:'https://tiktok.com/@' },
-  { key:'whatsapp',  icon:'💬', label:'WhatsApp',  cor:'#25D366', prefix:'https://wa.me/' },
-  { key:'website',   icon:'🌐', label:'Website',   cor:'#3B82F6', prefix:'https://' },
-  { key:'facebook',  icon:'📘', label:'Facebook',  cor:'#1877F2', prefix:'https://facebook.com/' },
-  { key:'twitter',   icon:'🐦', label:'Twitter/X', cor:'#000000', prefix:'https://x.com/' },
-  { key:'telegram',  icon:'✈️', label:'Telegram',  cor:'#2CA5E0', prefix:'https://t.me/' },
-  { key:'pinterest', icon:'📌', label:'Pinterest', cor:'#E60023', prefix:'https://pinterest.com/' }
-];
-
-function pvRenderizarLinks() {
-  const container = document.getElementById('pv-links-lista');
-  if (!container) return;
-  const links = APP.user.links || {};
-  const ativos = LINKS_CONFIG.filter(function(l) { return links[l.key] && links[l.key].trim(); });
-  if (!ativos.length) {
-    container.innerHTML = '<div style="padding:14px;text-align:center"><span class="link-empty">Nenhum link cadastrado — toque em ✏️ Editar para adicionar</span></div>';
-    return;
-  }
-  var html = '';
-  ativos.forEach(function(cfg) {
-    var url = links[cfg.key].trim();
-    var urlCompleta = url;
-    if (url.indexOf('http') !== 0 && url.charAt(0) !== '@') urlCompleta = cfg.prefix + url.replace(/^@/, '');
-    html += '<div class="link-item" onclick="window.open(\'' + urlCompleta.replace(/'/g, "\\'") + '\',\'_blank\')">' +
-      '<div class="link-item-icon" style="background:' + cfg.cor + '22">' + cfg.icon + '</div>' +
-      '<div class="link-item-info"><div class="link-item-label">' + cfg.label + '</div><div class="link-item-url">' + url + '</div></div>' +
-      '<div class="link-item-arrow">›</div></div>';
-  });
-  container.innerHTML = html;
-}
-
-function abrirEditarLinks() {
-  const links = APP.user.links || {};
-  LINKS_CONFIG.forEach(function(cfg) {
-    const el = document.getElementById('ml-' + cfg.key);
-    if (el) el.value = links[cfg.key] || '';
-  });
-  document.getElementById('modal-editar-links').style.display = 'flex';
-}
-
-function pvSalvarLinks() {
-  if (!APP.user.links) APP.user.links = {};
-  LINKS_CONFIG.forEach(function(cfg) {
-    const el = document.getElementById('ml-' + cfg.key);
-    if (el) APP.user.links[cfg.key] = el.value.trim();
-  });
-  pvRenderizarLinks();
-  // Atualizar canais de marketing com links cadastrados
-  mkSincronizarLinks();
-  saveAll();
-  closeModal('modal-editar-links');
-  showToast('Links salvos ✓');
-}
-
-function mkSincronizarLinks() {
-  // Sincroniza links do perfil com canais de marketing existentes
-  const links = APP.user.links || {};
-  const canais = APP.dashboard.canaisMarketing || [];
-  canais.forEach(function(canal) {
-    const tipoMap = { instagram:'instagram', linkedin:'linkedin', youtube:'youtube', tiktok:'tiktok', whatsapp:'whatsapp', facebook:'facebook', twitter:'twitter', telegram:'telegram' };
-    const linkKey = tipoMap[canal.tipo];
-    if (linkKey && links[linkKey]) {
-      canal.link = links[linkKey];
-    }
-  });
-}
-
-/* ── Adicionar à Tela Inicial ── */
-function mostrarInstrucoesHomeScreen() {
-  document.getElementById('modal-homescreen').style.display = 'flex';
-}
-
-/* ── PWA Manifest inline (V9.3.6) ── */
-(function() {
-  try {
-    // SVG icon PROSPECTARION — laranja, letra P
-    var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#F26419"/><text x="96" y="138" font-family="system-ui,sans-serif" font-weight="900" font-size="108" text-anchor="middle" fill="white">P</text></svg>';
-    var svgBase64 = 'data:image/svg+xml;base64,' + btoa(svgIcon);
-    var manifest = {
-      name: 'PROSPECTARION',
-      short_name: 'PROSP',
-      description: 'CRM pessoal para corretores e vendedores',
-      start_url: '.',
-      display: 'standalone',
-      background_color: '#F5F6F7',
-      theme_color: '#F26419',
-      orientation: 'portrait-primary',
-      icons: [
-        { src: svgBase64, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
-        { src: svgBase64, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
-      ]
-    };
-    var manifestStr = JSON.stringify(manifest);
-    var manifestDataUri = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(manifestStr)));
-    var mLink = document.getElementById('pwa-manifest-link');
-    if (mLink) mLink.href = manifestDataUri;
-    var aLink = document.getElementById('pwa-apple-icon');
-    if (aLink) { aLink.rel = 'apple-touch-icon'; aLink.href = svgBase64; }
-  } catch(e) {}
-})();
-
+function editarPerfil(){ abrirPerfilProfissional(); } // V10.1: tela interna no lugar do prompt()
 function exportarDados(){if(!APP.contacts.length){showToast('Nenhum contato');return;}const rows=[['Nome','Telefone','E-mail','Empresa','Categoria'],...APP.contacts.map(c=>[c.nome,c.tel,c.email,c.empresa,c.categoria])];const csv=rows.map(r=>r.map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='prospectarion-contatos.csv';a.click();showToast('CSV exportado ✓');}
 
 function exportarBackupJSON() {
@@ -5798,11 +6453,13 @@ function exportarBackupJSON() {
     }
 
     // 4. Validar que é um objeto
-    if (!dados || typeof dados !== 'object') {
+    if (_leituraFalhou || !dados || typeof dados !== 'object' || Array.isArray(dados)) {
       showToast('Dados inválidos — backup não gerado');
       return;
     }
 
+    /*CRIADOR-INICIO*/if (dados.criador) delete dados.criador; // V10.4.2: credenciais do cofre não saem no backup
+/*CRIADOR-FIM*/
     // 5. Montar JSON de exportação: _meta + dados originais integralmente
     const agora = new Date();
     const dataISO = agora.toISOString();
@@ -5841,6 +6498,82 @@ function exportarBackupJSON() {
     showToast('Erro ao gerar backup: ' + err.message);
   }
 }
+/* ══════════════════════════════════
+   BACKUP VIA WHATSAPP V9.3.4
+══════════════════════════════════ */
+function enviarBackupWhatsApp() {
+  try {
+    saveAll();
+    var raw = localStorage.getItem('prospectarionAll');
+    if (!raw) { showToast('Nenhum dado para exportar'); return; }
+
+    var dados;
+    try {
+      var _SK2 = 'PROSP2025XK';
+      var dec2 = decodeURIComponent(escape(atob(raw)));
+      var out2 = '';
+      for (var _i2 = 0; _i2 < dec2.length; _i2++) {
+        out2 += String.fromCharCode(dec2.charCodeAt(_i2) ^ _SK2.charCodeAt(_i2 % _SK2.length));
+      }
+      dados = JSON.parse(out2);
+    } catch(e1) {
+      try { dados = JSON.parse(raw); } catch(e2) { showToast('Erro ao ler dados'); return; }
+    }
+
+    if (_leituraFalhou || !dados || typeof dados !== 'object' || Array.isArray(dados)) { showToast('Dados inválidos'); return; }
+    /*CRIADOR-INICIO*/if (dados.criador) delete dados.criador; // V10.4.2
+/*CRIADOR-FIM*/
+
+    /* Baixar arquivo JSON */
+    var agora   = new Date();
+    var dataArq = agora.toISOString().split('T')[0];
+    var nc = (dados.contacts  || []).length;
+    var nd = (dados.deals     || []).length;
+    var nn = (dados.notes     || []).length;
+
+    var exportacao = {
+      _meta: { origem:'PROSPECTARION_BACKUP_WA', versao:'9.3.4',
+               exportadoEm: agora.toISOString(),
+               totalContatos: nc, totalNegocios: nd, totalNotas: nn },
+      dados: dados
+    };
+
+    var blob = new Blob([JSON.stringify(exportacao, null, 2)], { type:'application/json;charset=utf-8' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'PROSPECTARION-backup-' + dataArq + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    /* Abrir WhatsApp com instrução */
+    var _nl  = '\n';
+    var nome = dados.user && dados.user.nome ? dados.user.nome : 'Usuario';
+    var tel  = dados.user && dados.user.wa ? dados.user.wa.replace(/\D/g,'') : '';
+    var msg  = '\uD83D\uDD04 *BACKUP PROSPECTARION*' + _nl
+      + '\uD83D\uDCC5 ' + agora.toLocaleDateString('pt-BR') + ' as ' + agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + _nl
+      + '\uD83D\uDC64 ' + nome + _nl + _nl
+      + nc + ' contatos · ' + nd + ' negocios · ' + nn + ' notas' + _nl + _nl
+      + '*Como usar no outro aparelho:*' + _nl
+      + '1. Salve o arquivo JSON baixado' + _nl
+      + '2. Abra o PROSPECTARION no novo aparelho' + _nl
+      + '3. Perfil → Restaurar Backup Completo' + _nl
+      + '4. Selecione o arquivo JSON';
+
+    var waUrl = tel
+      ? 'https://wa.me/55' + tel + '?text=' + encodeURIComponent(msg)
+      : 'https://wa.me/?text=' + encodeURIComponent(msg);
+
+    showToast('\u2705 Backup baixado! Abrindo WhatsApp...');
+    setTimeout(function(){ window.open(waUrl, '_blank'); }, 800);
+
+  } catch(err) {
+    console.error('[BackupWA]', err);
+    showToast('Erro: ' + (err.message || err));
+  }
+}
+
+
 function restaurarBackupJSON(input) {
   const file = input.files[0];
   input.value = ''; // limpar para permitir re-seleção do mesmo arquivo
@@ -5930,6 +6663,11 @@ function confirmarRestauracaoBackup() {
     if (Array.isArray(backup.notes))        APP.notes        = backup.notes;
     if (Array.isArray(backup.interactions)) APP.interactions = backup.interactions;
     if (Array.isArray(backup.relationships))APP.relationships= backup.relationships;
+    if (Array.isArray(backup.rendaExtra))   APP.rendaExtra   = backup.rendaExtra;
+    // V10.1 Etapa B: chave ausente (backup antigo) preserva o que existe no aparelho
+    if (backup.perfil && typeof backup.perfil === 'object' && !Array.isArray(backup.perfil)) APP.perfil = Object.assign(_pfPerfilPadrao(), backup.perfil);
+    if (Array.isArray(backup.redes))        APP.redes        = backup.redes;
+    if (Array.isArray(backup.conteudo))     APP.conteudo     = backup.conteudo; // V10 FIX02: chave ausente (backup antigo) preserva a lista atual; [] explícito é respeitado
     if (backup.dashboard && typeof backup.dashboard === 'object') {
       if (!APP.dashboard) APP.dashboard = {};
       if (Array.isArray(backup.dashboard.prioridades)) APP.dashboard.prioridades = backup.dashboard.prioridades;
@@ -5958,6 +6696,9 @@ function confirmarRestauracaoBackup() {
         Object.assign(APP.adm.config, backup.adm.config);
       }
     }
+
+    // ── FASE 0A: backup validado e confirmado aplicado → liberar gravação ──
+    _leituraFalhou = false;
 
     // ── Persistir com mecanismo existente ──
     saveAll();
@@ -6861,8 +7602,8 @@ function renderActivityList() {
   if (!acts.length) {
     l.innerHTML = `<div class="activity-item">
       <div class="activity-dot" style="background:var(--accent)"></div>
-      <div class="activity-text">Bem-vindo ao PROSPECTARION!<span>Comece adicionando seus contatos</span></div>
-      <div class="activity-time">Agora</div>
+      <div class="activity-text">Nenhuma atividade ainda<span>Suas ações vão aparecer aqui</span></div>
+      <div class="activity-time"></div>
     </div>`;
     return;
   }
@@ -6893,10 +7634,9 @@ function initDashboard() {
   if (!APP.dashboard) APP.dashboard = {};
 
   // Arrays: só inicializa se ainda não existe (loadAll já pode ter carregado)
-  if (!Array.isArray(APP.dashboard.prioridades))     APP.dashboard.prioridades     = [];
-  if (!Array.isArray(APP.dashboard.marketing))       APP.dashboard.marketing       = [];
-  if (!Array.isArray(APP.dashboard.activities))      APP.dashboard.activities      = [];
-  if (!Array.isArray(APP.dashboard.canaisMarketing)) APP.dashboard.canaisMarketing = []; // V9.3.5
+  if (!Array.isArray(APP.dashboard.prioridades)) APP.dashboard.prioridades = [];
+  if (!Array.isArray(APP.dashboard.marketing))   APP.dashboard.marketing   = [];
+  if (!Array.isArray(APP.dashboard.activities))  APP.dashboard.activities  = [];
 
   // Escalares
   if (typeof APP.dashboard.profissao   !== 'string') APP.dashboard.profissao   = '';
@@ -7000,6 +7740,7 @@ function renderDashboard360() {
   initDashboard();
   renderCabecalho360();
   renderPrioridades();
+  renderMinhasRedesHome(); // V10.1
   renderRadarComercial();
   renderMetas();
   renderMarketing();
@@ -7014,7 +7755,7 @@ function renderCabecalho360() {
   const n = APP.user.nome || 'Usuário';
   const av = document.getElementById('d360-avatar');
   const prof = document.getElementById('d360-prof');
-  if (av) { av.textContent = n[0].toUpperCase(); }
+  if (av) { _pfAplicarAvatar(av, n); } // V10.1: foto ou inicial
   if (prof) {
     const profissao = APP.dashboard.profissao || 'Profissional';
     prof.textContent = profissao;
@@ -7347,134 +8088,6 @@ function renderMarketing() {
       </div>
     `;
   }).join('')}</div>`;
-}
-
-/* ═══════════════════════════════════════════
-   CANAIS DE MARKETING V9.3.5
-═══════════════════════════════════════════ */
-const MK_TIPOS = {
-  instagram:  { icon:'📸', label:'Instagram',          cor:'#E1306C' },
-  whatsapp:   { icon:'💬', label:'WhatsApp',            cor:'#25D366' },
-  linkedin:   { icon:'💼', label:'LinkedIn',            cor:'#0A66C2' },
-  youtube:    { icon:'▶️', label:'YouTube',             cor:'#FF0000' },
-  tiktok:     { icon:'🎵', label:'TikTok',              cor:'#010101' },
-  facebook:   { icon:'👥', label:'Facebook',            cor:'#1877F2' },
-  email:      { icon:'📧', label:'E-mail',              cor:'#EA4335' },
-  google:     { icon:'🔍', label:'Google Negócio',      cor:'#4285F4' },
-  blog:       { icon:'📝', label:'Blog / Site',         cor:'#FF6B35' },
-  indicacao:  { icon:'🤝', label:'Indicações',          cor:'#10B981' },
-  outro:      { icon:'📌', label:'Outro',               cor:'#6B7280' }
-};
-
-// Templates de ações por tipo de canal
-const MK_ACOES = {
-  instagram:  ['Postar 1 Story mostrando sua rotina de trabalho','Publicar Reel com dica profissional rápida','Responder todos os DMs e comentários pendentes','Interagir em 5 perfis do seu nicho (curtir + comentar)','Postar foto de imóvel/produto com CTA claro','Fazer enquete nos Stories para engajar seguidores'],
-  whatsapp:   ['Enviar mensagem de valor para lista de transmissão','Criar ou atualizar catálogo de produtos/imóveis','Responder todos os contatos em aberto','Enviar lembrete personalizado para lead quente','Postar status profissional no WhatsApp','Fazer follow-up com prospect que não respondeu há 2 dias'],
-  linkedin:   ['Publicar artigo curto com insight do mercado','Comentar em posts de 3 conexões estratégicas','Enviar 5 convites para novos contatos do nicho','Atualizar seção "Em destaque" do perfil','Postar resultado ou conquista recente','Responder mensagens e interações pendentes'],
-  youtube:    ['Gravar vídeo de 5 min respondendo dúvida comum','Otimizar título e thumbnail do último vídeo','Responder comentários do canal','Planejar roteiro do próximo vídeo','Postar short (até 60s) com dica rápida','Analisar métricas e ajustar estratégia'],
-  tiktok:     ['Gravar vídeo de tendência adaptado ao seu nicho','Usar 3 hashtags relevantes no próximo post','Interagir com 5 criadores do mesmo segmento','Dueto ou resposta em vídeo popular','Postar nos horários de pico (18h–21h)','Analisar vídeos com maior alcance'],
-  facebook:   ['Publicar conteúdo de valor no grupo ou página','Responder todos os comentários e mensagens','Impulsionar post de melhor desempenho','Entrar em grupo do nicho e participar','Compartilhar depoimento de cliente','Agendar 3 posts para a semana'],
-  email:      ['Enviar newsletter semanal para sua lista','Escrever sequência de boas-vindas para novos leads','Limpar lista (remover inativos há +6 meses)','Testar novo assunto de e-mail (A/B)','Enviar e-mail de follow-up para lead frio','Criar template de proposta personalizável'],
-  google:     ['Responder todas as avaliações (positivas e negativas)','Publicar novidade ou oferta no perfil','Adicionar nova foto do seu negócio/imóvel','Verificar e atualizar horários e dados','Pedir avaliação para cliente satisfeito','Analisar termos de busca e ajustar descrição'],
-  blog:       ['Escrever post de 500 palavras respondendo dúvida comum','Otimizar SEO do post mais visitado','Compartilhar artigo nas redes sociais','Atualizar post antigo com informações novas','Criar call-to-action em todos os artigos','Analisar métricas do Google Analytics'],
-  indicacao:  ['Ligar para 3 clientes satisfeitos e pedir indicação','Criar cartão de referência (digital ou físico)','Montar programa de indicações com recompensa','Agradecer pessoalmente a última indicação recebida','Mapear quem são seus 5 principais indicadores','Registrar indicações recebidas este mês'],
-  outro:      ['Identificar 3 novas oportunidades de prospecção','Atualizar material de apresentação','Fazer networking em evento presencial ou online','Ligar para 5 leads que não avançaram','Criar conteúdo novo para o canal','Revisar e planejar estratégia da semana']
-};
-
-function mkAbrirAddCanal() { openModal('modal-mk-canal'); }
-
-function mkSalvarCanal() {
-  const nome = (document.getElementById('mk-canal-nome').value || '').trim();
-  const tipo = document.getElementById('mk-canal-tipo').value;
-  const meta = parseInt(document.getElementById('mk-canal-meta').value) || 3;
-  const obs  = (document.getElementById('mk-canal-obs').value || '').trim();
-  if (!nome) { showToast('Digite o nome do canal'); return; }
-  if (!APP.dashboard.canaisMarketing) APP.dashboard.canaisMarketing = [];
-  const canal = {
-    id: 'mk_' + Date.now(),
-    nome, tipo, meta, obs,
-    atividades: [],
-    criadoEm: new Date().toISOString()
-  };
-  APP.dashboard.canaisMarketing.push(canal);
-  saveAll();
-  closeModal('modal-mk-canal');
-  // limpar campos
-  ['mk-canal-nome','mk-canal-obs'].forEach(function(id) { const el=document.getElementById(id); if(el) el.value=''; });
-  const metaEl = document.getElementById('mk-canal-meta'); if(metaEl) metaEl.value='';
-  mkRenderizarCanais();
-  showToast('Canal adicionado ✓');
-}
-
-function mkGerarAcaoHoje(tipo) {
-  const acoes = MK_ACOES[tipo] || MK_ACOES.outro;
-  const hoje = new Date().toDateString();
-  // Escolhe ação baseada no dia (rotação consistente no mesmo dia)
-  const idx = (new Date().getDay() + new Date().getDate()) % acoes.length;
-  return acoes[idx];
-}
-
-function mkToggleAcao(canalId, acaoIdx) {
-  const canal = (APP.dashboard.canaisMarketing || []).find(function(c) { return c.id === canalId; });
-  if (!canal) return;
-  if (!canal.atividades) canal.atividades = [];
-  const hoje = new Date().toISOString().slice(0,10);
-  const existe = canal.atividades.find(function(a) { return a.dia === hoje && a.idx === acaoIdx; });
-  if (existe) {
-    canal.atividades = canal.atividades.filter(function(a) { return !(a.dia === hoje && a.idx === acaoIdx); });
-  } else {
-    canal.atividades.push({ dia: hoje, idx: acaoIdx, feito: true });
-  }
-  saveAll();
-  mkRenderizarCanais();
-}
-
-function mkExcluirCanal(canalId) {
-  if (!confirm('Excluir este canal?')) return;
-  APP.dashboard.canaisMarketing = (APP.dashboard.canaisMarketing || []).filter(function(c) { return c.id !== canalId; });
-  saveAll();
-  mkRenderizarCanais();
-  showToast('Canal removido');
-}
-
-function mkRenderizarCanais() {
-  const lista = document.getElementById('mk-canais-lista');
-  if (!lista) return;
-  const canais = APP.dashboard.canaisMarketing || [];
-  if (!canais.length) {
-    lista.innerHTML = '<div class="d360-empty-mini">Adicione seus canais de venda e comunicação</div>';
-    return;
-  }
-  const hoje = new Date().toISOString().slice(0,10);
-  lista.innerHTML = canais.map(function(canal) {
-    const info = MK_TIPOS[canal.tipo] || MK_TIPOS.outro;
-    // Gerar 3 ações sugeridas para hoje
-    const acoes = MK_ACOES[canal.tipo] || MK_ACOES.outro;
-    const base = (new Date().getDay() + new Date().getDate()) % acoes.length;
-    const sugestoes = [0,1,2].map(function(offset) { return (base + offset) % acoes.length; });
-    const feitos = (canal.atividades || []).filter(function(a) { return a.dia === hoje; }).map(function(a) { return a.idx; });
-    const feitosHoje = feitos.length;
-
-    return '<div class="mk-canal-card">' +
-      '<div class="mk-canal-head">' +
-        '<div class="mk-canal-icon" style="background:' + info.cor + '">' + info.icon + '</div>' +
-        '<div class="mk-canal-info">' +
-          '<div class="mk-canal-nome">' + canal.nome + '</div>' +
-          '<div class="mk-canal-sub">' + info.label + ' · Meta: ' + canal.meta + '/sem · Hoje: ' + feitosHoje + ' feitas</div>' +
-        '</div>' +
-        '<button class="mk-canal-del" onclick="mkExcluirCanal(\'' + canal.id + '\')" title="Excluir canal">✕</button>' +
-      '</div>' +
-      '<div class="mk-acoes-lista">' +
-        sugestoes.map(function(acaoIdx) {
-          const feito = feitos.indexOf(acaoIdx) !== -1;
-          return '<div class="mk-acao-item' + (feito ? ' mk-acao-feita' : '') + '" onclick="mkToggleAcao(\'' + canal.id + '\',' + acaoIdx + ')">' +
-            '<div class="mk-acao-check">' + (feito ? '✓' : '○') + '</div>' +
-            '<div class="mk-acao-texto">' + acoes[acaoIdx] + '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
-    '</div>';
-  }).join('');
 }
 
 /* ── Clientes que precisam de atenção ── */
@@ -7902,16 +8515,17 @@ const SEC = {
   /* ── 6. Verificar integridade do localStorage (anti-tamper) ── */
   checkIntegrity() {
     try {
-      const raw = localStorage.getItem('prospectarionAll');
-      if (!raw) return true;
-      const data = JSON.parse(raw);
+      // FASE 0A: interpretar o formato oficial (_dec) e o JSON legado
+      const lida = _p0aLerBase();
+      if (!lida.ok) return true; // ausência ou falha de leitura: tratada pelo loadAll()
+      const data = lida.data;
       // Verificar se plano e código são coerentes
-      if (data.user?.plano && !['mensal','semestral','anual','vitalicio'].includes(data.user.plano)) {
+      if (data.user?.plano && !['mensal','semestral','anual','vitalicio','criador','livre','trial'].includes(data.user.plano)) {
         SEC.clearAndLock('plano inválido');
         return false;
       }
       // Verificar se código tem formato válido (XK + 3 chars + 3 chars)
-      if (data.user?.codigo && !/^XK[A-Z0-9]{3,8}$/.test(data.user.codigo)) {
+      if (data.user?.codigo && !_p0aCodigoValido(data.user.codigo)) {
         SEC.clearAndLock('código inválido');
         return false;
       }
@@ -7934,9 +8548,12 @@ const SEC = {
   /* ── 7. Verificar expiração real do plano ── */
   checkExpiry() {
     try {
-      const raw = localStorage.getItem('prospectarionAll');
-      if (!raw) return;
-      const data = JSON.parse(raw);
+      if (_leituraFalhou) return; // FASE 0A
+      const lida = _p0aLerBase();
+      if (!lida.ok) return;
+      // FASE 0A: preserva o comportamento atual — o vencimento só era aplicado sobre JSON legado
+      if (lida.formato !== 'legado') return;
+      const data = lida.data;
       if (!data.user?.plano || data.user.plano === 'vitalicio') return;
       if (!data.user?.exp) return;
       const exp = new Date(data.user.exp);
@@ -7945,7 +8562,7 @@ const SEC = {
         data.user.plano = '';
         data.user.codigo = '';
         data.user.exp = '';
-        localStorage.setItem('prospectarionAll', JSON.stringify(data));
+        localStorage.setItem('prospectarionAll', _enc(JSON.stringify(data))); // FASE 0A: formato oficial
         Object.assign(APP.user, { plano:'', codigo:'', exp:'' });
         showModulo('mod-pagamento');
         SEC.showExpiredBanner();
@@ -8079,22 +8696,13 @@ const SEC = {
 
   /* ── Limpar dados e bloquear (adulteração detectada) ── */
   clearAndLock(reason) {
-    console.error = () => {}; // silenciar
-    try { localStorage.removeItem('prospectarionAll'); } catch(e) {}
-    const lock = document.createElement('div');
-    lock.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui;text-align:center;padding:40px';
-    lock.innerHTML = `
-      <div style="font-size:64px;margin-bottom:20px">⚠️</div>
-      <div style="font-size:20px;font-weight:900;color:#EF4444;margin-bottom:8px">Dados inválidos detectados</div>
-      <div style="font-size:14px;color:#6B7280;max-width:320px;line-height:1.6;margin-bottom:24px">
-        Os dados do aplicativo foram corrompidos ou adulterados.<br>
-        Entre em contato com o suporte.
-      </div>
-      <button onclick="location.reload()" style="padding:14px 32px;background:#F26419;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">
-        🔄 Reiniciar
-      </button>
-    `;
-    document.body.appendChild(lock);
+    // FASE 0A: NUNCA apagar 'prospectarionAll' e nunca bloquear. Apenas avisar, uma vez por sessão.
+    if (SEC._p0aAvisoIntegridade) return;
+    SEC._p0aAvisoIntegridade = true;
+    _p0aAviso('p0a-aviso-integridade',
+      'Inconsist\u00eancia detectada (' + reason + ')',
+      'Seus dados foram <strong>preservados</strong> \u2014 nada foi apagado. Por seguran\u00e7a, exporte um backup em ' +
+      '<strong>Perfil \u2192 Exportar Backup</strong>.', 'baixo');
   },
 
   /* ── Banner de plano expirado ── */
@@ -8453,127 +9061,36 @@ var _reFiltro = 'todos';
 var _reEditandoId = null;
 
 /* ── Sementes dos 8 prospects conhecidos ── */
-/* ── Seeds com dados reais verificados (V9.3.4.1) ── */
 const RE_SEEDS = [
-  {
-    id: 're_seed_0',
-    nome: 'Escola Qualifica Talentos',
-    servico: 'gmn',
-    whatsapp: '54999120156',
-    status: 'contato',
-    valorEstimado: 300,
-    observacoes: 'R. Mal. Floriano Peixoto, 854 - Silva. Só 3 avaliações, sem fotos, sem descrição dos cursos, sem site. Decisão consultiva — ticket maior se justifica. VERIFICADO.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_1',
-    nome: 'Competence Centro Educacional',
-    servico: 'gmn',
-    whatsapp: '51984772187',
-    status: 'contato',
-    valorEstimado: 300,
-    observacoes: 'R. Prof. Francisco Brochado da Rocha, 255 - Centro. 2 avaliações, nota 3.0 — perfil abandonado. Dor dupla: reputação + GMN. Pode render pacote maior. VERIFICADO.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_2',
-    nome: 'Pet Mimado',
-    servico: 'gmn',
-    whatsapp: '51980418503',
-    status: 'contato',
-    valorEstimado: 200,
-    observacoes: 'Av. João Pereira de Vargas, 1014 - Camboim. Nota 5.0, negócio novo, pouquíssima visibilidade. Alta abertura — tende a fechar rápido. VERIFICADO.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_3',
-    nome: 'Pet Aí - Spa Pet',
-    servico: 'gmn',
-    whatsapp: '51986820030',
-    status: 'contato',
-    valorEstimado: 200,
-    observacoes: 'Av. Justino Camboim - Camboim. Nota 5.0, atendimento muito elogiado, só 34 avaliações. Nicho pet tem alta busca no Maps — argumento forte. VERIFICADO.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_4',
-    nome: 'Lanã Restaurante e Hamburgueria',
-    servico: 'gmn',
-    whatsapp: '51999189765',
-    status: 'contato',
-    valorEstimado: 150,
-    observacoes: 'Av. Sapucaia - Centro. Nota 4.7, só 33 avaliações — invisível perto do Darling (2.404 avaliações). Gap gritante pra mostrar. VERIFICADO.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_5',
-    nome: 'Padaria D&G',
-    servico: 'gmn',
-    whatsapp: '',
-    status: 'novo',
-    valorEstimado: 197,
-    observacoes: 'A verificar.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_6',
-    nome: 'M&C Açougue e Padaria',
-    servico: 'gmn',
-    whatsapp: '',
-    status: 'novo',
-    valorEstimado: 197,
-    observacoes: 'A verificar.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  },
-  {
-    id: 're_seed_7',
-    nome: 'Lancheria do Carlão',
-    servico: 'gmn',
-    whatsapp: '',
-    status: 'novo',
-    valorEstimado: 197,
-    observacoes: 'A verificar.',
-    atividades: [],
-    ultimoContato: '',
-    criadoEm: new Date().toISOString()
-  }
+  { nome:'Padaria D&G',                    servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'M&C Açougue e Padaria',           servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'Pet Aí Spa Pet',                  servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'Pet Mimado',                      servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'Escola Qualifica Talentos',       servico:'gmn', whatsapp:'', status:'novo', valorEstimado:297 },
+  { nome:'Lanã Hamburgueria',               servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'Lancheria do Carlão',             servico:'gmn', whatsapp:'', status:'novo', valorEstimado:197 },
+  { nome:'Competence Centro Educacional',   servico:'gmn', whatsapp:'', status:'novo', valorEstimado:297 }
 ];
 
 /* ── Semeador: carrega os 8 prospects iniciais se rendaExtra estiver vazio ── */
 function reCarregarSeeds() {
   if (!APP.rendaExtra || !APP.rendaExtra.length) {
-    APP.rendaExtra = RE_SEEDS.slice(); // já vêm com todos os campos preenchidos
+    APP.rendaExtra = RE_SEEDS.map(function(s, i) {
+      return {
+        id: 're_seed_' + i,
+        nome: s.nome,
+        servico: s.servico,
+        status: s.status,
+        whatsapp: s.whatsapp || '',
+        valorEstimado: s.valorEstimado || 0,
+        observacoes: '',
+        atividades: [],
+        ultimoContato: '',
+        criadoEm: new Date().toISOString()
+      };
+    });
     saveAll();
-    return;
   }
-  // ── Migração V9.3.4.1: atualiza seeds existentes com dados reais se ainda estiverem vazios ──
-  var migrou = false;
-  RE_SEEDS.forEach(function(seed) {
-    var existente = APP.rendaExtra.find(function(p) { return p.id === seed.id; });
-    if (!existente) return;
-    // Só atualiza campos que ainda estão vazios/padrão — nunca sobrescreve edições do usuário
-    if (!existente.whatsapp && seed.whatsapp) { existente.whatsapp = seed.whatsapp; migrou = true; }
-    if ((!existente.observacoes || existente.observacoes === '') && seed.observacoes) { existente.observacoes = seed.observacoes; migrou = true; }
-    if (existente.valorEstimado === 197 && seed.valorEstimado !== 197) { existente.valorEstimado = seed.valorEstimado; migrou = true; }
-    if (existente.status === 'novo' && seed.status === 'contato') { existente.status = seed.status; migrou = true; }
-    if (existente.nome === 'Pet Aí Spa Pet' && seed.nome === 'Pet Aí - Spa Pet') { existente.nome = seed.nome; migrou = true; }
-    if (existente.nome === 'Lanã Hamburgueria' && seed.nome === 'Lanã Restaurante e Hamburgueria') { existente.nome = seed.nome; migrou = true; }
-  });
-  if (migrou) saveAll();
 }
 
 /* ── ICR Calculator (0–100) ── */
@@ -8897,18 +9414,235 @@ function reSalvarAtividade(id) {
   reRenderDashWidget();
 }
 
+
+/* ═══════════════════════════════════════════
+   V10.4 — CARTÃO DE BOAS-VINDAS (ES5)
+   Aparece no topo do Início só no primeiro acesso (app sem contatos, negócios
+   e tarefas). Some para sempre quando os 3 passos são concluídos ou quando
+   a pessoa fecha. Estado guardado em APP.user.boasVindas (mesma base de dados).
+═══════════════════════════════════════════ */
+function bvPrimeiroNome() {
+  var n = String((APP.user && APP.user.nome) || '').replace(/^\s+|\s+$/g, '');
+  if (!n || /^usu[aá]rio$/i.test(n)) {
+    try { if (APP.perfil && APP.perfil.nome) n = String(APP.perfil.nome).replace(/^\s+|\s+$/g, ''); } catch (e) {}
+  }
+  if (!n || /^usu[aá]rio$/i.test(n)) return '';
+  return n.split(/\s+/)[0];
+}
+function bvPassos() {
+  return [
+    { rotulo: 'Cadastre seu primeiro contato', feito: (APP.contacts || []).length > 0 },
+    { rotulo: 'Crie um negócio', feito: (APP.deals || []).length > 0 },
+    { rotulo: 'Agende uma tarefa', feito: ((APP.dashboard && APP.dashboard.prioridades) || []).length > 0 }
+  ];
+}
+function bvEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function bvRender() {
+  var el = document.getElementById('bv-cartao');
+  if (!el || !APP || !APP.user) return;
+  var bv = APP.user.boasVindas;
+  var passos = bvPassos();
+  var algum = passos[0].feito || passos[1].feito || passos[2].feito;
+  if (!bv) {
+    /* Quem já usa o app (tem dados) não é primeiro acesso: o cartão nunca aparece */
+    APP.user.boasVindas = algum ? { fim: 'ja_usava', em: new Date().toISOString() } : { inicio: new Date().toISOString() };
+    bv = APP.user.boasVindas;
+  }
+  if (bv.fim) { el.hidden = true; el.innerHTML = ''; return; }
+  var feitos = passos.filter(function (p) { return p.feito; }).length;
+  if (feitos === 3) {
+    APP.user.boasVindas.fim = 'concluido'; APP.user.boasVindas.em = new Date().toISOString();
+    el.hidden = true; el.innerHTML = '';
+    try { saveAll(); } catch (e) {}
+    try { showToast('🎉 Primeiros passos concluídos!'); } catch (e) {}
+    return;
+  }
+  var nome = bvPrimeiroNome();
+  var html = '<button type="button" class="bv-fechar" onclick="bvFechar()" aria-label="Fechar boas-vindas">✕</button>' +
+    '<div class="bv-titulo">👋 ' + (nome ? 'Olá, <em>' + bvEsc(nome) + '</em>! ' : 'Olá! ') + 'Bem-vindo ao PROSPECTARION</div>' +
+    '<div class="bv-sub">Comece em 3 passos rápidos:</div><ol class="bv-passos">';
+  for (var i = 0; i < passos.length; i++) {
+    html += '<li><button type="button" class="bv-passo' + (passos[i].feito ? ' feito' : '') + '" onclick="bvAbrirPasso(' + i + ')"' + (passos[i].feito ? ' aria-disabled="true"' : '') + '>' +
+      '<span class="bv-num">' + (passos[i].feito ? '✓' : (i + 1)) + '</span><span>' + passos[i].rotulo + '</span><span class="bv-seta">›</span></button></li>';
+  }
+  html += '</ol><button type="button" class="bv-comecar" onclick="bvComecar()">' + (feitos ? 'Continuar' : 'Começar') + '</button>' +
+    '<div class="bv-progresso">' + feitos + ' de 3 concluídos</div>';
+  el.innerHTML = html;
+  el.hidden = false;
+}
+function bvAbrirPasso(i) {
+  var p = bvPassos()[i];
+  if (!p || p.feito) return;
+  if (i === 0) { appGoScreen('as-contacts', null, 'Contatos'); openNewContact(); }
+  else if (i === 1) { appGoScreen('as-pipeline', null, 'Pipeline'); openNewDeal(); }
+  else { appGoScreen('as-agenda', null, 'Agenda'); agAbrirNovo(); }
+}
+function bvComecar() {
+  var passos = bvPassos();
+  for (var i = 0; i < passos.length; i++) { if (!passos[i].feito) { bvAbrirPasso(i); return; } }
+}
+function bvFechar() {
+  if (!APP.user.boasVindas) APP.user.boasVindas = {};
+  APP.user.boasVindas.fim = 'fechado'; APP.user.boasVindas.em = new Date().toISOString();
+  saveAll();
+  bvRender();
+}
+(function () {
+  var r360 = renderDashboard360;
+  renderDashboard360 = function () { var r = r360.apply(this, arguments); try { bvRender(); } catch (e) {} return r; };
+  var sv = saveAll;
+  saveAll = function () {
+    var r = sv.apply(this, arguments);
+    try { var el = document.getElementById('bv-cartao'); if (el && !el.hidden) bvRender(); } catch (e) {}
+    return r;
+  };
+})();
+
+/*CRIADOR-INICIO*/
+/* ═══════════════════════════════════════════
+   V10.4 — LEADS DO TESTE (só do proprietário, ES5)
+   Lê a planilha central (Google Sheets via Apps Script) com a senha do proprietário.
+   Endereço, senha e a última lista ficam em APP.adm.config (mesma base de dados).
+   Este bloco não vai para as edições dos clientes.
+═══════════════════════════════════════════ */
+var _ldFiltro = 'todos';
+function ldCfg() { if (!APP.adm.config) APP.adm.config = {}; return APP.adm.config; }
+function ldEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function ldTel(d) {
+  d = String(d || '').replace(/\D/g, '');
+  if (d.length === 13 && d.indexOf('55') === 0) d = d.substr(2);
+  if (d.length === 11) return '(' + d.substr(0, 2) + ') ' + d.substr(2, 5) + '-' + d.substr(7);
+  if (d.length === 10) return '(' + d.substr(0, 2) + ') ' + d.substr(2, 4) + '-' + d.substr(6);
+  return d;
+}
+function ldData(iso, comHora) {
+  if (!iso) return '—';
+  var d = new Date(iso); if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('pt-BR') + (comHora ? ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '');
+}
+/* Dia do teste: 1, 2 ou 3 enquanto ativo; 0 = encerrado */
+function ldSituacao(l) {
+  var agora = new Date(), ini = new Date(l.inicio), fim = new Date(l.fim);
+  if (isNaN(ini.getTime()) || isNaN(fim.getTime())) return { dia: 0, ativo: false, texto: 'Sem datas' };
+  if (agora > fim) {
+    var dias = Math.floor((agora - fim) / 86400000);
+    return { dia: 0, ativo: false, texto: dias < 1 ? 'Teste encerrado hoje' : ('Teste encerrado há ' + dias + (dias === 1 ? ' dia' : ' dias')) };
+  }
+  var dia = Math.min(3, Math.floor((agora - ini) / 86400000) + 1);
+  return { dia: dia, ativo: true, texto: 'Dia ' + dia + ' de 3 do teste' };
+}
+function ldMensagem(l) {
+  var s = ldSituacao(l), nome = String(l.nome || '').split(' ')[0];
+  if (s.ativo) return 'Olá, ' + nome + '! Aqui é o Anderson, criador do PROSPECTARION. Vi que você está no dia ' + s.dia +
+    ' do seu teste grátis. Está conseguindo usar? Posso te ajudar a cadastrar seus primeiros contatos ou tirar alguma dúvida. 😊';
+  return 'Olá, ' + nome + '! Aqui é o Anderson, criador do PROSPECTARION. Seu teste grátis terminou. O que achou? ' +
+    'Se quiser continuar, o Plano Anual sai por R$ 297,00 (metade do preço) e seus contatos continuam no seu celular. Posso te mandar o link?';
+}
+function ldWhatsApp(l) {
+  var d = String(l.whatsapp || '').replace(/\D/g, '');
+  if (d.length <= 11) d = '55' + d;
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(ldMensagem(l));
+}
+function ldLeads() { var c = ldCfg().leadsCache; return (c && c.leads && c.leads.slice) ? c.leads.slice(0) : []; }
+function abrirLeadsTeste() {
+  if (APP.user.plano !== 'criador') { showToast('Acesso restrito ao proprietário'); return; }
+  appGoScreen('as-leads', null, 'Leads do teste');
+  ldRender();
+  if (ldCfg().leadsUrl && ldCfg().leadsToken) ldAtualizar(true);
+}
+function ldSetFiltro(f) { _ldFiltro = f; ldRender(); }
+function ldRender() {
+  var cfg = ldCfg(), leads = ldLeads();
+  var lista = document.getElementById('ld-lista'), aviso = document.getElementById('ld-aviso'), sub = document.getElementById('ld-sub');
+  if (!lista) return;
+  leads.sort(function (a, b) { return String(b.data || b.inicio).localeCompare(String(a.data || a.inicio)); });
+  var ativos = leads.filter(function (l) { return ldSituacao(l).ativo; }).length;
+  sub.textContent = leads.length ? (leads.length + (leads.length === 1 ? ' lead' : ' leads') + ' · ' + ativos + ' em teste agora' +
+    (cfg.leadsCache && cfg.leadsCache.em ? ' · atualizado ' + ldData(cfg.leadsCache.em, true) : '')) : 'Quem pedir o teste grátis aparece aqui.';
+  var chips = document.querySelectorAll('#as-leads .ld-chip');
+  for (var c = 0; c < chips.length; c++) chips[c].className = 'ld-chip' + (chips[c].getAttribute('data-f') === _ldFiltro ? ' ativo' : '');
+  if (!cfg.leadsUrl || !cfg.leadsToken) {
+    aviso.innerHTML = '<div class="ld-aviso"><strong>Planilha ainda não ligada.</strong> Sem ela, cada teste fica só no celular de quem testou e não chega até você.' +
+      '<br>Siga o guia <em>COMO_LIGAR_A_PLANILHA</em> (5 minutos) e cole aqui o endereço e a senha.' +
+      '<button type="button" class="ld-btn ld-btn-pri" onclick="ldConfigurar()">⚙ Ligar planilha</button></div>';
+  } else aviso.innerHTML = '';
+  var vis = leads.filter(function (l) {
+    var s = ldSituacao(l);
+    return _ldFiltro === 'todos' || (_ldFiltro === 'ativos' && s.ativo) || (_ldFiltro === 'encerrados' && !s.ativo);
+  });
+  if (!vis.length) { lista.innerHTML = '<div class="ld-vazio">' + (leads.length ? 'Nenhum lead neste filtro.' : 'Nenhum lead ainda.') + '</div>'; return; }
+  lista.innerHTML = vis.map(function (l) {
+    var s = ldSituacao(l);
+    return '<div class="ld-card"><div class="ld-card-topo"><div class="ld-nome">' + ldEsc(l.nome) + '</div>' +
+      '<span class="ld-tag ' + (s.ativo ? 'ld-tag-ativo' : 'ld-tag-fim') + '">' + ldEsc(s.texto) + '</span></div>' +
+      '<div class="ld-linha">📱 ' + ldEsc(ldTel(l.whatsapp)) + '</div><div class="ld-linha">✉️ ' + ldEsc(l.email) + '</div>' +
+      '<div class="ld-linha ld-cinza">Cadastro: ' + ldData(l.data || l.inicio, true) + ' · Teste até ' + ldData(l.fim) + (l.origem ? ' · ' + ldEsc(l.origem) : '') + '</div>' +
+      '<div class="ld-botoes"><a class="ld-btn ld-btn-wa" href="' + ldEsc(ldWhatsApp(l)) + '" target="_blank" rel="noopener">💬 Chamar no WhatsApp</a>' +
+      '<a class="ld-btn" href="mailto:' + ldEsc(l.email) + '">✉️ E-mail</a></div></div>';
+  }).join('');
+}
+function ldAtualizar(silencioso) {
+  var cfg = ldCfg();
+  if (!cfg.leadsUrl || !cfg.leadsToken) { ldConfigurar(); return; }
+  var st = document.getElementById('ld-status');
+  if (st) st.textContent = 'Buscando na planilha…';
+  var url = cfg.leadsUrl + (cfg.leadsUrl.indexOf('?') >= 0 ? '&' : '?') + 'acao=listar&token=' + encodeURIComponent(cfg.leadsToken);
+  fetch(url, { method: 'GET', redirect: 'follow' }).then(function (r) { return r.json(); }).then(function (j) {
+    if (!j || !j.ok) throw new Error(j && j.erro === 'token' ? 'Senha da planilha não confere.' : 'Resposta inesperada da planilha.');
+    cfg.leadsCache = { em: new Date().toISOString(), leads: j.leads || [] };
+    saveAll();
+    if (st) st.textContent = '';
+    ldRender();
+    if (!silencioso) showToast('✅ ' + (j.leads || []).length + ' leads carregados');
+  }).catch(function (e) {
+    if (st) st.textContent = '';
+    showToast('⚠️ ' + (e && e.message && e.message.indexOf('Senha') === 0 ? e.message : 'Não consegui ler a planilha. Confira a internet e o endereço.'));
+  });
+}
+function ldConfigurar() {
+  var cfg = ldCfg();
+  document.getElementById('ld-cfg-url').value = cfg.leadsUrl || '';
+  document.getElementById('ld-cfg-token').value = cfg.leadsToken || '';
+  openModal('modal-ld-config');
+}
+function ldSalvarConfig() {
+  var u = document.getElementById('ld-cfg-url').value.replace(/^\s+|\s+$/g, '');
+  var t = document.getElementById('ld-cfg-token').value.replace(/^\s+|\s+$/g, '');
+  if (u && !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)) { showToast('⚠️ O endereço deve terminar em /exec (copie do Apps Script)'); return; }
+  var cfg = ldCfg(); cfg.leadsUrl = u; cfg.leadsToken = t;
+  saveAll(); closeModal('modal-ld-config'); ldRender();
+  if (u && t) ldAtualizar();
+}
+function ldExportarCSV() {
+  var leads = ldLeads();
+  if (!leads.length) { showToast('Nenhum lead para exportar'); return; }
+  var cab = ['Nome', 'WhatsApp', 'E-mail', 'Cadastro', 'Início do teste', 'Fim do teste', 'Dia do teste', 'Situação', 'Origem'];
+  function cel(v) { v = String(v == null ? '' : v); return '"' + v.replace(/"/g, '""') + '"'; }
+  var linhas = [cab.map(cel).join(';')].concat(leads.map(function (l) {
+    var s = ldSituacao(l);
+    return [l.nome, ldTel(l.whatsapp), l.email, ldData(l.data || l.inicio, true), ldData(l.inicio, true), ldData(l.fim, true),
+      s.ativo ? s.dia : 'encerrado', s.texto, l.origem || ''].map(cel).join(';');
+  }));
+  var blob = new Blob(['﻿' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'prospectarion-leads-do-teste-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.parentNode.removeChild(a);
+  showToast('CSV exportado ✓');
+}
+(function () {
+  var ini = initApp;
+  initApp = function () {
+    var r = ini.apply(this, arguments);
+    try { var it = document.getElementById('set-leads'); if (it) it.style.display = APP.user.plano === 'criador' ? '' : 'none'; } catch (e) {}
+    return r;
+  };
+})();
+/*CRIADOR-FIM*/
 /* ═══════════════════════════════════════════
    INICIALIZAÇÃO
 ═══════════════════════════════════════════ */
 loadAll();
-// V9.3.6 — aplicar tema + wallpaper imediatamente após loadAll
-(function() {
-  try {
-    var tema = (APP.user && APP.user.tema) ? APP.user.tema : 'laranja';
-    document.documentElement.setAttribute('data-tema', tema);
-  } catch(e) {}
-})();
-// Wallpaper será aplicado pelo initApp() → wpAplicarCSS()
 
 // ── SPLASH SCREEN DE BOAS-VINDAS ──────────────────────
 // Aparece para todos na primeira abertura do link
@@ -8954,6 +9688,13 @@ function mostrarSplash() {
     ">
       📂 Já uso o PROSPECTARION — Restaurar meus dados
     </button>
+    <button type="button" class="inst-splash inst-botao" onclick="instInstalar()" style="
+      width:100%;max-width:320px;padding:12px;margin:-8px 0 18px;
+      background:transparent;color:#1A1A1A;border:none;border-radius:12px;
+      font-size:15px;font-weight:700;cursor:pointer;text-decoration:underline;
+    ">
+      📲 Instalar na tela inicial
+    </button>
     <div style="font-size:12px;color:#9CA3AF;display:flex;align-items:center;justify-content:center;gap:5px">
       🔒 Seguro · Privado · Seus dados ficam no seu celular
     </div>
@@ -8994,7 +9735,9 @@ SEC.init();
 if(APP.user.plano && APP.user.codigo) {
   showModulo('mod-app');
   initApp();
-}
+}/*CRIADOR-INICIO*/
+cofreIniciar(); // V10.4.2: o cofre abre antes de qualquer tela do criador
+/*CRIADOR-FIM*/
 </script>
 </body>
 </html>

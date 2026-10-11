@@ -1956,6 +1956,7 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
   background: #F26419; color: #fff; font-size: 17px; font-weight: 800; font-family: inherit;
 }
 
+
 /* ═══════════════════════════════════════════
    V10.2 — EDIÇÃO HOSPEDADA (degustação / demonstração)
    Tema único claro (branco + laranja da marca), por escolha.
@@ -2761,6 +2762,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
       </div>
       <button type="button" class="inst-cartao inst-botao" onclick="instInstalar()"><span class="inst-cartao-icone" aria-hidden="true">📲</span><span class="inst-cartao-txt"><strong>Instalar na tela inicial</strong><small>Abra o PROSPECTARION com um toque, como um app</small></span><span class="inst-cartao-seta" aria-hidden="true">›</span></button>
       <div class="section-title">Configurações</div>
+      
       <div class="stat-card" style="padding:0 14px;border-radius:var(--r)">
         <div class="settings-item" onclick="editarPerfil()"><div class="settings-icon">👤</div><div style="flex:1"><div class="settings-label">Meu perfil</div><div class="settings-sub">Perfil profissional, foto e redes</div></div><div class="settings-arrow">›</div></div>
         <div class="settings-item" onclick="exportarDados()"><div class="settings-icon">📤</div><div style="flex:1"><div class="settings-label">Exportar dados</div><div class="settings-sub">Baixar contatos em CSV</div></div><div class="settings-arrow">›</div></div>
@@ -4257,7 +4259,51 @@ function pubAtivarCodigo() {
   document.getElementById('tela-sucesso-pag').classList.add('open');
 }
 
+/* ═══ V10.4.2 — PLANO SÓ VALE COM CÓDIGO VÁLIDO (edições de clientes) ═══
+   Plano criador/livre não existe para clientes; plano pago precisa do código de ativação
+   assinado; teste grátis tem no máximo 3 dias. Plano inválido só volta para a tela de planos:
+   nenhum dado é apagado. */
+function pubLicencasValidas(plano, licencas, codigo) {
+  if (typeof licAssinatura !== 'function' || !licencas || !licencas.slice) return null;
+  var lista = [], achou = false, i;
+  for (i = 0; i < licencas.length; i++) {
+    var l = licLimpar(licencas[i]);
+    if (l.length !== 10 || !LIC_PLANOS[l.charAt(0)]) continue;
+    var dia = licDeTexto(l.substr(1, 3));
+    if (dia < 0 || licAssinatura(l.charAt(0), dia) !== l.substr(4)) continue;
+    lista.push({ plano: LIC_PLANOS[l.charAt(0)], dia: dia });
+    if (LIC_PLANOS[l.charAt(0)] === plano && codigo === 'XK' + l.substr(4)) achou = true;
+  }
+  return achou ? lista : null;
+}
+function pubPlanoValido(u) {
+  if (!u || !u.plano || !u.codigo) return true;
+  var agora = Date.now(), exp = u.exp ? new Date(u.exp).getTime() : 0;
+  if (PROSP_EDICAO === 'demo') return (u.plano === 'livre' && u.codigo === 'LIVRE-DEMO') || u.plano === 'trial';
+  if (u.plano === 'trial') {
+    if (!/^TRIAL-[A-Z0-9]{1,10}$/.test(String(u.codigo))) return false;
+    return !!exp && exp - agora <= (TRIAL.DIAS + 0.2) * 86400000;
+  }
+  if (PROSP_EDICAO !== 'classico') return false;
+  if (u.plano !== 'mensal' && u.plano !== 'semestral' && u.plano !== 'anual' && u.plano !== 'vitalicio') return false;
+  var lista = pubLicencasValidas(u.plano, u.licencas, u.codigo);
+  if (!lista) return false;
+  if (u.plano === 'vitalicio') return true;
+  if (!exp) return false;
+  /* vencimento máximo possível com os códigos ativados: emissão mais recente + soma dos meses (renovações somam) */
+  var maxDia = 0, meses = 0, i;
+  for (i = 0; i < lista.length; i++) { if (lista[i].dia > maxDia) maxDia = lista[i].dia; meses += LIC_MESES[lista[i].plano] || 0; }
+  var d = licDataDoDia(maxDia);
+  return exp <= new Date(d.getFullYear(), d.getMonth() + meses, d.getDate() + 2).getTime();
+}
+function pubPlanoSeguro() {
+  if (!APP || !APP.user || pubPlanoValido(APP.user)) return false;
+  APP.user.plano = ''; APP.user.codigo = ''; APP.user.exp = '';
+  return true;
+}
+
 var PUB_TELAS = [];
+
 /* ═══════════════════════════════════════════
    V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
    Android/Chrome: abre a instalação do próprio celular com um toque.
@@ -4575,6 +4621,8 @@ function loadAll() {
     if (d.perfil && typeof d.perfil === 'object' && !Array.isArray(d.perfil)) APP.perfil = Object.assign(_pfPerfilPadrao(), d.perfil);
     if (Array.isArray(d.redes))         APP.redes         = d.redes;
     if (Array.isArray(d.conteudo))      APP.conteudo      = d.conteudo;
+    /* V10.4.2: campos que esta versão não conhece continuam guardados */
+    for (var _pk in d) { if (Object.prototype.hasOwnProperty.call(d, _pk) && !(_pk in APP)) APP[_pk] = d[_pk]; }
     // ── Restaurar APP.dashboard completo (metas, prioridades, marketing, activities) ──
     // Estratégia: substituição direta de cada campo salvo.
     // initDashboard() rodará depois e apenas preencherá campos AUSENTES — nunca sobrescreverá.
@@ -6575,6 +6623,7 @@ function exportarBackupJSON() {
       return;
     }
 
+    
     // 5. Montar JSON de exportação: _meta + dados originais integralmente
     const agora = new Date();
     const dataISO = agora.toISOString();
@@ -6636,6 +6685,7 @@ function enviarBackupWhatsApp() {
     }
 
     if (_leituraFalhou || !dados || typeof dados !== 'object' || Array.isArray(dados)) { showToast('Dados inválidos'); return; }
+    
 
     /* Baixar arquivo JSON */
     var agora   = new Date();
@@ -6769,7 +6819,11 @@ function confirmarRestauracaoBackup() {
 
     // ── Restaurar campo a campo (sem alterar funções existentes) ──
     if (backup.user && typeof backup.user === 'object') {
+      var _pubAntes = { plano: APP.user.plano, codigo: APP.user.codigo, exp: APP.user.exp, licencas: APP.user.licencas, trialUsado: APP.user.trialUsado, leadTeste: APP.user.leadTeste };
       Object.assign(APP.user, backup.user);
+      if (_pubAntes.trialUsado) APP.user.trialUsado = true;
+      if (_pubAntes.leadTeste && !APP.user.leadTeste) APP.user.leadTeste = _pubAntes.leadTeste;
+      if (!pubPlanoValido(APP.user)) { APP.user.plano = _pubAntes.plano; APP.user.codigo = _pubAntes.codigo; APP.user.exp = _pubAntes.exp; APP.user.licencas = _pubAntes.licencas; } // V10.4.2
     }
     if (Array.isArray(backup.contacts))     APP.contacts     = backup.contacts;
     if (Array.isArray(backup.deals))        APP.deals        = backup.deals;
@@ -8338,7 +8392,8 @@ function salvarVisitaRapida() {
 /* ── Controle de tentativas de login ── */
 const _loginCtrl = { attempts: 0, blockedUntil: 0 };
 
-function admLogin(){
+function admLogin(){ return; // V10.4.2: painel do criador fora das edições de clientes
+
   const now = Date.now();
 
   // Verificar bloqueio temporário
@@ -9649,6 +9704,7 @@ try { if (!localStorage.getItem('prospectarionAll_demo')) localStorage.setItem('
    INICIALIZAÇÃO
 ═══════════════════════════════════════════ */
 loadAll();
+try { pubPlanoSeguro(); } catch (e) {} // V10.4.2: plano só vale com código válido
 
 // ── SPLASH SCREEN DE BOAS-VINDAS ──────────────────────
 // Aparece para todos na primeira abertura do link

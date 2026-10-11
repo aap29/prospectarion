@@ -2,7 +2,7 @@
    Com internet: busca a versão mais nova e guarda uma cópia.
    Sem internet: abre a última cópia guardada. Os dados do cliente
    ficam no aparelho e nunca passam por aqui. */
-var CACHE = 'prospectarion-v10-4-1';
+var CACHE = 'prospectarion-v10-4-2';
 var ARQUIVOS = ['app.html', 'demo.html', 'teste.html', 'manifest-app.webmanifest', 'manifest-demo.webmanifest', 'manifest-teste.webmanifest', 'icone-192.png', 'icone-512.png'];
 
 /* Endereço curto (…/teste) e completo (…/teste.html) usam a mesma cópia guardada */
