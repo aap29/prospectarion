@@ -1998,6 +1998,10 @@ body.cofre-travado { overflow: hidden; }
 .cofre-tag { font-size: 11px; font-weight: 800; color: #059669; background: #ECFDF5; border-radius: 10px; padding: 2px 8px; }
 .cofre-mini { min-height: 40px; padding: 6px 12px; border-radius: 10px; border: 1.5px solid #FCA5A5; background: #fff; color: #B91C1C; font-weight: 800; cursor: pointer; }
 .cofre-botao:focus-visible, .cofre-link:focus-visible, .cofre-mini:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+.cofre-mestra-nova { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 900; letter-spacing: 1px; text-align: center; color: #C2410C; background: #FFF3EC; border: 2px dashed #F26419; border-radius: 12px; padding: 14px 8px; margin: 6px 0 14px; word-break: break-all; user-select: text; -webkit-user-select: text; }
+.cofre-codigo { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
+.cofre-aviso-troca { margin-top: 14px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 14px; line-height: 1.5; }
+.cofre-aviso-troca .cofre-mini { display: block; margin-top: 8px; border-color: #F59E0B; color: #92400E; }
 /*CRIADOR-FIM*/
 </style>
 </head>
@@ -3779,9 +3783,20 @@ function cofreEmailOk(email) {
   for (var i = 0; i < COFRE_CFG.emails.length; i++) if (cfIgual(h, COFRE_CFG.emails[i])) return true;
   return false;
 }
+/* V10.4.3: a Chave Mestra abre um "envelope" com a chave do cofre. Trocar a Chave Mestra troca só o envelope:
+   aparelhos identificados, senha e perguntas continuam valendo. */
 function cofreChaveDaMestra(mestra) {
-  var k = cfPbkdf2(cfBytes(cofreNormMestra(mestra)), cfDeHex(COFRE_CFG.mestra.sal), COFRE_CFG.mestra.iter);
-  return cfIgual(cfHex(cfSha256(k)), COFRE_CFG.mestra.verif) ? k : null;
+  var env = COFRE_CFG.mestra;
+  var d = cfPbkdf2(cfBytes(cofreNormMestra(mestra)), cfDeHex(env.sal), env.iter);
+  var k = env.kenc ? cfXor(cfDeHex(env.kenc), d) : d;
+  return cfIgual(cfHex(cfSha256(k)), env.verif) ? k : null;
+}
+var COFRE_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+function cofreNovaMestra() {
+  var b = cfAleatorio(40), s = '', i;
+  for (i = 0; i < b.length && s.length < 20; i++) if (b[i] < 248) s += COFRE_ALFA.charAt(b[i] % 31);
+  while (s.length < 20) s += COFRE_ALFA.charAt(cfAleatorio(1)[0] % 31);
+  return s.substr(0, 4) + '-' + s.substr(4, 4) + '-' + s.substr(8, 4) + '-' + s.substr(12, 4) + '-' + s.substr(16, 4);
 }
 function cofreToken() {
   var t = '';
@@ -4076,6 +4091,8 @@ function cofrePainel() {
     '<ul class="cofre-lista">' + lista + '</ul>' +
     '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
     '<button type="button" class="cofre-botao" onclick="cofreTrocarSenha()">Trocar senha</button>' +
+    '<button type="button" class="cofre-botao" onclick="cofreTrocarMestra()">Trocar Chave Mestra</button>' +
+    cofreTrocaPendenteHtml() +
     '<button type="button" class="cofre-botao" onclick="cofreTravar()">Travar agora</button>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreFecharPainel()">Voltar ao app</button>');
 }
@@ -4135,6 +4152,52 @@ admLogin = function () {
   document.getElementById('adm-painel').style.display = 'block';
   try { admInit(); } catch (e) {}
 };
+
+/* ── V10.4.3: trocar a Chave Mestra ──
+   A chave nova nasce neste aparelho e só aparece para o criador. O "código de troca" leva só o envelope
+   (não revela a chave nem a senha); depois de publicado, a chave antiga deixa de abrir o modo segurança. */
+function cofreTrocaPendenteHtml() {
+  var t = APP.criador && APP.criador.trocaMestra;
+  if (!t) return '';
+  if (COFRE_CFG.mestra.kenc === t.kenc) { delete APP.criador.trocaMestra; try { saveAll(); } catch (e) {} return ''; }
+  return '<div class="cofre-aviso-troca"><strong>Troca de Chave Mestra aguardando publicação</strong><br>Feita em ' + new Date(t.em).toLocaleDateString('pt-BR') +
+    '. Até ser publicada, a chave antiga continua valendo.<button type="button" class="cofre-mini" onclick="cofreCopiarTroca()">Copiar código de troca</button></div>';
+}
+function cofreCodigoTroca(env) { return 'PROSP-MESTRA:' + btoa(JSON.stringify(env)); }
+function cofreCopiarTroca() {
+  var t = APP.criador && APP.criador.trocaMestra; if (!t) return;
+  var cod = cofreCodigoTroca({ sal: t.sal, iter: t.iter, kenc: t.kenc, verif: t.verif });
+  function ok() { try { showToast('✅ Código de troca copiado'); } catch (e) {} }
+  try { navigator.clipboard.writeText(cod).then(ok, function () { cofreMostrarCodigo(cod); }); } catch (e) { cofreMostrarCodigo(cod); }
+}
+function cofreMostrarCodigo(cod) {
+  var a = document.getElementById('cofre-codigo-troca'); if (a) { a.value = cod; a.select(); }
+}
+function cofreTrocarMestra() {
+  cofreTela('<div class="cofre-icone">🗝️</div><h1>Trocar Chave Mestra</h1><p class="cofre-sub">Confirme com a sua senha. A chave nova é criada neste aparelho e só você vai ver. Seus aparelhos, senha e perguntas continuam valendo.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreTrocarMestraConfere()">Criar Chave Mestra nova</button>' +
+    '<button type="button" class="cofre-link" onclick="cofrePainel()">Voltar</button>');
+}
+function cofreTrocarMestraConfere() {
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = cofreAbrirComSenha(s); if (!k) { cofreErro(); cofreAviso('Senha não confere.'); return; }
+    var nova = cofreNovaMestra(), sal = cfHex(cfAleatorio(16)), iter = COFRE_CFG.mestra.iter || 60000;
+    var d = cfPbkdf2(cfBytes(cofreNormMestra(nova)), cfDeHex(sal), iter);
+    var env = { sal: sal, iter: iter, kenc: cfHex(cfXor(k, d)), verif: cfHex(cfSha256(k)) };
+    APP.criador.trocaMestra = { sal: env.sal, iter: env.iter, kenc: env.kenc, verif: env.verif, em: new Date().toISOString() };
+    saveAll();
+    cofreTela('<div class="cofre-icone">🗝️</div><h1>Sua Chave Mestra nova</h1>' +
+      '<p class="cofre-sub">Anote agora no papel. Ela só aparece esta vez.</p>' +
+      '<div class="cofre-mestra-nova" id="cofre-mestra-nova">' + cofreEsc(nova) + '</div>' +
+      '<p class="cofre-sub" style="text-align:left">Para valer em todos os aparelhos, a troca precisa ser publicada: copie o <strong>código de troca</strong> abaixo e envie para quem publica as atualizações do PROSPECTARION. O código não revela a chave.</p>' +
+      '<textarea class="cofre-campo cofre-codigo" id="cofre-codigo-troca" readonly rows="4">' + cofreEsc(cofreCodigoTroca(env)) + '</textarea>' +
+      '<button type="button" class="cofre-botao cofre-principal" onclick="cofreCopiarTroca()">Copiar código de troca</button>' +
+      '<button type="button" class="cofre-botao" onclick="cofrePainel()">Já anotei a chave nova</button>');
+  });
+}
 /*CRIADOR-FIM*/
 /* ═══════════════════════════════════════════
    V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
