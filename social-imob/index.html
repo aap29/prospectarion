@@ -186,6 +186,19 @@ table.mt td:last-child{border-radius:0 4px 4px 0}
 table.mt td .pill{width:100%}
 table.mt tr.tot td{background:transparent;font-size:12px;color:var(--mut)}
 .chk{width:20px;height:20px;accent-color:var(--ok)}
+/* Planilha compacta (v3.8.2): tudo cabe sem rolar para o lado */
+table.mt{min-width:0;border-spacing:0 3px}
+table.mt th{font-size:11px;padding:2px 3px}
+table.mt td{padding:3px;font-size:13px}
+table.mt td.nm{min-width:0;padding:8px 10px;font-size:13.5px;line-height:1.3;overflow-wrap:break-word}
+table.mt td.nm small.fm,table.mt th .sh{display:none}
+table.mt td .pill{width:auto;min-width:0;max-width:100%;padding:4px 8px;font-size:11.5px;border-radius:6px;overflow:hidden;text-overflow:ellipsis}
+.pill.ph{gap:4px}.pill.ph i{font-style:normal;font-size:12px}
+table.mt td.fmt{font-size:12px;color:var(--mut);white-space:nowrap}
+table.mt td.mono{font-size:12px;white-space:nowrap}
+table.mt .chk{width:18px;height:18px}
+@media (max-width:560px){ table.mt .c-fmt,table.mt th .lg{display:none} table.mt th .sh{display:inline} table.mt td.nm small.fm{display:block;font-size:11px;color:var(--mut);margin-top:2px} table.mt td,table.mt th{padding-left:2px;padding-right:2px} }
+@media (max-width:700px){ table.mt .pill.ph .rt{display:none} table.mt .pill.ph{padding:4px 6px} table.mt .pill.ph i{font-size:14px} table.mt td.nm{font-size:13px;padding:7px 8px} table.mt td .pill{font-size:11px;padding:3px 6px} }
 
 /* Painel tipo mLabs */
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:14px}
@@ -322,7 +335,7 @@ body.dev-celular .g30{grid-template-columns:repeat(2,1fr)}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '3.8.1';
+var APP_VER = '3.8.2';
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob/';
 var DB_NAME = 'SOCIAL_IMOB_360_PRO';
 var DB_VER = 1; // nunca aumentar: protege os dados já salvos
@@ -509,6 +522,7 @@ function criarPerfil(d){
 function corRede(r){ return (REDES[r]||{cor:'#9AA0AA'}).cor; }
 function redeDe(c){ return c.rede || (c.formato==='YouTube'||c.formato==='Shorts' ? 'YouTube' : c.formato==='Post GMN' ? 'Google' : 'Instagram'); }
 function pill(txt, cor, cls){ var light = cor==='#C4C4C4' || cor==='#FDAB3D' || cor==='#FFB38A'; return '<span class="pill '+(cls||'')+(light?' light':'')+'" style="background:'+cor+'">'+esc(txt)+'</span>'; }
+function pillH(ic, txt, cor){ var light = cor==='#C4C4C4' || cor==='#FDAB3D' || cor==='#FFB38A'; return '<span class="pill ph'+(light?' light':'')+'" style="background:'+cor+'" title="'+esc(txt)+'"><i>'+esc(ic||'')+'</i><span class="rt">'+esc(txt)+'</span></span>'; }
 function pillEtapa(c, sm){ var e = atrasado(c) ? 'Atrasado' : c.etapa; return pill(e, atrasado(c) ? '#E2445C' : ETAPA_COR[c.etapa], sm?'sm':''); }
 function copiar(txt){
   if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ toast('Copiado ✔'); }, function(){ copiarFallback(txt); }); }
@@ -1695,11 +1709,11 @@ function vPlanilha(){
     var cs = lst.filter(function(c){ return c.etapa===e; }).sort(ordemData);
     if(!cs.length) return;
     var cor = e==='Ideia' ? '#8A8F99' : ETAPA_COR[e];
-    s += '<div class="grp"><div class="grp-h" style="color:'+cor+'">'+e+' <span class="cnt">'+cs.length+'</span></div><div class="tbl-wrap"><table class="mt"><tr><th>Conteúdo</th><th>Perfil</th><th>Rede</th><th>Formato</th><th>Status</th><th>Data</th><th>Publicado</th></tr>';
+    s += '<div class="grp"><div class="grp-h" style="color:'+cor+'">'+e+' <span class="cnt">'+cs.length+'</span></div><div class="tbl-wrap"><table class="mt"><tr><th>Conteúdo</th><th>Perfil</th><th>Rede</th><th class="c-fmt">Formato</th><th>Status</th><th>Data</th><th><span class="lg">Publicado</span><span class="sh">✓</span></th></tr>';
     cs.slice(0,150).forEach(function(c){
       var p = perfil(c.perfil), r = redeDe(c);
-      s += '<tr><td class="nm" data-open="'+c.id+'" style="border-left-color:'+cor+'">'+esc(c.titulo||'(sem título)')+(c.perene?' ♻️':'')+'</td>'+
-        '<td>'+pill(p.ic+' '+p.nome.split(' ')[0], p.cor)+'</td><td>'+pill(r, corRede(r))+'</td><td>'+esc(c.formato)+'</td><td>'+pillEtapa(c)+'</td><td class="mono">'+dataCurta(c.data)+'</td>'+
+      s += '<tr><td class="nm" data-open="'+c.id+'" style="border-left-color:'+cor+'">'+esc(c.titulo||'(sem título)')+(c.perene?' ♻️':'')+'<small class="fm">'+esc(c.formato)+'</small></td>'+
+        '<td>'+pillH(p.ic, p.nome.split(' ')[0], p.cor)+'</td><td>'+pillH((REDES[r]||{}).ic||'⭐', r, corRede(r))+'</td><td class="fmt c-fmt">'+esc(c.formato)+'</td><td>'+pillEtapa(c)+'</td><td class="mono">'+dataCurta(c.data)+'</td>'+
         '<td><input type="checkbox" class="chk" data-pub="'+c.id+'" '+(c.etapa==='Publicado'?'checked':'')+'></td></tr>';
     });
     s += '</table></div>'+(cs.length>150?'<div class="empty">Mostrando 150 de '+cs.length+'. Use a busca.</div>':'')+'</div>';
