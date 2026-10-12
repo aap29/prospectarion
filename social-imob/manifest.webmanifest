@@ -7,12 +7,27 @@
  "scope": "./",
  "display": "standalone",
  "orientation": "any",
- "background_color": "#F7F4EC",
- "theme_color": "#F2552C",
+ "background_color": "#F3F9FF",
+ "theme_color": "#00A9FC",
  "lang": "pt-BR",
  "icons": [
-  {"src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-  {"src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-  {"src": "icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  {
+   "src": "icone-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icone-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icone-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
  ]
 }
