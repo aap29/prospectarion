@@ -41,7 +41,8 @@ img.logo{background:none;object-fit:cover}
 body.standalone #btnInstalar{display:none}
 .redes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
 .rede-card{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
-.rede-card .ri{font-size:26px;flex:none}.rede-card .t{font-weight:700}.rede-card.add{border-style:dashed;background:#FFF8F3}
+.rede-card .ri{font-size:26px;flex:none}
+.rede-grupo{margin-top:12px}.rede-head{display:flex;gap:10px;align-items:center;border-left:5px solid;padding:4px 0 4px 10px}.rede-head b{flex:1;font-size:16px}.rede-card .t{font-weight:700}.rede-card.add{border-style:dashed;background:#FFF8F3}
 .tabs{display:flex;gap:2px;overflow-x:auto;padding:0 12px;max-width:1280px;margin:0 auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{flex:none;background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px 9px;cursor:pointer;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px;font-weight:600}
@@ -233,7 +234,7 @@ body.dev-celular .g30{grid-template-columns:repeat(2,1fr)}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '3.4.0';
+var APP_VER = '3.5.0';
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob/';
 var DB_NAME = 'SOCIAL_IMOB_360_PRO';
 var DB_VER = 1; // nunca aumentar: protege os dados já salvos
@@ -251,6 +252,19 @@ var REDES = {
   'Google':{cor:'#FDAB3D', lim:1500, ic:'📍'}
 };
 var REDE_NOMES = Object.keys(REDES);
+var CATALOGO_REDES = [
+  {nome:'Threads', cor:'#101010', lim:500, ic:'🧵'}, {nome:'X (Twitter)', cor:'#1D1D1D', lim:280, ic:'✖️'},
+  {nome:'Pinterest', cor:'#E60023', lim:500, ic:'📌'}, {nome:'Kwai', cor:'#FF7700', lim:2200, ic:'🎬'},
+  {nome:'Blog', cor:'#F57D00', lim:100000, ic:'📝'}, {nome:'Site', cor:'#5559DF', lim:100000, ic:'🌐'},
+  {nome:'Spotify', cor:'#1DB954', lim:4000, ic:'🎧'}, {nome:'SoundCloud', cor:'#FF5500', lim:4000, ic:'☁️'},
+  {nome:'Telegram', cor:'#2AABEE', lim:4096, ic:'✈️'}, {nome:'E-mail / Newsletter', cor:'#784BD1', lim:100000, ic:'✉️'}
+];
+function registrarRede(d){ if(!d || !d.nome || REDES[d.nome]) return false; REDES[d.nome] = {cor:d.cor||'#9AA0AA', lim:+d.lim||5000, ic:d.ic||'⭐'}; REDE_NOMES.push(d.nome); return true; }
+function garantirRede(nome){
+  if(REDES[nome]) return;
+  var d = CATALOGO_REDES.filter(function(x){ return x.nome===nome; })[0] || {nome:nome, cor:'#9AA0AA', lim:5000, ic:'⭐'};
+  registrarRede(d); S.cfg.redesExtra = (S.cfg.redesExtra||[]).filter(function(x){ return x.nome!==d.nome; }).concat([d]);
+}
 var CAMP_STATUS = {'Nova':'#C4C4C4','Parado':'#E2445C','Comentários':'#FDAB3D','Em espera':'#333333','Aprovado':'#00C875','Concluída':'#0086C0'};
 var CAMP_GRUPOS = [['Novas campanhas',['Nova','Em espera','Parado'],'#579BFC'],['Em progresso',['Comentários','Aprovado'],'#1F4E8C'],['Concluídas',['Concluída'],'#00C875']];
 var DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -258,6 +272,7 @@ var DIAS_L = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 var MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 /* ---------- Guia das redes (padrões de referência) ---------- */
+function guia(r){ return GUIA[r] || {formatos:[['Publicação','Conforme a rede','Confira os tamanhos atuais na central de ajuda desta rede.']], texto:'Limite de texto cadastrado: '+((REDES[r]||{}).lim||'—')+' caracteres.', sinais:['Alcance','Interações (curtidas, comentários, compartilhamentos)','Cliques no link','Leads gerados'], horarios:'Sem padrão cadastrado para esta rede: registre os resultados dos posts e o app mostra seus melhores dias e horários.', dicas:['Mantenha constância semanal','Termine sempre com uma única chamada para ação','Reaproveite o conteúdo que melhor performou nas outras redes']}; }
 var GUIA = {
   'Instagram':{
     formatos:[['Reels','1080×1920 (9:16)','Até 3 min. Capa 1080×1920; no grade aparece em 3:4. Deixe texto longe das bordas (área segura central).'],
@@ -320,7 +335,14 @@ var PERFIS_EXTRA = [
   {k:'kennyilu', nome:'Kenny Ilustrador', arroba:'@kennyiluatrador', rede:'Instagram', cor:'#FDAB3D', cta:'', assinatura:'', ic:'🎨'},
   {k:'kennyacu', nome:'Kenny Acústico 29', arroba:'@kennyacustico29', rede:'Instagram', cor:'#7E3B8A', cta:'', assinatura:'', ic:'🎸'},
   {k:'saxruas', nome:'Sax nas Ruas', arroba:'@saxnasruas', rede:'Instagram', cor:'#FF642E', cta:'', assinatura:'', ic:'🎷'},
-  {k:'acu29', nome:'Acústico 29 Oficial', arroba:'@acustico29oficial', rede:'Instagram', cor:'#037F4C', cta:'', assinatura:'', ic:'🎤'}
+  {k:'acu29', nome:'Acústico 29 Oficial', arroba:'@acustico29oficial', rede:'Instagram', cor:'#037F4C', cta:'', assinatura:'', ic:'🎤'},
+  {k:'yt1', nome:'Anderson Alves Consórcio (canal principal)', arroba:'@andersonalvesconsorcio.invest', rede:'YouTube', cor:'#FF642E', cta:'Inscreva-se e comente sua dúvida', assinatura:'', ic:'▶️'},
+  {k:'yt2', nome:'Corretor Anderson Alves RS', arroba:'@corretorandersonalvesrs', rede:'YouTube', cor:'#E2445C', cta:'Inscreva-se e comente sua dúvida', assinatura:'', ic:'▶️'},
+  {k:'gmncorretor', nome:'Corretor Anderson Alves Investimentos Imobiliários', arroba:'Corretor Anderson Alves (Google)', rede:'Google', cor:'#FDAB3D', cta:'Ligue ou chame no WhatsApp (51) 98416-8848', assinatura:'', ic:'📍'},
+  {k:'gmnme', nome:'Marca & Estratégia', arroba:'Marca & Estratégia (Google)', rede:'Google', cor:'#CAB641', cta:'Peça seu diagnóstico gratuito', assinatura:'', ic:'📍'},
+  {k:'gmnkenny', nome:'Kenny Sax29', arroba:'Kenny Sax29 (Google)', rede:'Google', cor:'#BB3354', cta:'Consulte datas para o seu evento', assinatura:'', ic:'📍'},
+  {k:'wpp', nome:'WhatsApp Business', arroba:'(51) 98416-8848', rede:'WhatsApp', cor:'#00C875', cta:'', assinatura:'', ic:'💬'},
+  {k:'blog', nome:'Estratégia e Lucro (Blogger)', arroba:'estrategiaelucro.blogspot.com', rede:'Blog', cor:'#F57D00', cta:'', assinatura:'', ic:'📝'}
 ];
 var PADRAO = {
   perfis: [
@@ -456,10 +478,11 @@ function carregar(){
     Object.keys(PADRAO).forEach(function(k){ if(S.cfg[k]==null) S.cfg[k] = JSON.parse(JSON.stringify(PADRAO[k])); });
     S.cfg.perfis.forEach(function(p){ var d = PADRAO.perfis.filter(function(x){ return x.k===p.k; })[0]; if(d && !p.ic) p.ic = d.ic; if(!p.rede) p.rede = 'Instagram'; });
     aplicarDevice();
+    (S.cfg.redesExtra||[]).forEach(registrarRede);
     var add = 0;
     PERFIS_EXTRA.forEach(function(d){
       var ja = S.cfg.perfis.some(function(p){ return p.k===d.k || norm(p.arroba)===norm(d.arroba); });
-      if(!ja && (S.cfg.perfisRemovidos||[]).indexOf(d.k)<0){ S.cfg.perfis.push(JSON.parse(JSON.stringify(d))); S.cfg.hashtags[d.k] = S.cfg.hashtags[d.k]||''; add++; }
+      if(!ja && (S.cfg.perfisRemovidos||[]).indexOf(d.k)<0){ garantirRede(d.rede); S.cfg.perfis.push(JSON.parse(JSON.stringify(d))); S.cfg.hashtags[d.k] = S.cfg.hashtags[d.k]||''; add++; }
     });
     if(!c || add) return salvarCfg();
   });
@@ -615,13 +638,33 @@ function itemConteudo(c){
 
 /* ---------- PAINEL (estilo mLabs) ---------- */
 function minhasRedes(){
-  var s = '<div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">🌐 Minhas Redes <span class="m">('+S.cfg.perfis.length+')</span></h2><button class="btn sm" data-act="gerenciarRedes">⚙️ Gerenciar</button></div><div class="redes-grid">';
-  S.cfg.perfis.forEach(function(p){
-    var n = S.conteudos.filter(function(c){ return c.perfil===p.k; }).length;
-    s += '<div class="rede-card" data-verperfil="'+p.k+'" style="border-left:5px solid '+p.cor+'"><b class="ri">'+((REDES[p.rede||'Instagram']||{}).ic||'⭐')+'</b><div class="grow" style="min-width:0"><div class="t">'+esc(p.rede||'Instagram')+'</div><div class="m" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.arroba)+'</div></div><span class="m">'+n+'</span></div>';
+  var grupos = {}, ordem = [];
+  S.cfg.perfis.forEach(function(p){ var r = p.rede||'Instagram'; if(!grupos[r]){ grupos[r]=[]; ordem.push(r); } grupos[r].push(p); });
+  ordem.sort(function(a,b){ return REDE_NOMES.indexOf(a)-REDE_NOMES.indexOf(b); });
+  var s = '<div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">🌐 Minhas Redes <span class="m">('+ordem.length+' redes · '+S.cfg.perfis.length+' perfis)</span></h2><button class="btn sm" data-act="gerenciarRedes">⚙️ Gerenciar</button></div>';
+  ordem.forEach(function(r){
+    var R = REDES[r]||{ic:'⭐',cor:'#9AA0AA'};
+    s += '<div class="rede-grupo"><div class="rede-head" style="border-color:'+R.cor+'"><b>'+R.ic+' '+esc(r)+'</b><span class="m">'+grupos[r].length+(grupos[r].length===1?' perfil':' perfis')+'</span><button class="btn sm" data-addperfil="'+esc(r)+'">➕ Perfil</button></div><div class="redes-grid">';
+    grupos[r].forEach(function(p){
+      var n = S.conteudos.filter(function(c){ return c.perfil===p.k; }).length;
+      s += '<div class="rede-card" data-verperfil="'+p.k+'" style="border-left:5px solid '+p.cor+'"><b class="ri">'+R.ic+'</b><div class="grow" style="min-width:0"><div class="t" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.arroba)+'</div><div class="m" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.nome)+'</div></div><span class="m">'+n+'</span></div>';
+    });
+    s += '</div></div>';
   });
-  s += '<div class="rede-card add" data-act="adicionarRede"><b class="ri">➕</b><div class="grow"><div class="t">Adicionar rede</div><div class="m">Instagram, TikTok, YouTube…</div></div></div></div></div>';
+  s += '<button class="btn acc" data-act="novaRede" style="width:100%;margin-top:12px">➕ Adicionar rede social</button></div>';
   return s;
+}
+function telaNovaRede(){
+  var usadas = {}; S.cfg.perfis.forEach(function(p){ usadas[p.rede||'Instagram']=1; });
+  var opts = REDE_NOMES.concat(CATALOGO_REDES.map(function(x){ return x.nome; }).filter(function(n){ return REDE_NOMES.indexOf(n)<0; }));
+  abrirModal('<div class="mh"><h2>➕ Adicionar rede social</h2><button class="btn sm ghost x" data-act="fechar">✕</button></div>'+
+    '<p class="sub">Escolha a rede e cadastre o primeiro perfil dela. Depois, use “➕ Perfil” no grupo da rede para incluir outros perfis.</p>'+
+    '<label class="f">Rede</label><select id="nrRede">'+opts.map(function(n){ var ic=(REDES[n]||CATALOGO_REDES.filter(function(x){return x.nome===n;})[0]||{}).ic||'⭐'; return '<option value="'+esc(n)+'">'+ic+' '+esc(n)+(usadas[n]?' (já tem perfis)':'')+'</option>'; }).join('')+'<option value="__outra">✏️ Outra rede (digitar nome)</option></select>'+
+    '<div id="nrOutraBox" style="display:none"><div class="grid2"><div><label class="f">Nome da rede</label><input type="text" id="nrNome" placeholder="Ex.: Kwai, Twitch, Behance"></div><div><label class="f">Ícone (emoji)</label><input type="text" id="nrIc" value="⭐" maxlength="4"></div></div></div>'+
+    '<div class="grid2"><div><label class="f">@ ou nome do perfil</label><input type="text" id="nrArroba" placeholder="@meuperfil"></div><div><label class="f">Nome (marca)</label><input type="text" id="nrMarca"></div></div>'+
+    '<label class="f">Cor</label><input type="color" id="nrCor" value="'+proximaCor()+'" style="height:44px;width:100%">'+
+    '<div class="sp"></div><button class="btn acc" data-act="salvarNovaRede" style="width:100%">Salvar rede e perfil</button>');
+  var sr = $('#nrRede'); sr.onchange = function(){ $('#nrOutraBox').style.display = sr.value==='__outra' ? 'block' : 'none'; };
 }
 function vPainel(){
   var h = hoje();
@@ -638,6 +681,7 @@ function vPainel(){
   s += '<div class="tiles">';
   S.cfg.perfis.forEach(function(p){
     var cs = S.conteudos.filter(function(c){ return c.perfil===p.k; });
+    if(!cs.length && (p.rede||'Instagram')!=='Instagram') return;
     var pub30 = cs.filter(function(c){ return c.etapa==='Publicado' && c.data>addDias(h,-30) && c.data<=h; }).length;
     var pubAnt = cs.filter(function(c){ return c.etapa==='Publicado' && c.data>addDias(h,-60) && c.data<=addDias(h,-30); }).length;
     var plan = cs.filter(function(c){ return c.data>=h && c.data<=addDias(h,7) && c.etapa!=='Publicado'; }).length;
@@ -867,7 +911,8 @@ function auditoria(r){
   return {itens:todos, nota: todos.length ? Math.round(ok/todos.length*100) : 0};
 }
 function vRedes(){
-  var r = UI.redeSel, g = GUIA[r], a = auditoria(r), ins = insights(r);
+  if(!REDES[UI.redeSel]) UI.redeSel = 'Instagram';
+  var r = UI.redeSel, g = guia(r), a = auditoria(r), ins = insights(r);
   var s = '<div class="chips">'+REDE_NOMES.map(function(x){ return '<span class="chip '+(r===x?'on':'')+'" data-redesel="'+x+'"><i class="dot" style="background:'+corRede(x)+'"></i>'+REDES[x].ic+' '+x+'</span>'; }).join('')+'</div>';
   s += '<div class="tile" style="background:'+corRede(r)+';min-height:0;margin-bottom:14px;cursor:default"><div class="th"><span>'+REDES[r].ic+' Assistente '+r+'</span><span>'+dadosRede(r).length+' conteúdos</span></div><div class="tb"><div><div class="big">'+a.nota+'%</div><div class="lbl">nota do canal</div></div><div class="side">'+(ins.n?'Engajamento médio '+ins.media.toFixed(1)+'%<br>'+ins.n+' posts medidos<br>'+ins.leads+' leads':'Sem números ainda<br>Registre resultados<br>para liberar análises')+'</div></div></div>';
   // 1. Criar post
@@ -899,7 +944,7 @@ function vRedes(){
   return s;
 }
 function planoRede(r){
-  var a = auditoria(r), ins = insights(r), g = GUIA[r];
+  var a = auditoria(r), ins = insights(r), g = guia(r);
   var l = ['🧠 PLANO DE MELHORIA — '+r.toUpperCase()+' ('+dataBR(hoje())+')', 'Nota do canal: '+a.nota+'%', ''];
   var falta = a.itens.filter(function(x){ return !x[2]; });
   l.push(falta.length ? '🔧 Corrigir primeiro:' : '✅ Todos os itens em dia.');
@@ -1102,7 +1147,7 @@ var ADAPTA = {'Reel':{'YouTube':'Shorts','TikTok':'Vídeo curto','Facebook':'Ree
   'Post':{'Facebook':'Post','LinkedIn':'Post','Google':'Post GMN','WhatsApp':'Post'}};
 function telaAdaptar(c){
   abrirModal('<div class="mh"><h2>🧩 Adaptar para outra rede</h2><button class="btn sm ghost x" data-act="fechar">✕</button></div><p class="sub">Cria uma cópia ligada a este conteúdo, já no formato certo da rede escolhida. A legenda é cortada se passar do limite.</p><div class="list">'+
-    REDE_NOMES.filter(function(r){ return r!==redeDe(c); }).map(function(r){ var f = (ADAPTA[c.formato]||{})[r] || c.formato; return '<div class="it" data-adaptar="'+r+'|'+f+'">'+pill(r, corRede(r))+'<div class="grow"><div class="t">'+esc(f)+'</div><div class="m">'+esc((GUIA[r].formatos[0]||[])[1]||'')+' · limite '+REDES[r].lim+' caracteres</div></div></div>'; }).join('')+'</div>');
+    REDE_NOMES.filter(function(r){ return r!==redeDe(c); }).map(function(r){ var f = (ADAPTA[c.formato]||{})[r] || c.formato; return '<div class="it" data-adaptar="'+r+'|'+f+'">'+pill(r, corRede(r))+'<div class="grow"><div class="t">'+esc(f)+'</div><div class="m">'+esc((guia(r).formatos[0]||[])[1]||'')+' · limite '+REDES[r].lim+' caracteres</div></div></div>'; }).join('')+'</div>');
   telaAdaptar.atual = c;
 }
 
@@ -1421,6 +1466,7 @@ function ligar(){
   $all('[data-mv]', A).forEach(function(el){ el.onclick = function(e){ e.stopPropagation(); var p = el.dataset.mv.split('|'); mover(p[0], +p[1]); }; });
   $all('[data-imv]', A).forEach(function(el){ el.onclick = function(){ editarImovel(el.dataset.imv); }; });
   $all('[data-camp]', A).forEach(function(el){ el.onclick = function(){ editarCampanha(el.dataset.camp); }; });
+  $all('[data-addperfil]', A).forEach(function(el){ el.onclick = function(){ var r = el.dataset.addperfil; UI.view='ajustes'; render(); var b=$('#apBox'); if(b){ b.style.display='block'; $('#apRede').value = r; if(b.scrollIntoView) b.scrollIntoView({block:'center'}); var i=$('#apArroba'); if(i) i.focus(); } }; });
   $all('[data-verperfil]', A).forEach(function(el){ el.onclick = function(){ UI.perfil = el.dataset.verperfil; UI.view = 'planilha'; window.scrollTo(0,0); render(); }; });
   $all('[data-delperfil]', A).forEach(function(el){ el.onclick = function(){
     var k = el.dataset.delperfil, p = perfil(k), us = S.conteudos.filter(function(x){ return x.perfil===k; });
@@ -1429,7 +1475,7 @@ function ligar(){
     Promise.all([salvarCfg(), gravar('conteudos', us)]).then(function(){ toast('Perfil removido'); render(); });
   }; });
   $all('[data-redesel]', A).forEach(function(el){ el.onclick = function(){ UI.redeSel = el.dataset.redesel; render(); }; });
-  $all('[data-criarrede]', A).forEach(function(el){ el.onclick = function(){ var f = GUIA[UI.redeSel].formatos[+el.dataset.criarrede][0]; editarConteudo(null, {rede:UI.redeSel, formato:formatoDe(f)==='Post'&&/gmn|perfil da empresa/i.test(f)?'Post GMN':formatoDe(f), perfil:UI.perfil!=='todos'?UI.perfil:'imoveis'}); }; });
+  $all('[data-criarrede]', A).forEach(function(el){ el.onclick = function(){ var f = guia(UI.redeSel).formatos[+el.dataset.criarrede][0]; editarConteudo(null, {rede:UI.redeSel, formato:formatoDe(f)==='Post'&&/gmn|perfil da empresa/i.test(f)?'Post GMN':formatoDe(f), perfil:UI.perfil!=='todos'?UI.perfil:'imoveis'}); }; });
   $all('[data-aud]', A).forEach(function(el){ el.onchange = function(){ var p = el.dataset.aud.split('|'); S.cfg.auditoria[p[0]] = S.cfg.auditoria[p[0]] || {}; S.cfg.auditoria[p[0]][p[1]] = el.checked; salvarCfg().then(render); }; });
   $all('[data-pub]', A).forEach(function(el){ el.onchange = function(){ var c = S.conteudos.filter(function(x){ return x.id===el.dataset.pub; })[0]; if(!c) return; var nova = el.checked ? 'Publicado' : 'Agendado'; registrar(c, 'Etapa: '+c.etapa+' → '+nova); c.etapa = nova; if(el.checked && !c.data) c.data = hoje(); salvarConteudo(c).then(render); }; });
   $all('[data-modelop]', A).forEach(function(el){ el.onclick = function(){ UI.modeloPerfil = el.dataset.modelop; render(); }; });
@@ -1501,6 +1547,14 @@ function acao(a){
       });
       break;
     case 'apNovo': $('#apBox').style.display='block'; break;
+    case 'novaRede': telaNovaRede(); break;
+    case 'salvarNovaRede':
+      var rn = $('#nrRede').value, arr = $('#nrArroba').value.trim(), mk = $('#nrMarca').value.trim();
+      if(rn==='__outra'){ rn = $('#nrNome').value.trim(); if(!rn){ toast('Digite o nome da rede'); break; } if(!REDES[rn]){ var dn2 = {nome:rn, cor:$('#nrCor').value, lim:5000, ic:$('#nrIc').value.trim()||'⭐'}; registrarRede(dn2); S.cfg.redesExtra = (S.cfg.redesExtra||[]).concat([dn2]); } }
+      else garantirRede(rn);
+      if(!arr && !mk){ toast('Digite o @ ou o nome do perfil'); break; }
+      criarPerfil({rede:rn, arroba:arr, nome:mk, cor:$('#nrCor').value}).then(function(np){ fecharModal(); toast(rn+': '+np.arroba+' adicionado ✔'); render(); });
+      break;
     case 'gerenciarRedes': UI.view='ajustes'; render(); setTimeout(function(){ var d=$('#cardPerfis'); if(d && d.scrollIntoView) d.scrollIntoView({behavior:'smooth'}); }, 50); break;
     case 'adicionarRede': UI.view='ajustes'; render(); setTimeout(function(){ var b=$('#apBox'); if(b){ b.style.display='block'; if(b.scrollIntoView) b.scrollIntoView({behavior:'smooth', block:'center'}); var i=$('#apArroba'); if(i) i.focus(); } }, 50); break;
     case 'atualizarApp':
