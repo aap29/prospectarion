@@ -2022,6 +2022,7 @@ select.cofre-campo { appearance: auto; }
 .cofre-codigo { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
 .cofre-aviso-troca { margin-top: 14px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 14px; line-height: 1.5; }
 .cofre-aviso-troca .cofre-mini { display: block; margin-top: 8px; border-color: #F59E0B; color: #92400E; }
+.cofre-codigos { font-size: 22px; line-height: 1.7; letter-spacing: 2px; }
 /*CRIADOR-FIM*/
 /* ── V10.4.6: Orientador 360° ── */
 .d360-ori-msg .ori-saud { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; }
@@ -5325,7 +5326,7 @@ function cofreNovo2() {
   cofreDepois(function () {
     var k = cofreChaveDaMestra(m);
     if (!k) { cofreErroNovo(); cofreAviso('Chave Mestra não confere.'); return; }
-    __cofreNovo.k = k;
+    __cofreNovo.k = k; __cofreNovo.via = 'mestra';
     cofreNovoComChave();
   });
 }
@@ -5368,9 +5369,9 @@ function cofreNovo3() {
   if (s !== cofreValor('cofre-senha2')) { cofreAviso('As duas senhas não são iguais.'); return; }
   __cofreNovo.senha = s; cofreNovoPerguntas();
 }
-function cofreNovoPerguntas() {
+function cofreNovoPerguntas(novas) {
   var c = cofreCredencial();
-  var existentes = c && c.perguntas && c.perguntas.length === 2 && cofreSeloOk(c, __cofreNovo.k);
+  var existentes = !novas && c && c.perguntas && c.perguntas.length === 2 && cofreSeloOk(c, __cofreNovo.k);
   __cofreNovo.respondendo = existentes;
   var h = '<div class="cofre-icone">🧩</div><h1>Perguntas pessoais</h1><p class="cofre-sub">' +
     (existentes ? 'Responda as suas perguntas pessoais.' : 'Escolha 2 perguntas e responda. Elas protegem a troca de aparelho e a troca de senha.') + '</p>' + cofreEtapas(4);
@@ -5382,7 +5383,10 @@ function cofreNovoPerguntas() {
         cofreCampo('cofre-r' + i, 'Resposta ' + (i + 1), 'text', 'autocomplete="off" spellcheck="false"');
     }
   }
-  cofreTela(h + '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div><button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo4()">Continuar</button>');
+  /* V10.4.8: quem provou com a Chave Mestra ou com um código de recuperação pode trocar as perguntas */
+  var podeTrocar = existentes && (__cofreNovo.via === 'mestra' || __cofreNovo.via === 'codigo');
+  cofreTela(h + '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div><button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo4()">Continuar</button>' +
+    (podeTrocar ? '<button type="button" class="cofre-link" onclick="cofreNovoPerguntas(true)">Não lembro as respostas: criar perguntas novas</button>' : ''));
 }
 function cofreNovo4() {
   var r0 = cofreValor('cofre-r0'), r1 = cofreValor('cofre-r1');
@@ -5456,6 +5460,7 @@ function cofreEsqueci() {
     '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEsqueci1()">Continuar</button>' +
     (cofreRecOk() ? '<button type="button" class="cofre-botao rec-botao" onclick="cofreRecEmail(\'esqueci\')">📧 Não tenho a Chave Mestra: código por e-mail</button>' : '') +
+    (cofreTemCodigos() ? '<button type="button" class="cofre-botao rec-botao" onclick="cofreUsarCodigo()">🎫 Usar um código de recuperação</button>' : '') +
     '<button type="button" class="cofre-link" onclick="cofreEntrar()">Voltar</button>');
 }
 function cofreEsqueci1() {
@@ -5463,7 +5468,7 @@ function cofreEsqueci1() {
   cofreDepois(function () {
     var k = cofreEmailOk(email) ? cofreChaveDaMestra(m) : null;
     if (!k) { cofreErroNovo(); cofreAviso('E-mail ou Chave Mestra não conferem.'); return; }
-    __cofreNovo = { email: cofreNorm(email), k: k };
+    __cofreNovo = { email: cofreNorm(email), k: k, via: 'mestra' };
     cofreNovoTrocarSenha();
   });
 }
@@ -5507,6 +5512,7 @@ function cofrePainel() {
     '<button type="button" class="cofre-botao rap-painel-botao" onclick="rapPainel()">⚡ Entrar mais rápido<small>' + cofreEsc(rapResumo()) + '</small></button>' +
     '<button type="button" class="cofre-botao" onclick="cofreTrocarSenha()">Trocar senha</button>' +
     '<button type="button" class="cofre-botao" onclick="cofreTrocarMestra()">Trocar Chave Mestra</button>' +
+    '<button type="button" class="cofre-botao rap-painel-botao" onclick="cofreCodigosPainel()">🎫 Códigos de recuperação<small>' + cofreEsc(cofreTemCodigos() ? cofreCodigosLivres() + ' de 8 ainda não usados' : 'Crie 8 códigos para entrar se perder a senha') + '</small></button>' +
     cofreTrocaPendenteHtml() +
     '<button type="button" class="cofre-botao" onclick="cofreTravarAgora()">Travar agora</button>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreFecharPainel()">Voltar ao app</button>');
@@ -5658,9 +5664,82 @@ function cofreRecEmail(origem) {
   recIniciar({ id: 'criador', kenc: COFRE_CFG.rec.kenc, verif: COFRE_CFG.mestra.verif, para: COFRE_CFG.dica || '',
     voltar: function () { if (origem === 'novo') { __cofreNovo = { email: email }; cofreNovo(); var e = document.getElementById('cofre-email'); if (e) e.value = email; } else cofreEsqueci(); },
     depois: function (k) {
-      if (origem === 'novo' || !cofreCredencial()) { __cofreNovo = { email: email, k: k }; cofreNovoComChave(); }
-      else { __cofreNovo = { email: email, k: k }; cofreNovoTrocarSenha(); }
+      if (origem === 'novo' || !cofreCredencial()) { __cofreNovo = { email: email, k: k, via: 'email' }; cofreNovoComChave(); }
+      else { __cofreNovo = { email: email, k: k, via: 'email' }; cofreNovoTrocarSenha(); }
     } });
+}
+
+/* ── V10.4.8: códigos de recuperação (8 códigos de uso único, guardados pelo criador fora do app) ──
+   O app guarda só a prova de cada código e a chave do cofre embrulhada por ele. Cada código vale uma vez. */
+var COFRE_ITER_CODIGO = 20000;
+function cofreTemCodigos() { var c = APP.criador && APP.criador.codigos; return !!(c && c.lista && c.aparelho === cofreToken() && cofreCodigosLivres() > 0); }
+function cofreCodigosLivres() { var c = APP.criador && APP.criador.codigos; return c && c.lista ? c.lista.filter(function (x) { return !x.usado; }).length : 0; }
+function cofreNormCodigo(t) { return String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function cofreNovoCodigo() {
+  var b = cfAleatorio(30), s = '', i;
+  for (i = 0; i < b.length && s.length < 10; i++) if (b[i] < 248) s += COFRE_ALFA.charAt(b[i] % 31);
+  while (s.length < 10) s += COFRE_ALFA.charAt(cfAleatorio(1)[0] % 31);
+  return s.substr(0, 5) + '-' + s.substr(5, 5);
+}
+function cofreCodigosPainel() {
+  cofreTela('<div class="cofre-icone">🎫</div><h1>Códigos de recuperação</h1><p class="cofre-sub">8 códigos de uso único para entrar e criar uma senha nova se você perder a senha. Gerar novos códigos cancela os antigos. Confirme com a sua senha.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreCodigosGerar()">Gerar 8 códigos</button>' +
+    '<button type="button" class="cofre-link" onclick="cofrePainel()">Voltar</button>');
+}
+function cofreCodigosGerar() {
+  var s = cofreValor('cofre-senha');
+  cofreDepois(function () {
+    var k = cofreAbrirComSenha(s); if (!k) { cofreErro(); cofreAviso('Senha não confere. ' + cofreRestam()); return; }
+    cofreSemErros();
+    var sal = cfHex(cfAleatorio(16)), codigos = [], lista = [], i;
+    for (i = 0; i < 8; i++) {
+      var cod = cofreNovoCodigo(), d = cfPbkdf2(cfBytes(cofreNormCodigo(cod)), cfDeHex(sal), COFRE_ITER_CODIGO);
+      codigos.push(cod); lista.push({ prova: cofreProvaSenha(d), kenc: cfHex(cfXor(k, d)), usado: false });
+    }
+    APP.criador.codigos = { aparelho: cofreToken(), sal: sal, iter: COFRE_ITER_CODIGO, lista: lista, em: new Date().toISOString() };
+    saveAll();
+    var txt = 'PROSPECTARION — códigos de recuperação do criador (cada um vale 1 vez)\n' + codigos.join('\n');
+    cofreTela('<div class="cofre-icone">🎫</div><h1>Seus 8 códigos</h1><p class="cofre-sub">Guarde agora: anote no papel, tire um print ou salve no seu e-mail. Eles só aparecem esta vez. Cada código vale uma vez.</p>' +
+      '<div class="cofre-mestra-nova cofre-codigos" id="cofre-codigos">' + codigos.map(cofreEsc).join('<br>') + '</div>' +
+      '<textarea id="cofre-codigos-txt" class="cofre-campo cofre-codigo" readonly rows="3" style="display:none">' + cofreEsc(txt) + '</textarea>' +
+      '<button type="button" class="cofre-botao cofre-principal" onclick="cofreCodigosCopiar()">Copiar os códigos</button>' +
+      '<button type="button" class="cofre-botao" onclick="cofrePainel()">Já guardei os códigos</button>');
+  });
+}
+function cofreCodigosCopiar() {
+  var t = document.getElementById('cofre-codigos-txt'); if (!t) return;
+  function ok() { try { showToast('✅ Códigos copiados'); } catch (e) {} }
+  try { navigator.clipboard.writeText(t.value).then(ok, function () { t.style.display = 'block'; t.select(); }); } catch (e) { t.style.display = 'block'; t.select(); }
+}
+function cofreUsarCodigo() {
+  var email = cofreValor('cofre-email') || cofreEmailConhecido();
+  cofreTela('<div class="cofre-icone">🎫</div><h1>Código de recuperação</h1><p class="cofre-sub">Digite um dos 8 códigos que você guardou (ex.: ABCDE-23456). Ele vale uma vez.</p>' +
+    cofreCampo('cofre-email', 'E-mail de criador', 'email', 'autocapitalize="off" spellcheck="false" value="' + cofreEsc(email) + '"') +
+    cofreCampo('cofre-codigo-rec', 'Código', 'text', 'autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreUsarCodigoConfere()">Continuar</button>' +
+    '<button type="button" class="cofre-link" onclick="cofreEsqueci()">Voltar</button>');
+}
+function cofreUsarCodigoConfere() {
+  var b = cofreBloqueado(); if (b) { cofreAviso('Muitas tentativas. Aguarde ' + b + ' min. Seus dados continuam guardados.'); return; }
+  var email = cofreValor('cofre-email'), cod = cofreNormCodigo(cofreValor('cofre-codigo-rec'));
+  if (!cofreEmailOk(email)) { cofreAviso('Este não é o e-mail de criador' + (COFRE_CFG.dica ? ' (' + COFRE_CFG.dica + ')' : '') + '.'); return; }
+  if (cod.length !== 10) { cofreAviso('O código tem 10 letras e números (ex.: ABCDE-23456).'); return; }
+  cofreDepois(function () {
+    var cs = APP.criador.codigos, d = cfPbkdf2(cfBytes(cod), cfDeHex(cs.sal), cs.iter || COFRE_ITER_CODIGO), achou = null, k = null, c = cofreCredencial();
+    cs.lista.forEach(function (x) {
+      if (achou || x.usado || !cfIgual(cofreProvaSenha(d), x.prova)) return;
+      var kk = cfXor(cfDeHex(x.kenc), d);
+      if (c && cfIgual(cfHex(cfSha256(kk)), COFRE_CFG.mestra.verif) && cofreSeloOk(c, kk)) { achou = x; k = kk; }
+    });
+    if (!achou) { cofreErro(); var bb = cofreBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'Código não confere ou já foi usado. ' + cofreRestam()); return; }
+    achou.usado = true; achou.usadoEm = new Date().toISOString(); saveAll();
+    __cofreNovo = { email: cofreNorm(email), k: k, via: 'codigo' };
+    try { showToast('✅ Código aceito (' + cofreCodigosLivres() + ' restantes)'); } catch (e) {}
+    cofreNovoTrocarSenha();
+  });
 }
 /*CRIADOR-FIM*/
 /* ═══════════════════════════════════════════
