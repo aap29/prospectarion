@@ -2003,6 +2003,12 @@ body.cofre-travado { overflow: hidden; }
 .cofre-botao.trava-desligar { color: #B91C1C; border-color: #FCA5A5; }
 .inst-cartao.trava-cartao { background: linear-gradient(135deg, #374151, #1F2937); }
 select.cofre-campo { appearance: auto; }
+/* ── V10.4.7: ver a senha ── */
+.cofre-senha-box { position: relative; }
+.cofre-senha-box .cofre-campo { padding-right: 56px; }
+.cofre-olho { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 48px; height: 46px; border: none; background: none; font-size: 22px; cursor: pointer; border-radius: 10px; }
+.cofre-olho:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+.cofre-botao.rec-botao { border-color: #F26419; color: #C2410C; }
 /*CRIADOR-INICIO*/
 /* ── V10.4.2: cofre do criador (só as telas do criador) ── */
 .cofre-etapas { list-style: none; display: flex; gap: 6px; padding: 0; margin: 4px 0 6px; }
@@ -4414,7 +4420,18 @@ function cofreTela(conteudo) {
   });
 }
 function cofreCampo(id, rotulo, tipo, extra) {
-  return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label><input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
+  var campo = '<input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
+  /* V10.4.7: 👁 para ver o que está digitando */
+  if (tipo === 'password') campo = '<div class="cofre-senha-box">' + campo + '<button type="button" class="cofre-olho" aria-label="Mostrar senha" aria-pressed="false" onclick="cofreOlho(\'' + id + '\', this)">👁</button></div>';
+  return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label>' + campo;
+}
+function cofreOlho(id, b) {
+  var c = document.getElementById(id); if (!c) return;
+  var ver = c.type === 'password';
+  c.type = ver ? 'text' : 'password';
+  b.textContent = ver ? '🙈' : '👁';
+  b.setAttribute('aria-label', ver ? 'Esconder senha' : 'Mostrar senha'); b.setAttribute('aria-pressed', ver ? 'true' : 'false');
+  try { c.focus(); } catch (e) {}
 }
 function cofreAviso(txt) { var e = document.getElementById('cofre-erro'); if (e) { e.textContent = txt; e.style.display = txt ? 'block' : 'none'; } }
 function cofreValor(id) { var e = document.getElementById(id); return e ? e.value : ''; }
@@ -4711,6 +4728,87 @@ function rapResumo() {
   return n.length ? 'Ligado: ' + n.join(', ') : 'PIN, digital, Google ou 30 dias conectado';
 }
 /* ═══════════════════════════════════════════
+   V10.4.7 — RECUPERAR O ACESSO POR E-MAIL (ES5)
+   O serviço do Google Apps Script (o mesmo da planilha de leads) manda um código de 6 números para o
+   e-mail cadastrado. Com o código certo, o serviço devolve a parte da chave que só ele guarda; junto com
+   a parte que fica no app, ela reabre o cofre/trava para criar uma senha nova. Sem internet, não funciona
+   (as outras formas continuam valendo). Sem o serviço configurado, o botão nem aparece.
+═══════════════════════════════════════════ */
+var REC_URL = '';
+var __recCtx = null;
+
+function recDisponivel() { return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(REC_URL); }
+function recPost(obj, fim) {
+  var feito = false;
+  function uma(r) { if (!feito) { feito = true; fim(r); } }
+  setTimeout(function () { uma({ ok: false, erro: 'rede' }); }, 25000);
+  try {
+    fetch(REC_URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(obj) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { uma(j && typeof j === 'object' ? j : { ok: false, erro: 'rede' }); }, function () { uma({ ok: false, erro: 'rede' }); });
+  } catch (e) { uma({ ok: false, erro: 'rede' }); }
+}
+function recErroTexto(j) {
+  var e = j && j.erro;
+  if (e === 'rede') return 'Sem conexão com o serviço. A recuperação por e-mail precisa de internet (Wi-Fi ou dados móveis).';
+  if (e === 'limite') return 'Já enviamos 3 códigos na última hora. Use o último código recebido ou tente de novo mais tarde.';
+  if (e === 'codigo') return 'Código errado.' + (j.restam ? ' Mais ' + j.restam + ' tentativa(s).' : '');
+  if (e === 'vencido') return 'Este código venceu (vale 10 minutos). Toque em "Enviar outro código".';
+  if (e === 'tentativas') return 'Muitas tentativas com este código. Toque em "Enviar outro código".';
+  if (e === 'nao_cadastrado') return 'Nenhum e-mail de recuperação cadastrado para este acesso.';
+  return 'Não foi possível concluir agora. Tente de novo em instantes.';
+}
+function recOcupado(sim, txt) {
+  var b = document.querySelector('#cofre .cofre-principal');
+  if (b) { b.disabled = sim; if (sim) { b.setAttribute('data-txt', b.textContent); b.textContent = txt || 'Aguarde…'; } else if (b.getAttribute('data-txt')) b.textContent = b.getAttribute('data-txt'); }
+}
+/* ctx: { id, kenc (hex), verif (hex), titulo, depois(k), voltar() } */
+function recIniciar(ctx) {
+  __recCtx = ctx;
+  cofreTela('<div class="cofre-icone">📧</div><h1>Recuperar por e-mail</h1><p class="cofre-sub">Vamos enviar um código de 6 números para o e-mail cadastrado' + (ctx.para ? ' (' + cofreEsc(ctx.para) + ')' : '') + '. Ele vale por 10 minutos.</p>' +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="recEnviar()">Enviar código</button>' +
+    '<button type="button" class="cofre-link" onclick="recVoltar()">Voltar</button>');
+}
+function recVoltar() { var c = __recCtx; __recCtx = null; if (c && c.voltar) c.voltar(); }
+function recEnviar() {
+  var c = __recCtx; if (!c) return;
+  recOcupado(true, 'Enviando…');
+  recPost({ acao: 'rec_pedir', id: c.id }, function (j) {
+    recOcupado(false);
+    if (!j.ok) { cofreAviso(recErroTexto(j)); return; }
+    c.para = j.para || c.para;
+    recTelaCodigo();
+  });
+}
+function recTelaCodigo() {
+  var c = __recCtx; if (!c) return;
+  cofreTela('<div class="cofre-icone">📨</div><h1>Digite o código</h1><p class="cofre-sub">Enviamos um código de 6 números para <strong>' + cofreEsc(c.para || 'o seu e-mail') + '</strong>. Confira também a caixa de spam.</p>' +
+    cofreCampo('cofre-codigo', 'Código', 'text', 'inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code"') +
+    '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="recConfirmar()">Confirmar</button>' +
+    '<button type="button" class="cofre-botao" onclick="recEnviar()">Enviar outro código</button>' +
+    '<button type="button" class="cofre-link" onclick="recVoltar()">Voltar</button>');
+  var e = document.getElementById('cofre-codigo');
+  if (e) e.addEventListener('input', function () { var v = e.value.replace(/\D/g, '').slice(0, 6); if (v !== e.value) e.value = v; });
+}
+function recConfirmar() {
+  var c = __recCtx; if (!c) return;
+  var cod = cofreValor('cofre-codigo').replace(/\D/g, '');
+  if (cod.length !== 6) { cofreAviso('O código tem 6 números.'); return; }
+  recOcupado(true, 'Conferindo…');
+  recPost({ acao: 'rec_confirmar', id: c.id, codigo: cod }, function (j) {
+    recOcupado(false);
+    if (!j.ok) { cofreAviso(recErroTexto(j)); return; }
+    var k = null;
+    try { if (/^[0-9a-f]{64}$/.test(j.r)) k = cfXor(cfDeHex(c.kenc), cfDeHex(j.r)); } catch (e) {}
+    if (!k || !cfIgual(cfHex(cfSha256(k)), c.verif)) { cofreAviso('O código está certo, mas a chave de recuperação deste aparelho não confere. Use a outra forma de recuperação.'); return; }
+    __recCtx = null;
+    try { showToast('✅ E-mail confirmado'); } catch (e) {}
+    c.depois(k);
+  });
+}
+/* ═══════════════════════════════════════════
    V10.4.5 — TRAVA OPCIONAL DO APP (clientes, ES5)
    Perfil → "Proteger o app": o cliente cria uma senha e responde 2 perguntas pessoais. Com a trava ligada,
    o app abre pedindo a senha ou uma forma rápida (PIN, digital, Google, 30 dias conectado).
@@ -4773,12 +4871,14 @@ function travaGravar(k, senha, perguntas, r0, r1) {
   saveAll();
 }
 function travaBloqueado() { var t = APP.trava || {}, a = Date.now(); return t.bloqueioAte && t.bloqueioAte > a ? Math.ceil((t.bloqueioAte - a) / 60000) : 0; }
+/* V10.4.7: 5 erros seguidos = pausa de 5 min; cada nova série dobra (máx. 60 min) */
 function travaErro() {
   var t = APP.trava; if (!t) return;
   t.erros = (t.erros || 0) + 1;
-  if (t.erros >= 5) t.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, t.erros - 5)) * 60000;
+  if (t.erros >= 5) { t.series = (t.series || 0) + 1; t.erros = 0; t.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, t.series - 1)) * 60000; }
   try { saveAll(); } catch (e) {}
 }
+function travaRestam() { var n = 5 - ((APP.trava && APP.trava.erros) || 0); return n === 1 ? ' Mais 1 tentativa antes de uma pausa.' : ' Mais ' + n + ' tentativas antes de uma pausa.'; }
 function travaSenhaFraca(s) {
   if (String(s).length < 8) return 'A senha precisa ter pelo menos 8 caracteres.';
   if (!/[A-Za-z]/.test(s) || !/[0-9]/.test(s)) return 'Use letras e números na senha.';
@@ -4792,9 +4892,10 @@ function travaSessaoOk() {
 function travaLiberar() {
   __travaOk = true; __travaNovo = null;
   try { sessionStorage.setItem('prospectarion_sessao', JSON.stringify({ t: 'cliente:' + rapToken(), em: Date.now() })); } catch (e) {}
-  var t = APP.trava; if (t) { t.erros = 0; t.bloqueioAte = 0; }
+  var t = APP.trava; if (t) { t.erros = 0; t.bloqueioAte = 0; t.series = 0; }
   try { saveAll(); } catch (e) {}
   travaFechar();
+  travaRecPendente();
 }
 function travaFechar() {
   var f = document.getElementById('cofre'); if (f) f.parentNode.removeChild(f);
@@ -4831,7 +4932,7 @@ function travaEntrarConfere() {
   var s = cofreValor('cofre-senha');
   cofreDepois(function () {
     var k = travaAbrirComSenha(s);
-    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'Senha não confere.'); return; }
+    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min. Seus dados continuam guardados.' : 'Senha não confere. Toque no 👁 para conferir o que digitou.' + travaRestam()); return; }
     rapDepoisDaSenha(k, travaUsuario(), s);
   });
 }
@@ -4844,6 +4945,7 @@ function travaEsqueci() {
     cofreCampo('trava-r0', cofreEsc(p[0]), 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') +
     cofreCampo('trava-r1', cofreEsc(p[1]), 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') + TRAVA_ERRO +
     '<button type="button" class="cofre-botao cofre-principal" onclick="travaEsqueciConfere()">Continuar</button>' +
+    (travaRecLigado() ? '<button type="button" class="cofre-botao rec-botao" onclick="travaRecEmail()">📧 Receber código por e-mail</button>' : '') +
     '<button type="button" class="cofre-link" onclick="travaEntrar(true)">Voltar</button>');
 }
 function travaEsqueciConfere() {
@@ -4851,7 +4953,7 @@ function travaEsqueciConfere() {
   var r0 = cofreValor('trava-r0'), r1 = cofreValor('trava-r1');
   cofreDepois(function () {
     var k = travaAbrirComRespostas(r0, r1);
-    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'As respostas não conferem.'); return; }
+    if (!k) { travaErro(); var bb = travaBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min. Seus dados continuam guardados.' : 'As respostas não conferem.' + travaRestam()); return; }
     __travaNovo = { k: k, recuperar: true };
     travaTelaSenha();
   });
@@ -4902,7 +5004,9 @@ function travaTelaPerguntas() {
     '<label class="cofre-rotulo" for="trava-p0">Pergunta 1</label>' + travaOpcoesPerguntas('trava-p0', 0) +
     cofreCampo('trava-r0', 'Resposta 1', 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') +
     '<label class="cofre-rotulo" for="trava-p1">Pergunta 2</label>' + travaOpcoesPerguntas('trava-p1', 2) +
-    cofreCampo('trava-r1', 'Resposta 2', 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') + TRAVA_ERRO +
+    cofreCampo('trava-r1', 'Resposta 2', 'text', 'autocomplete="off" autocapitalize="off" spellcheck="false"') +
+    (typeof recDisponivel === 'function' && recDisponivel() ? cofreCampo('trava-email', 'E-mail para recuperar a senha (opcional)', 'email', 'autocomplete="email" autocapitalize="off" spellcheck="false" value="' + cofreEsc((APP.user && APP.user.email) || '') + '"') +
+      '<p class="cofre-sub" style="text-align:left;font-size:14px;margin:6px 0 0">Se esquecer a senha, você recebe um código neste e-mail. Precisa de internet.</p>' : '') + TRAVA_ERRO +
     '<button type="button" class="cofre-botao cofre-principal" onclick="travaPerguntasConfere()">Ligar proteção</button>' +
     '<button type="button" class="cofre-link" onclick="travaTelaSenha()">Voltar</button>');
 }
@@ -4911,9 +5015,12 @@ function travaPerguntasConfere() {
   var r0 = cofreValor('trava-r0'), r1 = cofreValor('trava-r1');
   if (p0 === p1) { cofreAviso('Escolha duas perguntas diferentes.'); return; }
   if (cofreNorm(r0).length < 2 || cofreNorm(r1).length < 2) { cofreAviso('Responda as duas perguntas.'); return; }
+  var em = cofreNorm(cofreValor('trava-email'));
+  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { cofreAviso('Confira o e-mail de recuperação (ou deixe em branco).'); return; }
   var n = __travaNovo; if (!n || !n.senha) { travaComecar(); return; }
   cofreDepois(function () {
     travaGravar(n.k, n.senha, [TRAVA_PERGUNTAS[p0], TRAVA_PERGUNTAS[p1]], r0, r1);
+    if (em) travaRecRegistrar(n.k, em);
     __travaOk = true;
     try { sessionStorage.setItem('prospectarion_sessao', JSON.stringify({ t: 'cliente:' + rapToken(), em: Date.now() })); } catch (e) {}
     rapAvisoOk('Proteção ligada');
@@ -4933,6 +5040,8 @@ function travaPainelTela() {
   cofreTela('<div class="cofre-icone">🔒</div><h1>Proteger o app</h1><p class="cofre-sub">Proteção ligada neste aparelho. O app só abre com a sua senha ou uma forma rápida.</p>' +
     '<button type="button" class="cofre-botao rap-painel-botao" onclick="rapPainel()">⚡ Entrar mais rápido<small>' + cofreEsc(rapResumo()) + '</small></button>' +
     '<button type="button" class="cofre-botao" onclick="travaTrocarSenha()">Trocar senha</button>' +
+    (typeof recDisponivel === 'function' && recDisponivel() ? '<button type="button" class="cofre-botao rap-painel-botao" onclick="travaRecPainel()">📧 Recuperação por e-mail<small>' +
+      cofreEsc(travaRecLigado() ? 'Ligada: ' + APP.trava.rec.para : (APP.trava.rec && APP.trava.rec.rPend ? 'Aguardando internet para ligar' : 'Desligada: toque para cadastrar um e-mail')) + '</small></button>' : '') +
     '<button type="button" class="cofre-botao" onclick="travaTravarAgora()">Travar agora</button>' +
     '<button type="button" class="cofre-botao trava-desligar" onclick="travaDesligar()">Desligar proteção</button>' +
     TRAVA_ERRO +
@@ -5014,6 +5123,46 @@ document.addEventListener('visibilitychange', function () {
   if (document.hidden) { __travaOculto = Date.now(); return; }
   if (__travaOk && __travaOculto && Date.now() - __travaOculto > TRAVA_MIN * 60000 && !rapConectadoChave()) travaTravar();
 });
+
+/* ── V10.4.7: recuperação por e-mail da trava ── */
+function travaRecLigado() { var t = APP.trava; return typeof recDisponivel === 'function' && recDisponivel() && !!(t && t.rec && t.rec.ok && t.rec.id && t.rec.kenc); }
+function travaMascara(e) { var p = String(e).split('@'); return p.length === 2 ? p[0].substr(0, 2) + '•••@' + p[1] : ''; }
+/* Cadastra o e-mail no serviço: o serviço guarda uma parte da chave; o app guarda a outra (embrulhada) */
+function travaRecRegistrar(k, email) {
+  var t = APP.trava; if (!t) return;
+  var r = cfAleatorio(32), id = cfHex(cfAleatorio(16));
+  t.rec = { id: id, kenc: cfHex(cfXor(k, r)), para: travaMascara(email), ok: false, rPend: cfHex(r), email: email };
+  saveAll();
+  travaRecPendente();
+}
+function travaRecPendente() {
+  var t = APP.trava, c = t && t.rec;
+  if (!c || c.ok || !c.rPend || typeof recDisponivel !== 'function' || !recDisponivel()) return;
+  recPost({ acao: 'rec_registrar', id: c.id, email: c.email, r: c.rPend }, function (j) {
+    var t2 = APP.trava; if (!t2 || !t2.rec || t2.rec.id !== c.id) return;
+    if (j.ok) { t2.rec.ok = true; t2.rec.para = j.para || t2.rec.para; delete t2.rec.rPend; delete t2.rec.email; saveAll(); try { showToast('✅ E-mail de recuperação ligado'); } catch (e) {} }
+  });
+}
+function travaRecEmail() {
+  var t = travaDados(); if (!t || !travaRecLigado()) return;
+  recIniciar({ id: t.rec.id, kenc: t.rec.kenc, verif: t.verif, para: t.rec.para, voltar: travaEsqueci,
+    depois: function (k) { __travaNovo = { k: k, recuperar: true }; travaTelaSenha(); } });
+}
+function travaRecPainel() {
+  cofreTela('<div class="cofre-icone">📧</div><h1>Recuperação por e-mail</h1><p class="cofre-sub">Se esquecer a senha, você recebe um código neste e-mail. Confirme com a sua senha.</p>' +
+    cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
+    cofreCampo('trava-email', 'E-mail', 'email', 'autocomplete="email" autocapitalize="off" spellcheck="false" value="' + cofreEsc((APP.user && APP.user.email) || '') + '"') + TRAVA_ERRO +
+    '<button type="button" class="cofre-botao cofre-principal" onclick="travaRecPainelConfere()">Salvar e-mail</button>' +
+    '<button type="button" class="cofre-link" onclick="travaPainelTela()">Voltar</button>');
+}
+function travaRecPainelConfere() {
+  var s = cofreValor('cofre-senha'), em = cofreNorm(cofreValor('trava-email'));
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { cofreAviso('Digite um e-mail válido.'); return; }
+  cofreDepois(function () {
+    var k = travaAbrirComSenha(s); if (!k) { travaErro(); cofreAviso('Senha não confere.' + travaRestam()); return; }
+    travaRecRegistrar(k, em); travaPainelTela();
+  });
+}
 /*CRIADOR-INICIO*/
 /* ═══════════════════════════════════════════
    V10.4.2 — COFRE DO CRIADOR (ES5)
@@ -5024,7 +5173,7 @@ document.addEventListener('visibilitychange', function () {
    com uma chave que só nasce da Chave Mestra; editar os dados não abre o cofre.
    Nada aqui apaga dados: com o cofre fechado, os dados ficam guardados e escondidos.
 ═══════════════════════════════════════════ */
-var COFRE_CFG = {"emails": ["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e", "65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc", "577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a", "a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c", "136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c", "004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"], "mestra": {"sal": "191ae0cfce820c2f315e4692be8f1544", "iter": 60000, "verif": "d624b73fdaffd8099185c64ffbcd638a2fa4e49424ef50d4308735d229e1cd2e"}};
+var COFRE_CFG = {"emails": ["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e", "65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc", "577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a", "a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c", "136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c", "004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"], "mestra": {"sal": "191ae0cfce820c2f315e4692be8f1544", "iter": 60000, "verif": "d624b73fdaffd8099185c64ffbcd638a2fa4e49424ef50d4308735d229e1cd2e"}, "rec": {"kenc": "d756120f732b31ca9f3483c90d62c80d3d7649d29f93f5a0abd93aff71a767ee"}, "dica": "an\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022.rs@gmail.com"};
 var COFRE_ITER_SENHA = 30000, COFRE_ITER_RESP = 10000;
 var COFRE_TOKEN = 'prospectarion_aparelho';
 var COFRE_SESSAO = 'prospectarion_sessao';
@@ -5088,6 +5237,8 @@ function cofreAbrirComSenha(senha) {
   if (!cofreSeloOk(c, k)) return null;
   return k;
 }
+/* E-mail de criador já usado neste aparelho (para vir preenchido) */
+function cofreEmailConhecido() { var e = (APP.user && APP.user.email) || ''; return e && cofreEmailOk(e) ? cofreNorm(e) : ''; }
 function cofreAparelhoConhecido() {
   var c = cofreCredencial(); if (!c) return false;
   var t = cofreToken();
@@ -5097,14 +5248,17 @@ function cofreBloqueado() {
   var c = APP.criador || {}, agora = Date.now();
   return c.bloqueioAte && c.bloqueioAte > agora ? Math.ceil((c.bloqueioAte - agora) / 60000) : 0;
 }
+/* V10.4.7: 5 erros seguidos = pausa de 5 min; cada nova série de 5 dobra a pausa (máx. 60 min). Nada é apagado. */
 function cofreErro() {
   if (!APP.criador) APP.criador = {};
   var c = APP.criador;
+  if (c.erros >= 5 && !c.series) { c.series = 1; c.erros = 0; } /* dados de versões antigas */
   c.erros = (c.erros || 0) + 1;
-  if (c.erros >= 5) { c.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, c.erros - 5)) * 60000; }
+  if (c.erros >= 5) { c.series = (c.series || 0) + 1; c.erros = 0; c.bloqueioAte = Date.now() + Math.min(60, 5 * Math.pow(2, c.series - 1)) * 60000; }
   try { saveAll(); } catch (e) {}
 }
-function cofreSemErros() { if (APP.criador) { APP.criador.erros = 0; APP.criador.bloqueioAte = 0; } }
+function cofreRestam() { var c = APP.criador || {}; var n = 5 - ((c.erros || 0) % 5); return n === 1 ? 'Mais 1 tentativa antes de uma pausa.' : 'Mais ' + n + ' tentativas antes de uma pausa.'; }
+function cofreSemErros() { if (APP.criador) { APP.criador.erros = 0; APP.criador.bloqueioAte = 0; APP.criador.series = 0; } }
 function cofreSessaoOk() {
   try { var s = JSON.parse(sessionStorage.getItem(COFRE_SESSAO) || 'null'); return s && s.t === cofreToken() && cofreAparelhoConhecido(); } catch (e) { return false; }
 }
@@ -5120,11 +5274,12 @@ function cofreEntrar(soSenha) {
   if (soSenha !== true && rapEntrar()) return; // V10.4.4: PIN, digital ou conectado
   var b = cofreBloqueado();
   cofreTela('<div class="cofre-icone">🔐</div><h1>Acesso do Criador</h1><p class="cofre-sub">Aparelho identificado. Entre com seu e-mail e sua senha.</p>' +
-    cofreCampo('cofre-email', 'E-mail', 'email', 'autocomplete="username" autocapitalize="off" spellcheck="false"') +
+    cofreCampo('cofre-email', 'E-mail', 'email', 'autocomplete="username" autocapitalize="off" spellcheck="false" value="' + cofreEsc(cofreEmailConhecido()) + '"') +
     cofreCampo('cofre-senha', 'Senha', 'password', 'autocomplete="current-password"') +
-    '<div id="cofre-erro" class="cofre-erro" role="alert"' + (b ? '' : ' style="display:none"') + '>' + (b ? 'Muitas tentativas. Aguarde ' + b + ' min.' : '') + '</div>' +
+    '<div id="cofre-erro" class="cofre-erro" role="alert"' + (b ? '' : ' style="display:none"') + '>' + (b ? 'Muitas tentativas. Aguarde ' + b + ' min. Seus dados continuam guardados.' : '') + '</div>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEntrarConfere()">Entrar</button>' +
     '<button type="button" class="cofre-link" onclick="cofreEsqueci()">Esqueci a senha</button>');
+  if (cofreEmailConhecido()) { var cs = document.getElementById('cofre-senha'); if (cs) try { cs.focus(); } catch (e) {} }
   rapExtrasSenha();
 }
 function cofreEntrarConfere() {
@@ -5132,7 +5287,12 @@ function cofreEntrarConfere() {
   var email = cofreValor('cofre-email'), senha = cofreValor('cofre-senha');
   cofreDepois(function () {
     var k = cofreEmailOk(email) ? cofreAbrirComSenha(senha) : null;
-    if (!k || !cofreAparelhoConhecido()) { cofreErro(); var bb = cofreBloqueado(); cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min.' : 'E-mail ou senha não conferem.'); return; }
+    if (!k || !cofreAparelhoConhecido()) {
+      cofreErro(); var bb = cofreBloqueado();
+      cofreAviso(bb ? 'Muitas tentativas. Aguarde ' + bb + ' min. Seus dados continuam guardados.' :
+        (cofreEmailOk(email) ? 'Senha não confere. Toque no 👁 para conferir o que digitou. ' : 'Este não é o e-mail de criador' + (COFRE_CFG.dica ? ' (' + COFRE_CFG.dica + ')' : '') + '. ') + cofreRestam());
+      return;
+    }
     cofreSemErros(); APP.user.email = cofreNorm(email);
     rapDepoisDaSenha(k, cofreNorm(email), senha); // V10.4.4: oferece a entrada rápida
   });
@@ -5153,7 +5313,8 @@ function cofreNovo1() {
   cofreTela('<div class="cofre-icone">🗝️</div><h1>Chave Mestra</h1><p class="cofre-sub">Digite a Chave Mestra que só você tem (20 letras e números, no arquivo PROSPECTARION_CHAVE_MESTRA).</p>' + cofreEtapas(2) +
     cofreCampo('cofre-mestra', 'Chave Mestra', 'text', 'autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"') +
     '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
-    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo2()">Continuar</button>');
+    '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo2()">Continuar</button>' +
+    (cofreRecOk() ? '<button type="button" class="cofre-botao rec-botao" onclick="cofreRecEmail(\'novo\')">📧 Não tenho a Chave Mestra: código por e-mail</button>' : ''));
 }
 function cofreErroNovo() {
   var n = 0; try { n = parseInt(sessionStorage.getItem('prospectarion_cofre_erros') || '0', 10) + 1; sessionStorage.setItem('prospectarion_cofre_erros', String(n)); } catch (e) {}
@@ -5165,6 +5326,13 @@ function cofreNovo2() {
     var k = cofreChaveDaMestra(m);
     if (!k) { cofreErroNovo(); cofreAviso('Chave Mestra não confere.'); return; }
     __cofreNovo.k = k;
+    cofreNovoComChave();
+  });
+}
+/* Depois de provar quem é (Chave Mestra ou código por e-mail): senha → perguntas → aparelho */
+function cofreNovoComChave() {
+  (function () {
+    var k = __cofreNovo.k;
     var c = cofreCredencial(), temSenha = !!c && cofreSeloOk(c, k);
     __cofreNovo.temSenha = temSenha;
     cofreTela('<div class="cofre-icone">🔑</div><h1>' + (temSenha ? 'Sua senha' : 'Crie sua senha') + '</h1><p class="cofre-sub">' +
@@ -5174,7 +5342,7 @@ function cofreNovo2() {
       '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
       '<button type="button" class="cofre-botao cofre-principal" onclick="cofreNovo3()">Continuar</button>' +
       (temSenha ? '<button type="button" class="cofre-link" onclick="cofreNovoTrocarSenha()">Não lembro: criar senha nova</button>' : ''));
-  });
+  })();
 }
 function cofreSenhaFraca(s) {
   if (s.length < 8) return 'A senha precisa ter pelo menos 8 caracteres.';
@@ -5283,10 +5451,11 @@ function cofreGravar(k, senha, perguntas, aparelhos) {
 function cofreEsqueci() {
   if (!cofreCredencial()) { cofreNovo(); return; }
   cofreTela('<div class="cofre-icone">🗝️</div><h1>Esqueci a senha</h1><p class="cofre-sub">Confirme com seu e-mail, a Chave Mestra e as suas perguntas pessoais. Seus dados continuam todos guardados.</p>' +
-    cofreCampo('cofre-email', 'E-mail', 'email', 'autocapitalize="off" spellcheck="false"') +
+    cofreCampo('cofre-email', 'E-mail', 'email', 'autocapitalize="off" spellcheck="false" value="' + cofreEsc(cofreEmailConhecido()) + '"') +
     cofreCampo('cofre-mestra', 'Chave Mestra', 'text', 'autocomplete="off" autocapitalize="characters" spellcheck="false"') +
     '<div id="cofre-erro" class="cofre-erro" role="alert" style="display:none"></div>' +
     '<button type="button" class="cofre-botao cofre-principal" onclick="cofreEsqueci1()">Continuar</button>' +
+    (cofreRecOk() ? '<button type="button" class="cofre-botao rec-botao" onclick="cofreRecEmail(\'esqueci\')">📧 Não tenho a Chave Mestra: código por e-mail</button>' : '') +
     '<button type="button" class="cofre-link" onclick="cofreEntrar()">Voltar</button>');
 }
 function cofreEsqueci1() {
@@ -5479,6 +5648,20 @@ RAP = {
   id: function () { return APP.user.email || ''; },
   painel: function () { cofrePainel(); }
 };
+
+/* ── V10.4.7: recuperar por e-mail (o código vai para o e-mail de criador) ── */
+function cofreRecOk() { return typeof recDisponivel === 'function' && recDisponivel() && !!(COFRE_CFG.rec && COFRE_CFG.rec.kenc); }
+function cofreRecEmail(origem) {
+  var email = cofreValor('cofre-email') || __cofreNovo.email || cofreEmailConhecido();
+  if (!cofreEmailOk(email)) { cofreAviso('Digite primeiro o seu e-mail de criador' + (COFRE_CFG.dica ? ' (' + COFRE_CFG.dica + ')' : '') + '.'); return; }
+  email = cofreNorm(email);
+  recIniciar({ id: 'criador', kenc: COFRE_CFG.rec.kenc, verif: COFRE_CFG.mestra.verif, para: COFRE_CFG.dica || '',
+    voltar: function () { if (origem === 'novo') { __cofreNovo = { email: email }; cofreNovo(); var e = document.getElementById('cofre-email'); if (e) e.value = email; } else cofreEsqueci(); },
+    depois: function (k) {
+      if (origem === 'novo' || !cofreCredencial()) { __cofreNovo = { email: email, k: k }; cofreNovoComChave(); }
+      else { __cofreNovo = { email: email, k: k }; cofreNovoTrocarSenha(); }
+    } });
+}
 /*CRIADOR-FIM*/
 /* ═══════════════════════════════════════════
    V10.4.1 — BOTÃO "INSTALAR NA TELA INICIAL" (ES5)
