@@ -39,6 +39,9 @@ img.logo{background:none;object-fit:cover}
 .passo b.n{flex:none;width:28px;height:28px;border-radius:8px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center}
 .big-cta{width:100%;padding:16px;font-size:17px}
 body.standalone #btnInstalar{display:none}
+.redes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
+.rede-card{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
+.rede-card .ri{font-size:26px;flex:none}.rede-card .t{font-weight:700}.rede-card.add{border-style:dashed;background:#FFF8F3}
 .tabs{display:flex;gap:2px;overflow-x:auto;padding:0 12px;max-width:1280px;margin:0 auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{flex:none;background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px 9px;cursor:pointer;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px;font-weight:600}
@@ -230,7 +233,7 @@ body.dev-celular .g30{grid-template-columns:repeat(2,1fr)}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '3.3.0';
+var APP_VER = '3.4.0';
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob/';
 var DB_NAME = 'SOCIAL_IMOB_360_PRO';
 var DB_VER = 1; // nunca aumentar: protege os dados já salvos
@@ -312,6 +315,13 @@ var AUDIT_MANUAL = {
   'Google':[['dados','Horário, telefone, site e área atendida completos'],['categoria','Categoria principal correta'],['fotos','Mais de 10 fotos reais'],['avaliacoes','Responde todas as avaliações']]
 };
 
+var PERFIS_EXTRA = [
+  {k:'mta', nome:'Música, Tecnologia e Arte', arroba:'@musicatecnologiaearte', rede:'Instagram', cor:'#00A3A3', cta:'', assinatura:'', ic:'🎛️'},
+  {k:'kennyilu', nome:'Kenny Ilustrador', arroba:'@kennyiluatrador', rede:'Instagram', cor:'#FDAB3D', cta:'', assinatura:'', ic:'🎨'},
+  {k:'kennyacu', nome:'Kenny Acústico 29', arroba:'@kennyacustico29', rede:'Instagram', cor:'#7E3B8A', cta:'', assinatura:'', ic:'🎸'},
+  {k:'saxruas', nome:'Sax nas Ruas', arroba:'@saxnasruas', rede:'Instagram', cor:'#FF642E', cta:'', assinatura:'', ic:'🎷'},
+  {k:'acu29', nome:'Acústico 29 Oficial', arroba:'@acustico29oficial', rede:'Instagram', cor:'#037F4C', cta:'', assinatura:'', ic:'🎤'}
+];
 var PADRAO = {
   perfis: [
     {k:'imoveis', nome:'Corretor Anderson Alves', arroba:'@corretorandersonalves.invest', cor:'#1F76C2', cta:'Fale comigo no WhatsApp (51) 98416-8848', assinatura:'Eu sou o corretor Anderson Alves: imóveis com visão, negócios com estratégia. Até a próxima vez!', ic:'🏠'},
@@ -446,7 +456,12 @@ function carregar(){
     Object.keys(PADRAO).forEach(function(k){ if(S.cfg[k]==null) S.cfg[k] = JSON.parse(JSON.stringify(PADRAO[k])); });
     S.cfg.perfis.forEach(function(p){ var d = PADRAO.perfis.filter(function(x){ return x.k===p.k; })[0]; if(d && !p.ic) p.ic = d.ic; if(!p.rede) p.rede = 'Instagram'; });
     aplicarDevice();
-    if(!c) return salvarCfg();
+    var add = 0;
+    PERFIS_EXTRA.forEach(function(d){
+      var ja = S.cfg.perfis.some(function(p){ return p.k===d.k || norm(p.arroba)===norm(d.arroba); });
+      if(!ja && (S.cfg.perfisRemovidos||[]).indexOf(d.k)<0){ S.cfg.perfis.push(JSON.parse(JSON.stringify(d))); S.cfg.hashtags[d.k] = S.cfg.hashtags[d.k]||''; add++; }
+    });
+    if(!c || add) return salvarCfg();
   });
 }
 function salvarConteudo(c){
@@ -599,6 +614,15 @@ function itemConteudo(c){
 }
 
 /* ---------- PAINEL (estilo mLabs) ---------- */
+function minhasRedes(){
+  var s = '<div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">🌐 Minhas Redes <span class="m">('+S.cfg.perfis.length+')</span></h2><button class="btn sm" data-act="gerenciarRedes">⚙️ Gerenciar</button></div><div class="redes-grid">';
+  S.cfg.perfis.forEach(function(p){
+    var n = S.conteudos.filter(function(c){ return c.perfil===p.k; }).length;
+    s += '<div class="rede-card" data-verperfil="'+p.k+'" style="border-left:5px solid '+p.cor+'"><b class="ri">'+((REDES[p.rede||'Instagram']||{}).ic||'⭐')+'</b><div class="grow" style="min-width:0"><div class="t">'+esc(p.rede||'Instagram')+'</div><div class="m" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.arroba)+'</div></div><span class="m">'+n+'</span></div>';
+  });
+  s += '<div class="rede-card add" data-act="adicionarRede"><b class="ri">➕</b><div class="grow"><div class="t">Adicionar rede</div><div class="m">Instagram, TikTok, YouTube…</div></div></div></div></div>';
+  return s;
+}
 function vPainel(){
   var h = hoje();
   var s = '';
@@ -610,6 +634,7 @@ function vPainel(){
       '<ol class="sub"><li>No Notion, abra o banco <b>📣 Autoridade | Conteúdo 360°</b> → ⋯ → <b>Exportar</b> → Markdown e CSV.</li><li>Faça o mesmo com <b>Imóveis 360°</b> (opcional).</li><li>Aqui, toque em <b>Importar do Notion</b> e escolha o arquivo .zip ou .csv.</li></ol>'+
       '<button class="btn acc" data-act="importar">📥 Importar do Notion</button> <button class="btn" data-act="novo">✍️ Criar primeiro conteúdo</button></div>';
   }
+  s += minhasRedes();
   s += '<div class="tiles">';
   S.cfg.perfis.forEach(function(p){
     var cs = S.conteudos.filter(function(c){ return c.perfil===p.k; });
@@ -934,8 +959,8 @@ function vImoveis(){
 /* ---------- AJUSTES ---------- */
 function vAjustes(){
   var c = S.cfg, s = '<div class="title-row"><h2>Ajustes</h2></div>';
-  s += '<div class="card"><h2><span class="panel-n">1</span>Aparelho e tela inicial</h2><p class="sub">Atual: <b>'+({celular:'📱 Celular',tablet:'📲 Tablet',pc:'💻 Computador'}[c.device]||'📱 Celular')+'</b></p><button class="btn acc" data-act="instalar">📲 Instalar na tela inicial</button> <button class="btn" data-act="device">Trocar aparelho</button></div>';
-  s += '<div class="card"><h2><span class="panel-n">2</span>Perfis e redes ('+c.perfis.length+')</h2><p class="sub">Cada perfil tem rede, cor, CTA e assinatura própria. Nada se mistura.</p>'+
+  s += '<div class="card"><h2><span class="panel-n">1</span>Aparelho e tela inicial</h2><p class="sub">Atual: <b>'+({celular:'📱 Celular',tablet:'📲 Tablet',pc:'💻 Computador'}[c.device]||'📱 Celular')+'</b></p><button class="btn acc" data-act="instalar">📲 Instalar na tela inicial</button> <button class="btn" data-act="device">Trocar aparelho</button> <button class="btn" data-act="atualizarApp">🔄 Buscar atualização</button><p class="hint">Versão instalada: v'+APP_VER+'</p></div>';
+  s += '<div class="card" id="cardPerfis"><h2><span class="panel-n">2</span>Perfis e redes ('+c.perfis.length+')</h2><p class="sub">Cada perfil tem rede, cor, CTA e assinatura própria. Nada se mistura.</p>'+
     '<button class="btn acc" data-act="apNovo" style="width:100%">➕ Adicionar perfil (Instagram, TikTok, YouTube…)</button>'+boxNovoPerfil('ap');
   c.perfis.forEach(function(p, i){
     var usados = S.conteudos.filter(function(x){ return x.perfil===p.k; }).length;
@@ -1215,6 +1240,10 @@ function perfilDe(marca, perf){
   if(m.indexOf('corretor')>=0 || p.indexOf('corretor')>=0 || (!m && p.indexOf('imove')>=0)) return 'imoveis';
   if(m.indexOf('consorc')>=0 || p.indexOf('consorc')>=0 || p.indexOf('investimentos')>=0) return 'consorcios';
   if(m.indexOf('marcaeestrateg')>=0 || p.indexOf('marcaeestrateg')>=0 || m.indexOf('marcaestrateg')>=0) return 'me';
+  var tem = function(k){ return S.cfg.perfis.some(function(x){ return x.k===k; }); };
+  if((m.indexOf('musicatecnologia')>=0 || p.indexOf('musicatecnologia')>=0) && tem('mta')) return 'mta';
+  if((m.indexOf('saxnasruas')>=0 || p.indexOf('saxnasruas')>=0) && tem('saxruas')) return 'saxruas';
+  if((m.indexOf('acustico29')>=0 || p.indexOf('acustico29')>=0) && tem('acu29')) return 'acu29';
   if(m.indexOf('kenny')>=0 || m.indexOf('sax')>=0 || m.indexOf('musica')>=0 || p.indexOf('kenny')>=0 || p.indexOf('sax')>=0 || p.indexOf('acustico')>=0) return 'kenny';
   return 'definir';
 }
@@ -1392,10 +1421,11 @@ function ligar(){
   $all('[data-mv]', A).forEach(function(el){ el.onclick = function(e){ e.stopPropagation(); var p = el.dataset.mv.split('|'); mover(p[0], +p[1]); }; });
   $all('[data-imv]', A).forEach(function(el){ el.onclick = function(){ editarImovel(el.dataset.imv); }; });
   $all('[data-camp]', A).forEach(function(el){ el.onclick = function(){ editarCampanha(el.dataset.camp); }; });
+  $all('[data-verperfil]', A).forEach(function(el){ el.onclick = function(){ UI.perfil = el.dataset.verperfil; UI.view = 'planilha'; window.scrollTo(0,0); render(); }; });
   $all('[data-delperfil]', A).forEach(function(el){ el.onclick = function(){
     var k = el.dataset.delperfil, p = perfil(k), us = S.conteudos.filter(function(x){ return x.perfil===k; });
     if(!confirm('Remover o perfil '+p.arroba+'?'+(us.length?' Os '+us.length+' conteúdos dele NÃO são apagados: vão para “definir perfil”.':''))) return;
-    S.cfg.perfis = S.cfg.perfis.filter(function(x){ return x.k!==k; }); us.forEach(function(x){ x.perfil='definir'; registrar(x,'Perfil '+p.arroba+' removido'); });
+    S.cfg.perfis = S.cfg.perfis.filter(function(x){ return x.k!==k; }); S.cfg.perfisRemovidos = (S.cfg.perfisRemovidos||[]).concat([k]); us.forEach(function(x){ x.perfil='definir'; registrar(x,'Perfil '+p.arroba+' removido'); });
     Promise.all([salvarCfg(), gravar('conteudos', us)]).then(function(){ toast('Perfil removido'); render(); });
   }; });
   $all('[data-redesel]', A).forEach(function(el){ el.onclick = function(){ UI.redeSel = el.dataset.redesel; render(); }; });
@@ -1471,6 +1501,12 @@ function acao(a){
       });
       break;
     case 'apNovo': $('#apBox').style.display='block'; break;
+    case 'gerenciarRedes': UI.view='ajustes'; render(); setTimeout(function(){ var d=$('#cardPerfis'); if(d && d.scrollIntoView) d.scrollIntoView({behavior:'smooth'}); }, 50); break;
+    case 'adicionarRede': UI.view='ajustes'; render(); setTimeout(function(){ var b=$('#apBox'); if(b){ b.style.display='block'; if(b.scrollIntoView) b.scrollIntoView({behavior:'smooth', block:'center'}); var i=$('#apArroba'); if(i) i.focus(); } }, 50); break;
+    case 'atualizarApp':
+      toast('Buscando atualização…');
+      (navigator.serviceWorker && navigator.serviceWorker.getRegistration ? navigator.serviceWorker.getRegistration() : Promise.resolve(null)).then(function(r){ return r && r.update(); }).then(function(){ return window.caches ? caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); }) : null; }).then(function(){ location.reload(); }, function(){ location.reload(); });
+      break;
     case 'apCancelar': $('#apBox').style.display='none'; break;
     case 'apSalvar':
       var da = lerNovoPerfil('ap'); if(!da.arroba.trim() && !da.nome.trim()){ toast('Digite o @ ou o nome do perfil'); break; }
