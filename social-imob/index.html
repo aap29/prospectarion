@@ -230,7 +230,8 @@ body.dev-celular .g30{grid-template-columns:repeat(2,1fr)}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '3.1.1';
+var APP_VER = '3.2.0';
+var URL_APP = 'https://aap29.github.io/prospectarion/social-imob/';
 var DB_NAME = 'SOCIAL_IMOB_360_PRO';
 var DB_VER = 1; // nunca aumentar: protege os dados já salvos
 var ETAPAS = ['Ideia','Roteiro','Produção','Revisão','Agendado','Publicado'];
@@ -501,19 +502,16 @@ function telaInstalar(forcarLocal){
     '<img class="inst-logo" src="'+LOGO_192+'" alt="Logo Social Imob">';
   if(modoApp()) h += '<p class="sub" style="text-align:center"><b>✔ Você já está usando o app instalado.</b></p>';
   if(installEvt) h += '<button class="btn acc big-cta" data-act="instalarAgora">📲 Instalar agora com este logo</button><div class="sp"></div>';
-  if(local && pl!=='ios' && pl!=='pc'){
-    h += '<p class="sub">Você abriu o app como <b>arquivo</b> salvo no aparelho. Faça assim, uma única vez:</p>'+
-      '<h3 style="margin-top:6px">Opção A: pelo Chrome, com este logo</h3>'+
-      passo(1,'Com o app aberto <b>no Chrome</b>, toque em <b>⋮</b> (os três pontos, no canto superior direito).')+
-      passo(2,'Toque em <b>Adicionar à tela inicial</b> (ou <b>Instalar app</b>).')+
-      passo(3,'Confirme o nome <b>Social Imob</b> e toque em <b>Adicionar</b>. O ícone laranja aparece na sua tela.')+
-      '<p class="hint">Se essa opção não aparecer no menu do Chrome, use a Opção B: ela sempre funciona em aparelhos Samsung.</p>'+
-      '<h3 style="margin-top:12px">Opção B: pelo app Meus Arquivos (Samsung)</h3>'+
-      passo(1,'Abra <b>Meus Arquivos</b> → <b>Downloads</b>.')+
-      passo(2,'<b>Mantenha pressionado</b> o arquivo <b>'+nome+'</b> até ele ficar marcado.')+
-      passo(3,'Toque em <b>⋮ Mais</b> (canto inferior direito) → <b>Adicionar à tela inicial</b> → <b>Adicionar</b>.')+
-      passo(4,'Na primeira vez que tocar no atalho, escolha <b>Chrome</b> e marque <b>Sempre</b>. Isso é importante: os seus dados ficam guardados no Chrome.')+
-      '<p class="hint">Na Opção B o atalho aparece com o ícone padrão de arquivo HTML; a Opção A usa o logo do app.</p>';
+  if(local){
+    h += '<p class="sub"><b>Este é o arquivo salvo no aparelho.</b> Arquivo não vira app com ícone no Android. Para instalar com o logo, abra a versão online (gratuita, a mesma do PROSPECTARION):</p>'+
+      '<a class="btn acc big-cta" style="display:block;text-align:center;text-decoration:none" href="'+URL_APP+'" target="_blank" rel="noopener">🌐 Abrir versão instalável no Chrome</a><div class="sp"></div>'+
+      '<p class="sub" style="word-break:break-all;text-align:center"><b>'+URL_APP+'</b></p>'+
+      '<button class="btn" data-act="copiarLink" style="width:100%">📋 Copiar o endereço</button>'+
+      '<h3 style="margin-top:14px">Depois, no Chrome:</h3>'+
+      passo(1,'Com o endereço acima aberto no <b>Chrome</b>, toque no botão laranja <b>📲 Instalar</b> do app → <b>Instalar agora</b>.')+
+      passo(2,'Se não aparecer, toque em <b>⋮</b> (canto superior direito) → <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.')+
+      passo(3,'Dentro do app instalado, toque em <b>Carregar meus 132 conteúdos do Notion</b>.')+
+      '<p class="hint">Apague da tela inicial o atalho antigo com ícone “HTML”: ele abre o código, não o app.</p>';
   } else if(pl==='ios'){
     h += passo(1,'Abra o app no <b>Safari</b>.')+passo(2,'Toque em <b>Compartilhar</b> (quadrado com seta).')+passo(3,'Toque em <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.');
   } else if(pl==='pc'){
@@ -1425,6 +1423,7 @@ function acao(a){
     case 'instalar': telaInstalar(); break;
     case 'instalarAgora': if(installEvt){ installEvt.prompt(); installEvt.userChoice.then(function(){ installEvt=null; fecharModal(); }); } break;
     case 'baixarLogo': baixarLogo(); break;
+    case 'copiarLink': copiar(URL_APP); break;
     case 'carregarNotion':
       if(S.cfg.seedNotion && !confirm('Os dados do Notion já foram carregados antes. Carregar de novo? Nada é duplicado: os conteúdos existentes são atualizados.')) break;
       toast('Carregando do Notion…'); carregarNotion().then(function(m){ alert(m+'\n\nDados lidos do seu Notion em 11/10/2026.'); fecharModal(); render(); }, function(err){ alert('Não foi possível carregar: '+(err && err.message || err)); });
