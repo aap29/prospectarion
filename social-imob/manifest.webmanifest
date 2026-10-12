@@ -1,0 +1,18 @@
+{
+ "name": "Social Imob 360 PRO",
+ "short_name": "Social Imob",
+ "description": "Planejamento, calendário e assistente das redes sociais de Anderson Alves.",
+ "id": "./",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#F7F4EC",
+ "theme_color": "#F2552C",
+ "lang": "pt-BR",
+ "icons": [
+  {"src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+  {"src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+  {"src": "icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+ ]
+}
