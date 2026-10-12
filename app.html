@@ -2006,6 +2006,59 @@ body.cofre-travado { overflow: hidden; }
 .inst-cartao.trava-cartao { background: linear-gradient(135deg, #374151, #1F2937); }
 select.cofre-campo { appearance: auto; }
 
+/* ── V10.4.6: Orientador 360° ── */
+.d360-ori-msg .ori-saud { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.d360-ori-msg .ori-frase { font-size: 14px; font-style: italic; color: #FDBA74; margin-bottom: 8px; line-height: 1.5; }
+.d360-ori-msg .ori-resumo { font-size: 15px; color: rgba(255,255,255,.9); line-height: 1.55; }
+#ori-acoes-home { margin-top: 12px; }
+#ori-acoes-home .ori-acao { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); }
+#ori-acoes-home .ori-acao strong { color: #fff; }
+#ori-acoes-home .ori-acao small { color: rgba(255,255,255,.72); }
+#ori-acoes-home .ori-b { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.22); }
+#ori-acoes-home .ori-b-wa { background: #16A34A; border-color: #16A34A; }
+#ori-acoes-home .ori-ver-todas { background: transparent; color: #FDBA74; border-color: rgba(253,186,116,.5); }
+.ori-atalhos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.ori-atalhos button { min-height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,.2); background: rgba(242,100,25,.18); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.ori-acao { border-radius: 14px; padding: 12px; margin-bottom: 10px; background: #fff; border: 1px solid #E5E7EB; }
+.ori-acao-top { display: flex; gap: 10px; align-items: flex-start; }
+.ori-acao-ic { font-size: 24px; line-height: 1.1; flex: 0 0 auto; }
+.ori-acao-tx { min-width: 0; flex: 1; }
+.ori-acao-tx strong { display: block; font-size: 16px; font-weight: 800; color: #1A1A1A; overflow-wrap: anywhere; }
+.ori-acao-tx small { display: block; font-size: 14px; color: #4B5563; margin-top: 2px; line-height: 1.4; }
+.ori-acao-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ori-b { min-height: 42px; padding: 6px 12px; border-radius: 10px; border: 1.5px solid #D1D5DB; background: #fff; color: #1A1A1A; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.ori-b-wa { background: #16A34A; color: #fff; border-color: #16A34A; }
+.ori-ver-todas { display: block; width: 100%; min-height: 46px; margin-top: 4px; border-radius: 12px; border: 1.5px dashed #F26419; background: #FFF7ED; color: #C2410C; font-size: 15px; font-weight: 800; cursor: pointer; font-family: inherit; }
+body.ori-aberto { overflow: hidden; }
+#ori-painel { position: fixed; inset: 0; z-index: 2147482000; background: #F3F4F6; overflow-y: auto; -webkit-overflow-scrolling: touch; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+.ori-caixa { max-width: 640px; margin: 0 auto; padding: 0 16px 40px; box-sizing: border-box; }
+.ori-topo { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 14px 0 10px; background: #F3F4F6; }
+.ori-topo-tit { flex: 1; font-size: 20px; font-weight: 900; color: #1A1A1A; }
+.ori-fechar { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid #D1D5DB; background: #fff; font-size: 20px; font-weight: 900; cursor: pointer; }
+.ori-abas { position: sticky; top: 70px; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding-bottom: 10px; background: #F3F4F6; }
+.ori-aba { min-height: 48px; border-radius: 12px; border: 1.5px solid #E5E7EB; background: #fff; color: #374151; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; padding: 4px; }
+.ori-aba.ativa { background: #F26419; border-color: #F26419; color: #fff; }
+.ori-intro { font-size: 15px; color: #4B5563; line-height: 1.5; margin: 4px 0 12px; }
+.ori-vazio { padding: 14px; border-radius: 12px; background: #fff; border: 1px dashed #D1D5DB; font-size: 15px; color: #4B5563; text-align: center; }
+.ori-rot { display: block; font-size: 15px; font-weight: 800; color: #1A1A1A; margin: 12px 0 6px; }
+.ori-sel { width: 100%; min-height: 50px; border-radius: 12px; border: 1.5px solid #D1D5DB; padding: 8px 12px; font-size: 16px; background: #fff; font-family: inherit; }
+.ori-sits { display: flex; flex-wrap: wrap; gap: 6px; }
+.ori-sit { min-height: 42px; padding: 6px 12px; border-radius: 20px; border: 1.5px solid #FDBA74; background: #FFF7ED; color: #9A3412; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.ori-sit.ativa { background: #F26419; border-color: #F26419; color: #fff; }
+.ori-dica { margin: 14px 0 10px; padding: 12px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FCD34D; font-size: 15px; line-height: 1.5; color: #1A1A1A; }
+.ori-msg { margin-bottom: 10px; padding: 12px; border-radius: 14px; background: #fff; border: 1px solid #E5E7EB; }
+.ori-msg-tit { display: block; font-size: 16px; margin: 4px 0 6px; color: #1A1A1A; }
+.ori-msg-tx { font-size: 15px; line-height: 1.55; color: #1F2937; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.ori-tag { display: inline-block; font-size: 12px; font-weight: 800; color: #9A3412; background: #FFEDD5; border-radius: 8px; padding: 2px 8px; }
+.ori-bloco { margin-bottom: 14px; padding: 12px; border-radius: 14px; background: #fff; border: 1px solid #E5E7EB; }
+.ori-bloco-tit { font-size: 16px; font-weight: 900; color: #1A1A1A; margin-bottom: 8px; }
+.ori-ol { margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.55; color: #1F2937; }
+.ori-ol li { margin-bottom: 6px; }
+.ori-linha { padding: 10px 0; border-top: 1px solid #F3F4F6; }
+.ori-linha:first-of-type { border-top: none; }
+.ori-linha strong { font-size: 15px; color: #1A1A1A; }
+.ori-b:focus-visible, .ori-aba:focus-visible, .ori-sit:focus-visible, .ori-fechar:focus-visible, .ori-ver-todas:focus-visible, .ori-atalhos button:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+@media (max-width: 380px) { .ori-abas { grid-template-columns: repeat(2, 1fr); } .ori-abas { top: 70px; } }
 
 /* ═══════════════════════════════════════════
    V10.2 — EDIÇÃO HOSPEDADA (degustação / demonstração)
@@ -2515,6 +2568,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); }
             <span class="d360-ori-badge">IA Local</span>
           </div>
           <div class="d360-ori-msg" id="d360-ori-msg">Analisando seus dados...</div>
+          <div id="ori-acoes-home" data-lista="home"></div>
+          <div class="ori-atalhos"><button type="button" data-ori="aba" data-aba="acoes">🎯 Todas as ações</button><button type="button" data-ori="aba" data-aba="destravar">💬 Destravar conversa</button><button type="button" data-ori="aba" data-aba="conteudo">✍️ Conteúdo do dia</button><button type="button" data-ori="aba" data-aba="prospectar">🔍 Prospectar</button></div>
         </div>
       </div>
 
@@ -4468,6 +4523,579 @@ function pubPlanoSeguro() {
 }
 
 var PUB_TELAS = [];
+/* ═══════════════════════════════════════════
+   V10.4.6 — ORIENTADOR 360° (ES5, 100% off-line)
+   Lê os dados do próprio app e diz o que fazer agora, com a mensagem pronta:
+   - saudação + frase do dia + resumo;
+   - próximas ações em ordem de importância (compromisso atrasado, cliente quente esfriando,
+     lead novo sem resposta, negócio parado além do prazo da etapa, pendência, contato esfriando,
+     pedido de indicação) com WhatsApp, Ligar, Feito, Reagendar e Destravar;
+   - destravar conversa (mensagens por situação, com nome e assunto do cliente);
+   - conteúdo do dia para as redes; novas prospecções.
+   Só usa campos que já existem (interactions, proximaAcao, prioridades, deals.atividades) e
+   APP.orientador (cartões adiados no dia). Nada é apagado.
+═══════════════════════════════════════════ */
+var ORI_FRIO = 14, ORI_QUENTE = 3, ORI_LEAD_NOVO = 3, ORI_MAX_HOME = 3;
+var __oriAcoes = [], __oriAba = 'acoes', __oriContato = '', __oriSit = '', __oriSemente = 0, __oriLista = [];
+
+function oriEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function oriPad(n) { return (n < 10 ? '0' : '') + n; }
+function oriDiaStr(d) { return d.getFullYear() + '-' + oriPad(d.getMonth() + 1) + '-' + oriPad(d.getDate()); }
+function oriHojeStr() { return oriDiaStr(new Date()); }
+function oriMaisDias(n) { var d = new Date(); d.setDate(d.getDate() + n); return oriDiaStr(d); }
+function oriTempo(v) {
+  if (!v) return 0;
+  var s = String(v), t = /^\d{4}-\d{2}-\d{2}$/.test(s) ? Date.parse(s + 'T12:00:00') : Date.parse(s);
+  return isNaN(t) ? 0 : t;
+}
+/* Dias de calendário (ontem = 1), como a pessoa conta */
+function oriDiasDesde(t) { if (!t) return null; var a = new Date(t), h = new Date(); a.setHours(0, 0, 0, 0); h.setHours(0, 0, 0, 0); return Math.max(0, Math.round((h - a) / 86400000)); }
+function oriMinuscula(t) { t = String(t || ''); return /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ][a-záéíóúâêôãõç]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t; }
+function oriPrimeiroNome(nome) {
+  var n = String(nome || '').split(/\s+-\s+|\s+–\s+|\(/)[0].replace(/^\s+|\s+$/g, '');
+  n = n.split(/\s+/)[0] || '';
+  return n ? n.charAt(0).toUpperCase() + n.slice(1).toLowerCase() : '';
+}
+/* Valor em reais: aceita 450000, 450.000, 450.000,00, R$ 1.250,50, 1250.5 */
+function oriValor(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : 0;
+  var s = String(v || '').replace(/[^\d,.\-]/g, '');
+  if (!s) return 0;
+  if (s.indexOf(',') >= 0) s = s.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  var n = parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+function oriMoeda(v) {
+  if (v >= 1000000) return 'R$ ' + (v / 1000000).toFixed(1).replace('.', ',') + ' mi';
+  if (v >= 1000) return 'R$ ' + Math.round(v / 1000) + ' mil';
+  return 'R$ ' + Math.round(v);
+}
+function oriTelDigitos(tel) {
+  var d = String(tel || '').replace(/\D/g, '');
+  if (d.length === 10 || d.length === 11) d = '55' + d;
+  return d.length >= 12 ? d : '';
+}
+
+/* ── Último contato real com cada cliente (não a data do cadastro) ── */
+function oriIndice() {
+  var porId = {}, porNome = {};
+  function marca(mapa, chave, t) { if (chave && t && (!mapa[chave] || mapa[chave] < t)) mapa[chave] = t; }
+  (APP.interactions || []).forEach(function (i) { marca(porId, i.contactId, oriTempo(i.createdAt)); });
+  (APP.notes || []).forEach(function (n) { if (n.contato) marca(porNome, String(n.contato).toLowerCase(), oriTempo(n.createdAt)); });
+  (APP.deals || []).forEach(function (d) {
+    var t = 0;
+    (d.atividades || []).forEach(function (a) { var x = oriTempo(a.data); if (x > t) t = x; });
+    if (t) { marca(porId, d.contactId, t); if (d.contato) marca(porNome, String(d.contato).toLowerCase(), t); }
+  });
+  return { porId: porId, porNome: porNome };
+}
+function oriUltimo(c, ix) {
+  var t = Math.max(ix.porId[c.id] || 0, ix.porNome[String(c.nome || '').toLowerCase()] || 0);
+  (c.historico || []).forEach(function (h) { var x = oriTempo(h.data); if (x > t) t = x; });
+  if (c.proximaAcao && c.proximaAcao.concluida) { var y = oriTempo(c.proximaAcao.concluidaEm || c.proximaAcao.data); if (y > t) t = y; }
+  return { t: t || oriTempo(c.createdAt), registrado: !!t };
+}
+function oriContarSemContato() {
+  var ix = oriIndice();
+  return (APP.contacts || []).filter(function (c) { var u = oriUltimo(c, ix); return oriDiasDesde(u.t) > ORI_FRIO; }).length;
+}
+/* Retornos pendentes = próximas ações dos clientes para hoje ou atrasadas, ainda não feitas */
+function oriRetornosPendentes() {
+  var h = oriHojeStr();
+  return (APP.contacts || []).filter(function (c) { var p = c.proximaAcao; return p && !p.concluida && (p.data || h) <= h; }).length;
+}
+
+/* ── Área de atuação (para mensagens e conteúdo) ── */
+function oriArea() {
+  var p = (((APP.dashboard && APP.dashboard.profissao) || '') + ' ' + ((APP.perfil && APP.perfil.bio) || '') + ' ' + ((APP.user && APP.user.profissao) || '')).toLowerCase();
+  var imob = /corret|imob|imóve|imove|creci|aluguel|locaç/.test(p), cons = /cons[oó]rc|patrimon|carta contemplada|invest/.test(p);
+  if (!imob && !cons) {
+    var t = (APP.deals || []).map(function (d) { return d.titulo || ''; }).join(' ').toLowerCase();
+    imob = /casa|apto|apartamento|terreno|imóvel|imovel|sobrado|sala comercial|cobertura/.test(t);
+    cons = /cons[oó]rc|carta|cota/.test(t);
+  }
+  return { imob: imob, cons: cons };
+}
+function oriTema() { var a = oriArea(); return a.imob && a.cons ? 'imóvel ou consórcio' : (a.imob ? 'imóvel' : (a.cons ? 'consórcio' : 'o que conversamos')); }
+function oriEu() {
+  var n = (APP.perfil && APP.perfil.nomeProfissional) || (APP.user && (APP.user.apelido || APP.user.nome)) || '';
+  return n && n !== 'Usuário' ? n : '';
+}
+function oriAssunto(c) {
+  if (!c) return oriTema();
+  var d = (APP.deals || []).filter(function (x) { return (x.contactId === c.id || (x.contato && x.contato === c.nome)) && x.etapa < 4; })[0];
+  return d && d.titulo ? d.titulo : oriTema();
+}
+
+/* ── Mensagens prontas por situação ── */
+var ORI_SITUACOES = [
+  { id: 'sumiu', n: 'Sumiu / não responde', dica: 'Pergunta curta, fácil de responder com sim ou não. Ofereça uma saída: quem pode dizer "agora não" volta a conversar.',
+    m: ['Oi {nome}, tudo bem? Passando para saber se ainda faz sentido conversarmos sobre {assunto}. Se o momento mudou, sem problema: me avisa que eu ajusto por aqui. 🙂',
+        '{nome}, separei uma novidade sobre {assunto} que tem a ver com o que você me contou. Posso te mandar um áudio de 1 minuto?'] },
+  { id: 'caro', n: 'Achou caro', dica: 'Antes de dar desconto, descubra se é falta de verba ou falta de certeza. Mostre caminhos, não só preço.',
+    m: ['Entendo, {nome}. Para eu te ajudar melhor: o valor ficou acima do que você planejou ou você quer ter certeza de que vale o investimento?',
+        '{nome}, posso te mostrar 2 caminhos para encaixar {assunto} no seu orçamento sem perder o principal do que você procura?'] },
+  { id: 'pensar', n: '"Vou pensar"', dica: '"Vou pensar" quase sempre esconde uma dúvida. Pergunte qual é e combine data para o retorno.',
+    m: ['Claro, {nome}, decisão importante tem que ser bem pensada. Ficou alguma dúvida sobre {assunto}? Assim já te mando a informação certa.',
+        'Combinado, {nome}! Posso te ligar {dia} para fecharmos as dúvidas que ficarem?'] },
+  { id: 'conjuge', n: 'Precisa falar com cônjuge/sócio', dica: 'Traga quem decide para a conversa. Ofereça um horário fácil para os dois.',
+    m: ['Faz todo sentido decidir junto, {nome}. Que tal uma conversa rápida com vocês dois, por vídeo ou pessoalmente? Assim respondo as dúvidas de uma vez.',
+        '{nome}, se ajudar, preparo um resumo de {assunto} em 5 pontos para você mostrar em casa. Quer que eu mande?'] },
+  { id: 'comparando', n: 'Está comparando opções', dica: 'Seja o consultor que ajuda a comparar, mesmo que a escolha não seja com você. Isso gera confiança.',
+    m: ['Ótimo comparar, {nome}! Me conta o que você está olhando que eu te ajudo a colocar lado a lado, com prós e contras de cada opção.',
+        '{nome}, para comparar de forma justa, vale olhar 3 coisas: custo total, prazo e segurança. Quer que eu monte essa comparação para você?'] },
+  { id: 'posvisita', n: 'Depois da visita/reunião', dica: 'Peça uma nota de 0 a 10: o que falta para chegar a 10 é exatamente o que você precisa resolver.',
+    m: ['{nome}, obrigado pelo seu tempo hoje! De 0 a 10, quanto {assunto} combinou com o que você procura? O que faltou para ser 10?',
+        'Oi {nome}! Ficou alguma dúvida depois da nossa conversa sobre {assunto}? Estou à disposição para o próximo passo.'] },
+  { id: 'posproposta', n: 'Proposta enviada sem resposta', dica: 'Ofereça revisar juntos. Propostas paradas morrem em silêncio: marque um horário.',
+    m: ['Oi {nome}! Conseguiu analisar a proposta de {assunto}? Se quiser, revisamos juntos em 10 minutos.',
+        '{nome}, a condição que te passei para {assunto} pode mudar em breve. Quer garantir ou prefere que eu ajuste algum ponto?'] },
+  { id: 'fechar', n: 'Pronto para fechar', dica: 'Facilite o sim: diga o próximo passo concreto e o que a pessoa precisa separar.',
+    m: ['{nome}, está tudo certo para avançarmos com {assunto}. O próximo passo é simples: {dia} eu te envio a documentação. Pode ser?',
+        'Perfeito, {nome}! Para seguir com {assunto} só preciso de alguns dados seus. Prefere que eu ligue ou mando a lista por aqui?'] },
+  { id: 'indicacao', n: 'Pedir indicação', dica: 'O melhor momento é logo depois de uma entrega ou elogio. Peça um nome específico, não "se souber de alguém".',
+    m: ['{nome}, foi um prazer te atender! Você conhece alguém que também esteja pensando em {tema}? Uma indicação sua vale muito para mim e eu cuido com o mesmo carinho.',
+        '{nome}, posso te pedir um favor rápido? Pense em 1 pessoa da família ou do trabalho que esteja planejando {tema}. Posso falar com ela em seu nome?'] },
+  { id: 'reaquecer', n: 'Reaquecer contato antigo', dica: 'Volte com uma novidade útil, não com cobrança. Uma pergunta aberta reabre a conversa.',
+    m: ['Oi {nome}! Faz um tempo que não conversamos. Como andam os planos para {tema}? Tenho novidades que podem te interessar.',
+        '{nome}, lembrei de você hoje! Surgiu uma oportunidade em {tema} que combina com o que você me contou. Posso te mostrar?'] },
+  { id: 'primeiro', n: 'Primeiro contato (lead novo)', dica: 'Responda rápido: lead novo esfria em horas. Apresente-se e peça só 5 minutos.',
+    m: ['Oi {nome}, tudo bem? Aqui é {eu}. Vi seu interesse em {tema} e quero te ajudar. Qual o melhor horário para conversarmos 5 minutos?',
+        'Olá {nome}! Sou {eu}. Para te mandar só opções que fazem sentido: qual é a sua prioridade número 1 em {tema}?'] },
+  { id: 'obrigado', n: 'Agradecer / pós-venda', dica: 'Pós-venda bem feito vira indicação. Mande uma mensagem 7 e 30 dias depois do fechamento.',
+    m: ['{nome}, parabéns pela conquista! Obrigado pela confiança. Qualquer coisa que precisar, conte comigo.',
+        'Oi {nome}! Passando para saber como está tudo depois de {assunto}. Ficou alguma dúvida em que eu possa ajudar?'] }
+];
+function oriSituacao(id) { for (var i = 0; i < ORI_SITUACOES.length; i++) if (ORI_SITUACOES[i].id === id) return ORI_SITUACOES[i]; return ORI_SITUACOES[0]; }
+function oriPreencher(txt, c) {
+  var eu = oriEu(), nome = oriPrimeiroNome(c && c.nome), d = new Date(); d.setDate(d.getDate() + 1);
+  var s = String(txt);
+  if (!nome) { s = s.replace(/\{nome\}, /g, '').replace(/ \{nome\}/g, '').replace(/\{nome\}/g, ''); s = s.charAt(0).toUpperCase() + s.slice(1); }
+  return s
+    .replace(/\{nome\}/g, nome)
+    .replace(/\{assunto\}/g, oriAssunto(c))
+    .replace(/\{tema\}/g, oriTema())
+    .replace(/\{dia\}/g, d.getDay() === 0 ? 'segunda' : 'amanhã')
+    .replace(/\{eu\}/g, eu || 'seu consultor');
+}
+function oriMsg(sit, c, variante) { return oriPreencher(oriSituacao(sit).m[variante || 0], c); }
+
+/* ── Próximas ações (em ordem de importância) ── */
+function oriAdiados() { if (!APP.orientador || typeof APP.orientador !== 'object') APP.orientador = {}; if (!APP.orientador.adiados) APP.orientador.adiados = {}; return APP.orientador.adiados; }
+function oriAdiado(chave) { var a = APP.orientador && APP.orientador.adiados; return !!(a && a[chave] && a[chave] >= oriHojeStr()); }
+function oriContatoPorNome(nome) {
+  if (!nome) return null;
+  var n = String(nome).toLowerCase();
+  return (APP.contacts || []).filter(function (c) { return String(c.nome || '').toLowerCase() === n; })[0] || null;
+}
+function oriContatoPorId(id) { return (APP.contacts || []).filter(function (c) { return c.id === id; })[0] || null; }
+function oriCalcularAcoes() {
+  var A = [], h = oriHojeStr(), ix = oriIndice(), usados = {};
+  /* compromissos e negócios sempre aparecem; os avisos por contato só se o cliente ainda não apareceu */
+  function add(a) { if (oriAdiado(a.chave)) return; if (a.contato && (a.tipo === 'agenda' || a.tipo === 'deal' || a.tipo === 'pendencia')) usados[a.contato.id] = 1; A.push(a); }
+  /* 1. Compromissos atrasados e de hoje (agenda) */
+  var ag = [];
+  try { ag = agGetTodos(); } catch (e) {}
+  ag.forEach(function (t) {
+    if (t.concluida) return;
+    var d = t.data || h; if (d > h) return;
+    var c = t.clienteId ? oriContatoPorId(t.clienteId) : null, atras = d < h;
+    var dias = atras ? oriDiasDesde(oriTempo(d)) : 0;
+    add({ chave: 'ag:' + t.id, tipo: 'agenda', ag: t, contato: c, peso: atras ? 100 + Math.min(dias, 30) : 90,
+      ic: atras ? '⏰' : '📅', titulo: (c ? oriPrimeiroNome(c.nome) + ' · ' : '') + (t.titulo || 'Compromisso'),
+      motivo: atras ? 'Compromisso atrasado há ' + dias + (dias === 1 ? ' dia' : ' dias') : 'Compromisso de hoje' + (t.hora ? ' às ' + t.hora : ''),
+      sit: 'sumiu', msg: c ? oriPreencher('Oi {nome}, tudo bem? Passando para dar sequência ao nosso último contato sobre {assunto}. Podemos conversar hoje?', c) : '' });
+  });
+  /* 2. Negócios parados além do prazo da etapa */
+  var etapas = (typeof PL_ETAPAS !== 'undefined') ? PL_ETAPAS : [];
+  (APP.deals || []).forEach(function (d) {
+    if (!(d.etapa < 4)) return;
+    var et = etapas[d.etapa] || { label: 'Em andamento', prazo: 7 };
+    var t = Math.max(oriTempo(d.etapa_data), oriTempo(d.createdAt));
+    (d.atividades || []).forEach(function (a) { var x = oriTempo(a.data); if (x > t) t = x; });
+    var dias = oriDiasDesde(t), prazo = et.prazo || 7;
+    if (dias === null || dias <= prazo) return;
+    var c = d.contactId ? oriContatoPorId(d.contactId) : oriContatoPorNome(d.contato), v = oriValor(d.valor);
+    var sit = d.etapa >= 3 ? 'pensar' : (d.etapa === 2 ? 'posproposta' : 'sumiu');
+    add({ chave: 'deal:' + d.id, tipo: 'deal', deal: d, contato: c, peso: 60 + Math.min(dias - prazo, 25) + (v >= 100000 ? 10 : 0) + d.etapa * 2,
+      ic: '💼', titulo: (d.titulo || 'Negócio') + (c ? ' · ' + oriPrimeiroNome(c.nome) : ''),
+      motivo: 'Parado há ' + dias + ' dias na etapa ' + et.label.replace(/[✓✗]/g, '').replace(/\s+$/, '') + ' (prazo: ' + prazo + ' dias)' + (v ? ' · ' + oriMoeda(v) : ''),
+      sit: sit, msg: oriMsg(d.etapa >= 3 ? 'fechar' : sit, c || { nome: d.contato }) });
+  });
+  /* 3. Clientes quentes esfriando e leads novos sem resposta */
+  (APP.contacts || []).forEach(function (c) {
+    var u = oriUltimo(c, ix), dias = oriDiasDesde(u.t);
+    if (c.temperatura === 'hot' && dias > ORI_QUENTE) {
+      add({ chave: 'quente:' + c.id, tipo: 'contato', contato: c, peso: 85 + Math.min(dias, 14), ic: '🔥', titulo: oriPrimeiroNome(c.nome) + (c.empresa ? ' · ' + c.empresa : ''),
+        motivo: 'Cliente quente sem contato há ' + dias + ' dias', sit: 'reaquecer', msg: oriMsg('reaquecer', c, 1) });
+    } else if (!u.registrado && oriDiasDesde(oriTempo(c.createdAt)) <= ORI_LEAD_NOVO && (c.categoria || 'lead') === 'lead') {
+      add({ chave: 'novo:' + c.id, tipo: 'contato', contato: c, peso: 80, ic: '🆕', titulo: oriPrimeiroNome(c.nome) + (c.empresa ? ' · ' + c.empresa : ''),
+        motivo: 'Lead novo ainda sem nenhum contato registrado', sit: 'primeiro', msg: oriMsg('primeiro', c) });
+    }
+  });
+  /* 4. Pendências comerciais ativas */
+  var pend = [];
+  try { pend = pcGetAtivas(); } catch (e) {}
+  pend.slice(0, 5).forEach(function (p) {
+    var c = p.contactId ? oriContatoPorId(p.contactId) : oriContatoPorNome(p.clienteNome);
+    add({ chave: 'pc:' + p.id, tipo: 'pendencia', pend: p, contato: c, peso: 75, ic: '⚠️', titulo: (p.titulo || 'Pendência') + (c ? ' · ' + oriPrimeiroNome(c.nome) : ''),
+      motivo: 'Pendência comercial em aberto', sit: 'sumiu', msg: c ? oriMsg('sumiu', c) : '' });
+  });
+  /* 5. Indicação: negócios fechados nos últimos 60 dias */
+  (APP.deals || []).forEach(function (d) {
+    if (d.etapa !== 4) return;
+    var dias = oriDiasDesde(Math.max(oriTempo(d.etapa_data), oriTempo(d.createdAt)));
+    if (dias === null || dias > 60) return;
+    var c = d.contactId ? oriContatoPorId(d.contactId) : oriContatoPorNome(d.contato);
+    if (!c) return;
+    add({ chave: 'ind:' + d.id, tipo: 'contato', contato: c, peso: 45, ic: '🤝', titulo: oriPrimeiroNome(c.nome) + ' · ' + (d.titulo || 'cliente'),
+      motivo: 'Fechou com você: ótimo momento para pedir indicação', sit: 'indicacao', msg: oriMsg('indicacao', c) });
+  });
+  /* 6. Contatos esfriando (+14 dias sem registro) */
+  var frios = (APP.contacts || []).map(function (c) { return { c: c, d: oriDiasDesde(oriUltimo(c, ix).t) }; })
+    .filter(function (x) { return x.d > ORI_FRIO; })
+    .sort(function (a, b) { var pa = a.c.temperatura === 'warm' ? 1 : 0, pb = b.c.temperatura === 'warm' ? 1 : 0; return (pb - pa) || (a.d - b.d); });
+  frios.slice(0, 6).forEach(function (x) {
+    add({ chave: 'frio:' + x.c.id, tipo: 'contato', contato: x.c, peso: 40 + (x.c.temperatura === 'warm' ? 8 : 0), ic: '🧊', titulo: oriPrimeiroNome(x.c.nome) + (x.c.empresa ? ' · ' + x.c.empresa : ''),
+      motivo: 'Sem contato há ' + x.d + ' dias', sit: 'reaquecer', msg: oriMsg('reaquecer', x.c) });
+  });
+  A = A.filter(function (a) { if (a.tipo !== 'contato' || !a.contato) return true; if (usados[a.contato.id]) return false; usados[a.contato.id] = 1; return true; });
+  A.sort(function (a, b) { return b.peso - a.peso; });
+  return A;
+}
+
+/* ── Frases do dia ── */
+var ORI_FRASES = [
+  'Quem é lembrado, é escolhido. Um contato hoje vale mais que dez amanhã.',
+  'Constância vence talento: faça o básico bem feito, todos os dias.',
+  'Cada "não" te deixa mais perto do próximo "sim".',
+  'Venda é consequência de relacionamento. Cuide das pessoas.',
+  'O follow-up é onde está o dinheiro que os outros deixam na mesa.',
+  'Pergunte mais, fale menos: quem entende o cliente fecha mais.',
+  'Comece pelo mais difícil. O resto do dia fica leve.',
+  'Seu pipeline de amanhã é a prospecção de hoje.',
+  'Clareza no próximo passo destrava qualquer negociação.',
+  'Pequenas ações diárias constroem grandes resultados.',
+  'Ninguém compra de quem some. Apareça com valor.',
+  'Organização é respeito com o seu tempo e com o tempo do cliente.',
+  'Indicação é o elogio que vira venda. Peça sem medo.',
+  'Hoje é um ótimo dia para reativar alguém que você esqueceu.'
+];
+function oriDiaDoAno() { var d = new Date(), i = new Date(d.getFullYear(), 0, 0); return Math.floor((d - i) / 86400000); }
+
+/* ── Conteúdo do dia ── */
+var ORI_CONTEUDO = {
+  imob: [
+    { f: 'Carrossel', t: '5 custos além do preço do imóvel', l: 'Comprar imóvel não é só o valor do anúncio. ITBI, escritura, registro, mudança e pequenos reparos entram na conta. Quem planeja tudo isso compra com tranquilidade.\n\n👉 Salve este post e me chame no direct para simular o seu caso.' },
+    { f: 'Reels', t: 'Tour de 30 segundos de um imóvel', l: 'Esse imóvel tem um detalhe que quase ninguém percebe… 👀\n\nAssista até o final e me diga: você moraria aqui?\n\n📲 Quer visitar? Me chama no WhatsApp.' },
+    { f: 'Stories', t: 'Enquete: casa ou apartamento?', l: 'Enquete nos stories: "Casa ou apartamento?" Depois responda quem votou com uma pergunta: "O que pesa mais para você: espaço ou segurança?" Cada resposta é uma conversa nova.' },
+    { f: 'Carrossel', t: '3 erros que travam a venda do seu imóvel', l: 'Preço acima do mercado, fotos ruins e documentação pendente. Esses 3 erros deixam o imóvel meses parado.\n\n🏡 Quer vender rápido e pelo preço justo? Faço uma avaliação gratuita.' },
+    { f: 'Reels', t: 'Bastidores: um dia de corretor', l: 'Visita, avaliação, negociação e muito café ☕. Assim é o meu dia para ajudar famílias a realizarem o sonho do imóvel próprio.\n\nQual parte você quer ver mais?' },
+    { f: 'Post', t: 'Checklist da visita', l: 'Na visita, confira: posição do sol, pressão da água, vizinhança à noite, vagas e custo do condomínio.\n\n✅ Salve para usar na sua próxima visita.' },
+    { f: 'Carrossel', t: 'Documentos para vender seu imóvel', l: 'Matrícula atualizada, IPTU, certidões e documentos pessoais. Com tudo em dia, a venda anda muito mais rápido.\n\n📋 Me chame que eu te mando a lista completa.' },
+    { f: 'Post', t: 'Depoimento de cliente', l: 'Nada fala mais alto que uma família feliz na casa nova. (Peça autorização ao cliente e poste a foto da entrega das chaves.) 🔑\n\nObrigado pela confiança!' }
+  ],
+  cons: [
+    { f: 'Carrossel', t: '3 formas de ser contemplado no consórcio', l: 'Sorteio, lance livre e lance embutido. Entender as três muda a sua estratégia e o seu prazo.\n\n💡 Quer saber qual combina com você? Me chame no direct.' },
+    { f: 'Reels', t: 'Carta contemplada: o que é e quando vale a pena', l: 'Carta contemplada é uma cota que já pode ser usada. Para quem tem pressa, pode ser o atalho certo — se for bem analisada.\n\n📲 Me pergunte como avaliar uma.' },
+    { f: 'Post', t: 'Consórcio x financiamento', l: 'No financiamento você paga juros; no consórcio, taxa de administração. Para quem planeja, a diferença no custo total pode ser grande.\n\nQuer ver as duas simulações lado a lado? Me chame.' },
+    { f: 'Stories', t: 'Caixinha: qual é o seu próximo objetivo?', l: 'Caixinha de perguntas: "Qual é o seu próximo grande objetivo: imóvel, carro, empresa ou investimento?" Responda cada um com uma ideia de planejamento.' },
+    { f: 'Carrossel', t: 'Consórcio como estratégia patrimonial', l: 'Consórcio não é só para comprar: é ferramenta de planejamento e construção de patrimônio com disciplina.\n\n📈 Quer montar sua estratégia? Converse comigo.' },
+    { f: 'Reels', t: 'Mito ou verdade sobre consórcio', l: '"Consórcio demora demais." Mito ou verdade? 🤔 Depende da estratégia de lance. Comente "QUERO" que eu te explico.' },
+    { f: 'Post', t: 'Quanto separar por mês para sua meta', l: 'Toda meta grande vira um valor mensal possível quando existe planejamento.\n\n🎯 Me diga sua meta que eu faço a conta com você.' }
+  ],
+  geral: [
+    { f: 'Reels', t: 'Quem sou eu e como eu ajudo', l: 'Prazer, {eu}! Ajudo pessoas a resolverem {tema} com segurança e sem dor de cabeça.\n\nSe isso faz sentido para você, me chame no direct. 👋' },
+    { f: 'Post', t: 'O erro mais comum dos meus clientes', l: 'O erro que mais vejo: decidir sem comparar o custo total. Pergunte, compare, peça ajuda.\n\nQuer uma segunda opinião? Estou aqui.' },
+    { f: 'Stories', t: 'Pergunta para a audiência', l: 'Stories com a pergunta: "Qual é a sua maior dúvida sobre {tema}?" As respostas viram os próximos conteúdos e novas conversas.' },
+    { f: 'Carrossel', t: 'Resultado de um cliente (antes e depois)', l: 'Como era, o que fizemos e o resultado. Histórias reais geram confiança.\n\n(Peça autorização ao cliente.)' },
+    { f: 'Post', t: 'Agradecimento aos clientes', l: 'Obrigado a cada cliente que confiou no meu trabalho este mês. Vocês são a razão de tudo! 🧡' },
+    { f: 'Reels', t: 'Dica rápida de 15 segundos', l: 'Uma dica rápida sobre {tema} que pode te poupar dinheiro. Salve e compartilhe com quem precisa! 💡' }
+  ]
+};
+var ORI_HASHTAGS = { imob: '#imoveis #corretordeimoveis #casapropria #imovelavenda', cons: '#consorcio #planejamentofinanceiro #cartacontemplada #patrimonio', geral: '#empreendedorismo #atendimento #confianca' };
+function oriIdeias() {
+  var a = oriArea(), area = [], geral = [];
+  if (a.imob) ORI_CONTEUDO.imob.forEach(function (x) { area.push({ x: x, h: ORI_HASHTAGS.imob }); });
+  if (a.cons) ORI_CONTEUDO.cons.forEach(function (x) { area.push({ x: x, h: ORI_HASHTAGS.cons }); });
+  ORI_CONTEUDO.geral.forEach(function (x) { geral.push({ x: x, h: ORI_HASHTAGS.geral }); });
+  /* da sua área primeiro (2 ideias) + 1 geral; sem área definida, 3 gerais */
+  var dia = oriDiaDoAno() + __oriSemente, r = [], i;
+  if (area.length) { for (i = 0; i < 2; i++) r.push(area[(dia * 2 + i) % area.length]); r.push(geral[dia % geral.length]); }
+  else for (i = 0; i < 3; i++) r.push(geral[(dia * 3 + i) % geral.length]);
+  return r.map(function (it) { return { f: it.x.f, t: it.x.t, l: oriPreencher(it.x.l, null) + '\n\n' + it.h }; });
+}
+
+/* ── Onde prospectar hoje ── */
+var ORI_PROSPECCAO = {
+  imob: ['Ligue para 3 anúncios de "vende-se direto com o proprietário" do seu bairro e ofereça uma avaliação gratuita.',
+    'Volte a falar com quem visitou imóveis e não comprou: o perfil pode ter mudado.',
+    'Deixe seu contato com 2 síndicos ou portarias de condomínios onde você já vendeu.',
+    'Publique um imóvel da sua carteira nos grupos do bairro, com 3 fotos boas e o preço.',
+    'Ofereça avaliação aos vizinhos dos imóveis que você vendeu ou agenciou.'],
+  cons: ['Ofereça uma simulação a quem paga aluguel: muitos não sabem que dá para planejar a casa própria.',
+    'Procure empresários do seu círculo: consórcio para máquinas, veículos ou sede própria.',
+    'Fale com 2 contadores ou corretores parceiros: eles atendem quem precisa de planejamento.',
+    'Quem já tem cota com você pode querer uma segunda para outro objetivo.',
+    'Investidores gostam de carta contemplada bem analisada: mostre uma oportunidade.'],
+  geral: ['Peça 1 indicação a cada cliente satisfeito hoje.',
+    'Mande uma novidade útil para 5 contatos antigos.',
+    'Participe de um grupo ou evento do seu nicho e apresente-se em 1 frase.',
+    'Publique um conteúdo com chamada para conversar no WhatsApp.',
+    'Faça parceria com um profissional que atende o mesmo cliente que você.']
+};
+function oriDicasProspeccao() {
+  var a = oriArea(), pool = [];
+  if (a.imob) pool = pool.concat(ORI_PROSPECCAO.imob);
+  if (a.cons) pool = pool.concat(ORI_PROSPECCAO.cons);
+  pool = pool.concat(ORI_PROSPECCAO.geral);
+  var ini = (oriDiaDoAno() * 3) % pool.length, r = [];
+  for (var i = 0; i < 3; i++) r.push(pool[(ini + i) % pool.length]);
+  return r;
+}
+
+/* ── Ações dos botões ── */
+function oriWhats(tel, msg) {
+  var n = oriTelDigitos(tel), u = 'https://wa.me/' + n + '?text=' + encodeURIComponent(msg || '');
+  window.open(u, '_blank');
+}
+function oriLigar(tel) { var d = String(tel || '').replace(/\D/g, ''); if (d) window.location.href = 'tel:' + d; }
+function oriCopiar(txt) {
+  function ok() { try { showToast('✅ Copiado'); } catch (e) {} }
+  function velho() {
+    var t = document.createElement('textarea'); t.value = txt; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select(); try { document.execCommand('copy'); ok(); } catch (e) {} document.body.removeChild(t);
+  }
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(ok, velho); return; } } catch (e) {}
+  velho();
+}
+/* Registra um contato feito (entra na linha do tempo do cliente e na meta de follow-ups) */
+function oriRegistrar(c, texto) {
+  if (!c) return;
+  if (!APP.interactions) APP.interactions = [];
+  APP.interactions.unshift({ id: 'int_' + Date.now(), contactId: c.id, type: 'followup', title: 'Follow-up', description: texto || 'Contato feito (Orientador 360°)', result: '', dealId: null, createdAt: new Date().toISOString() });
+  try { if (APP.dashboard && APP.dashboard.metas && APP.dashboard.metas.followups) APP.dashboard.metas.followups.feito++; } catch (e) {}
+  try { addActivity('🧭 Follow-up registrado — <strong>' + oriEsc(c.nome) + '</strong>'); } catch (e) {}
+}
+function oriFeito(a) {
+  if (a.tipo === 'agenda') {
+    var t = a.ag;
+    if (t._fonte === 'prio') { (APP.dashboard.prioridades || []).forEach(function (p, k) { if ((p.id || ('p_' + k)) === t.id) p.concluida = true; }); }
+    else if (t._fonte === 'proxAcao' && a.contato && a.contato.proximaAcao) { a.contato.proximaAcao.concluida = true; a.contato.proximaAcao.concluidaEm = new Date().toISOString(); }
+    else { oriAdiar(a, 1, true); }
+    if (a.contato) oriRegistrar(a.contato, 'Feito: ' + (t.titulo || 'compromisso'));
+  } else if (a.tipo === 'deal') {
+    var d = a.deal; if (!d.atividades) d.atividades = [];
+    d.atividades.push({ id: 'a' + Date.now(), tipo: 'followup', resultado: 'contato_feito', descricao: 'Contato feito (Orientador 360°)', proxima_acao: '', proxima_data: '', data: oriHojeStr() });
+    if (a.contato) oriRegistrar(a.contato, 'Contato sobre ' + (d.titulo || 'negócio'));
+  } else if (a.tipo === 'pendencia') {
+    oriIrPara('as-pendencias', 'Pendências'); return;
+  } else {
+    oriRegistrar(a.contato, a.motivo);
+  }
+  saveAll(); oriAtualizarTudo(); try { showToast('✅ Registrado'); } catch (e) {}
+}
+function oriAdiar(a, dias, silencioso) {
+  var nova = oriMaisDias(dias);
+  if (a.tipo === 'agenda' && a.ag._fonte === 'prio') {
+    (APP.dashboard.prioridades || []).forEach(function (p, i) { if ((p.id || ('p_' + i)) === a.ag.id) p.data = nova; });
+  } else if (a.contato && (a.tipo === 'agenda' || a.tipo === 'contato' || a.tipo === 'deal')) {
+    var c = a.contato, pa = c.proximaAcao && !c.proximaAcao.concluida ? c.proximaAcao : null;
+    if (pa) pa.data = nova;
+    else c.proximaAcao = { tipo: 'WhatsApp', data: nova, hora: '', descricao: a.motivo.slice(0, 80), concluida: false, criadaEm: new Date().toISOString() };
+  }
+  oriAdiados()[a.chave] = oriMaisDias(dias - 1 < 0 ? 0 : dias - 1);
+  saveAll();
+  if (!silencioso) { oriAtualizarTudo(); try { showToast('📅 Reagendado para ' + nova.split('-').reverse().slice(0, 2).join('/')); } catch (e) {} }
+}
+function oriIrPara(tela, titulo) {
+  oriFechar();
+  try { appGoScreen(tela, document.querySelector('.bottom-nav .nav-btn[onclick*="' + tela + '"]'), titulo); } catch (e) {}
+}
+function oriAtualizarTudo() {
+  renderOrientador360();
+  try { renderRadarComercial(); } catch (e) {}
+  try { agAtualizarBadge(); } catch (e) {}
+  try { renderMetas(); } catch (e) {}
+  if (document.getElementById('ori-painel')) oriPainelConteudo();
+}
+
+/* ── Cartão de ação ── */
+function oriCartao(a, i, completo) {
+  var tel = a.contato && a.contato.tel, b = '';
+  if (a.msg) b += '<button type="button" class="ori-b ori-b-wa" data-ori="wa" data-i="' + i + '">💬 WhatsApp</button>';
+  if (tel) b += '<button type="button" class="ori-b" data-ori="tel" data-i="' + i + '">📞 Ligar</button>';
+  b += '<button type="button" class="ori-b" data-ori="feito" data-i="' + i + '">' + (a.tipo === 'pendencia' ? '📂 Abrir' : '✅ Feito') + '</button>';
+  if (a.contato) b += '<button type="button" class="ori-b" data-ori="destravar" data-i="' + i + '">🔓 Destravar</button>';
+  if (completo && a.tipo !== 'pendencia') b += '<button type="button" class="ori-b" data-ori="adiar1" data-i="' + i + '">📅 Amanhã</button><button type="button" class="ori-b" data-ori="adiar3" data-i="' + i + '">+3 dias</button><button type="button" class="ori-b" data-ori="adiar7" data-i="' + i + '">+7 dias</button>';
+  return '<div class="ori-acao"><div class="ori-acao-top"><span class="ori-acao-ic" aria-hidden="true">' + a.ic + '</span><div class="ori-acao-tx"><strong>' + oriEsc(a.titulo) + '</strong><small>' + oriEsc(a.motivo) + '</small></div></div>' +
+    '<div class="ori-acao-btns">' + b + '</div></div>';
+}
+
+/* ── Cartão do Início ── */
+function renderOrientador360() {
+  var el = document.getElementById('d360-ori-msg');
+  if (!el) return;
+  var hora = new Date().getHours(), saud = hora < 12 ? 'Bom dia' : (hora < 18 ? 'Boa tarde' : 'Boa noite');
+  var nome = oriPrimeiroNome((APP.perfil && APP.perfil.nomeProfissional) || APP.user.apelido || APP.user.nome);
+  if (nome === 'Usuário') nome = '';
+  __oriAcoes = oriCalcularAcoes();
+  var h = oriHojeStr(), ag = [];
+  try { ag = agGetTodos().filter(function (t) { return !t.concluida && (t.data || h) <= h; }); } catch (e) {}
+  var atras = ag.filter(function (t) { return (t.data || h) < h; }).length;
+  var quentes = (APP.contacts || []).filter(function (c) { return c.temperatura === 'hot'; }).length;
+  var parados = __oriAcoes.filter(function (a) { return a.tipo === 'deal'; }).length;
+  var partes = [];
+  if (ag.length) partes.push(ag.length + (ag.length === 1 ? ' compromisso' : ' compromissos') + (atras ? ' (' + atras + ' atrasado' + (atras > 1 ? 's' : '') + ')' : ''));
+  if (quentes) partes.push(quentes + (quentes === 1 ? ' cliente quente' : ' clientes quentes'));
+  if (parados) partes.push(parados + (parados === 1 ? ' negócio parado' : ' negócios parados'));
+  var resumo;
+  if (!(APP.contacts || []).length) resumo = 'Cadastre seus primeiros contatos e eu passo a indicar, todos os dias, com quem falar e o que dizer.';
+  else if (!__oriAcoes.length) resumo = 'Tudo em dia por aqui. Que tal criar conteúdo ou buscar novas oportunidades?';
+  else resumo = (partes.length ? 'Hoje: ' + partes.join(' · ') + '. ' : '') + 'Separei ' + __oriAcoes.length + (__oriAcoes.length === 1 ? ' ação' : ' ações') + ' para você, começando pela mais importante.';
+  el.innerHTML = '<div class="ori-saud">' + saud + (nome ? ', ' + oriEsc(nome) : '') + '! 👋</div>' +
+    '<div class="ori-frase">“' + oriEsc(ORI_FRASES[oriDiaDoAno() % ORI_FRASES.length]) + '”</div>' +
+    '<div class="ori-resumo">' + oriEsc(resumo) + '</div>';
+  var lista = document.getElementById('ori-acoes-home');
+  if (lista) {
+    __oriLista = __oriAcoes.slice(0, ORI_MAX_HOME);
+    lista.innerHTML = __oriLista.map(function (a, i) { return oriCartao(a, i, false); }).join('') +
+      (__oriAcoes.length > ORI_MAX_HOME ? '<button type="button" class="ori-ver-todas" data-ori="aba" data-aba="acoes">Ver todas as ' + __oriAcoes.length + ' ações ›</button>' : '');
+    lista.setAttribute('data-lista', 'home');
+  }
+}
+
+/* ── Painel completo ── */
+function oriAbrir(aba, contatoId, sit) {
+  __oriAba = aba || 'acoes';
+  if (contatoId !== undefined) __oriContato = contatoId || '';
+  if (sit) __oriSit = sit;
+  var p = document.getElementById('ori-painel');
+  if (!p) {
+    p = document.createElement('div'); p.id = 'ori-painel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Orientador 360°');
+    document.body.appendChild(p);
+  }
+  document.body.classList.add('ori-aberto');
+  oriPainelConteudo();
+  try { p.scrollTop = 0; } catch (e) {}
+}
+function oriFechar() { var p = document.getElementById('ori-painel'); if (p) p.parentNode.removeChild(p); document.body.classList.remove('ori-aberto'); }
+function oriPainelConteudo() {
+  var p = document.getElementById('ori-painel'); if (!p) return;
+  var abas = [['acoes', '🎯 Ações'], ['destravar', '💬 Destravar'], ['conteudo', '✍️ Conteúdo'], ['prospectar', '🔍 Prospectar']];
+  var corpo = __oriAba === 'destravar' ? oriAbaDestravar() : (__oriAba === 'conteudo' ? oriAbaConteudo() : (__oriAba === 'prospectar' ? oriAbaProspectar() : oriAbaAcoes()));
+  p.innerHTML = '<div class="ori-caixa"><div class="ori-topo"><span class="ori-topo-tit">🧭 Orientador 360°</span><button type="button" class="ori-fechar" data-ori="fechar" aria-label="Fechar">✕</button></div>' +
+    '<div class="ori-abas" role="tablist">' + abas.map(function (a) { return '<button type="button" role="tab" class="ori-aba' + (a[0] === __oriAba ? ' ativa' : '') + '" aria-selected="' + (a[0] === __oriAba) + '" data-ori="aba" data-aba="' + a[0] + '">' + a[1] + '</button>'; }).join('') + '</div>' +
+    '<div class="ori-corpo">' + corpo + '</div></div>';
+}
+function oriAbaAcoes() {
+  __oriAcoes = oriCalcularAcoes(); __oriLista = __oriAcoes;
+  if (!__oriAcoes.length) return '<div class="ori-vazio">✅ Nenhuma ação pendente agora. Aproveite para criar conteúdo ou prospectar.</div>';
+  return '<p class="ori-intro">Em ordem de importância. Toque em <strong>WhatsApp</strong> para abrir a conversa com a mensagem pronta (você revisa antes de enviar).</p>' +
+    '<div data-lista="painel">' + __oriAcoes.map(function (a, i) { return oriCartao(a, i, true); }).join('') + '</div>';
+}
+function oriOpcoesContatos() {
+  var cs = (APP.contacts || []).slice(0).sort(function (a, b) {
+    var t = { hot: 0, warm: 1 }, x = (t[a.temperatura] === undefined ? 2 : t[a.temperatura]) - (t[b.temperatura] === undefined ? 2 : t[b.temperatura]);
+    return x || String(a.nome || '').localeCompare(String(b.nome || ''));
+  });
+  return '<option value="">Escolha o cliente…</option>' + cs.map(function (c) { return '<option value="' + oriEsc(c.id) + '"' + (c.id === __oriContato ? ' selected' : '') + '>' + oriEsc(c.nome) + (c.temperatura === 'hot' ? ' 🔥' : '') + '</option>'; }).join('');
+}
+function oriAbaDestravar() {
+  var c = __oriContato ? oriContatoPorId(__oriContato) : null;
+  var h = '<p class="ori-intro">Escolha o cliente e a situação. Eu monto a mensagem com o nome e o assunto dele.</p>' +
+    '<label class="ori-rot" for="ori-contato">Cliente</label><select id="ori-contato" class="ori-sel" data-ori-muda="contato">' + oriOpcoesContatos() + '</select>' +
+    '<div class="ori-rot">Situação</div><div class="ori-sits">' + ORI_SITUACOES.map(function (s) { return '<button type="button" class="ori-sit' + (s.id === __oriSit ? ' ativa' : '') + '" data-ori="sit" data-sit="' + s.id + '">' + oriEsc(s.n) + '</button>'; }).join('') + '</div>';
+  if (__oriSit) {
+    var s = oriSituacao(__oriSit);
+    h += '<div class="ori-dica">💡 <strong>Como abordar:</strong> ' + oriEsc(s.dica) + '</div>';
+    s.m.forEach(function (m, i) {
+      var txt = oriPreencher(m, c);
+      h += '<div class="ori-msg"><div class="ori-msg-tx" id="ori-msg-' + i + '">' + oriEsc(txt) + '</div><div class="ori-acao-btns">' +
+        '<button type="button" class="ori-b" data-ori="copiar" data-alvo="ori-msg-' + i + '">📋 Copiar</button>' +
+        '<button type="button" class="ori-b ori-b-wa" data-ori="wamsg" data-alvo="ori-msg-' + i + '">💬 WhatsApp</button>' +
+        (c ? '<button type="button" class="ori-b" data-ori="registrar">✅ Enviei</button>' : '') + '</div></div>';
+    });
+    if (!c) h += '<p class="ori-intro">Sem cliente escolhido, a mensagem sai sem o nome e o WhatsApp abre para você escolher a conversa.</p>';
+  }
+  return h;
+}
+function oriAbaConteudo() {
+  var a = oriArea(), redes = (APP.redes || []).filter(function (r) { return r.ativo; }).length;
+  var ideias = oriIdeias();
+  return '<p class="ori-intro">3 ideias para hoje' + (a.imob || a.cons ? ' na sua área (' + oriTema() + ')' : '') + '. A legenda já vem pronta: copie, ajuste e publique' + (redes ? ' nas suas ' + redes + ' redes' : '') + '.</p>' +
+    ideias.map(function (x, i) {
+      return '<div class="ori-msg"><div class="ori-tag">' + oriEsc(x.f) + '</div><strong class="ori-msg-tit">' + oriEsc(x.t) + '</strong><div class="ori-msg-tx" id="ori-ideia-' + i + '">' + oriEsc(x.l) + '</div>' +
+        '<div class="ori-acao-btns"><button type="button" class="ori-b" data-ori="copiar" data-alvo="ori-ideia-' + i + '">📋 Copiar legenda</button>' +
+        '<button type="button" class="ori-b" data-ori="postei">✅ Postei</button></div></div>';
+    }).join('') +
+    '<button type="button" class="ori-ver-todas" data-ori="mais-ideias">🔄 Outras ideias</button>' +
+    (a.imob || a.cons ? '' : '<p class="ori-intro">Dica: preencha sua profissão em Perfil → Meu perfil para receber ideias da sua área.</p>');
+}
+function oriAbaProspectar() {
+  var ix = oriIndice(), h = '';
+  var dicas = oriDicasProspeccao();
+  h += '<div class="ori-bloco"><div class="ori-bloco-tit">🎯 Onde prospectar hoje</div><ol class="ori-ol">' + dicas.map(function (d) { return '<li>' + oriEsc(d) + '</li>'; }).join('') + '</ol></div>';
+  function lista(tit, cs, sit, vazio) {
+    var r = '<div class="ori-bloco"><div class="ori-bloco-tit">' + tit + '</div>';
+    if (!cs.length) return r + '<div class="ori-vazio">' + vazio + '</div></div>';
+    return r + cs.map(function (c) {
+      return '<div class="ori-linha"><div><strong>' + oriEsc(oriPrimeiroNome(c.nome) + (c.empresa ? ' · ' + c.empresa : '')) + '</strong></div><div class="ori-acao-btns">' +
+        (c.tel ? '<button type="button" class="ori-b ori-b-wa" data-ori="wacontato" data-c="' + oriEsc(c.id) + '" data-sit="' + sit + '">💬 WhatsApp</button>' : '') +
+        '<button type="button" class="ori-b" data-ori="destravar-c" data-c="' + oriEsc(c.id) + '" data-sit="' + sit + '">✏️ Ver mensagem</button></div></div>';
+    }).join('') + '</div>';
+  }
+  var ganhos = {};
+  (APP.deals || []).forEach(function (d) { if (d.etapa === 4) { var c = d.contactId ? oriContatoPorId(d.contactId) : oriContatoPorNome(d.contato); if (c) ganhos[c.id] = c; } });
+  var clientes = (APP.contacts || []).filter(function (c) { return ganhos[c.id] || c.categoria === 'cliente'; }).slice(0, 5);
+  var frios = (APP.contacts || []).filter(function (c) { return (c.categoria || 'lead') === 'lead' && oriDiasDesde(oriUltimo(c, ix).t) > 30; }).slice(0, 5);
+  var parceiros = (APP.contacts || []).filter(function (c) { return c.categoria === 'parceiro'; }).slice(0, 5);
+  h += lista('🤝 Pedir indicação a clientes', clientes, 'indicacao', 'Quando você tiver clientes (categoria Cliente ou negócio Fechado), eles aparecem aqui.');
+  h += lista('🧊 Reativar leads parados há mais de 30 dias', frios, 'reaquecer', 'Nenhum lead parado há mais de 30 dias. 👏');
+  h += lista('🔗 Acionar parceiros', parceiros, 'indicacao', 'Cadastre parceiros (categoria Parceiro) para trocar indicações.');
+  if (typeof oriExtraCriador === 'function') h += oriExtraCriador();
+  return h;
+}
+
+/* ── Cliques (um só ouvinte para todos os botões do Orientador) ── */
+document.addEventListener('click', function (ev) {
+  var b = ev.target && ev.target.closest ? ev.target.closest('[data-ori]') : null;
+  if (!b) return;
+  var o = b.getAttribute('data-ori'), i = parseInt(b.getAttribute('data-i'), 10), a = isNaN(i) ? null : __oriLista[i];
+  if (b.closest('[data-lista="home"]')) a = isNaN(i) ? null : __oriAcoes.slice(0, ORI_MAX_HOME)[i];
+  else if (b.closest('[data-lista="painel"]')) a = isNaN(i) ? null : __oriAcoes[i];
+  if (o === 'fechar') { oriFechar(); return; }
+  if (o === 'aba') { oriAbrir(b.getAttribute('data-aba')); return; }
+  if (o === 'sit') { __oriSit = b.getAttribute('data-sit'); oriPainelConteudo(); return; }
+  if (o === 'mais-ideias') { __oriSemente++; oriPainelConteudo(); return; }
+  if (o === 'postei') { try { showToast('✅ Ótimo! Registre em Marketing Pessoal para contar na sua meta.'); } catch (e) {} return; }
+  if (o === 'copiar' || o === 'wamsg') {
+    var alvo = document.getElementById(b.getAttribute('data-alvo')), txt = alvo ? alvo.textContent : '';
+    if (o === 'copiar') oriCopiar(txt);
+    else { var c0 = __oriContato ? oriContatoPorId(__oriContato) : null; oriWhats(c0 && c0.tel, txt); }
+    return;
+  }
+  if (o === 'registrar') { var c1 = oriContatoPorId(__oriContato); if (c1) { oriRegistrar(c1, 'Mensagem enviada: ' + oriSituacao(__oriSit).n); saveAll(); oriAtualizarTudo(); try { showToast('✅ Registrado na linha do tempo'); } catch (e) {} } return; }
+  if (o === 'wacontato' || o === 'destravar-c') {
+    var c2 = oriContatoPorId(b.getAttribute('data-c')), s2 = b.getAttribute('data-sit');
+    if (o === 'wacontato' && c2) oriWhats(c2.tel, oriMsg(s2, c2));
+    else oriAbrir('destravar', c2 ? c2.id : '', s2);
+    return;
+  }
+  if (!a) return;
+  if (o === 'wa') oriWhats(a.contato && a.contato.tel, a.msg);
+  else if (o === 'tel') oriLigar(a.contato && a.contato.tel);
+  else if (o === 'feito') oriFeito(a);
+  else if (o === 'destravar') oriAbrir('destravar', a.contato ? a.contato.id : '', a.sit);
+  else if (o === 'adiar1') oriAdiar(a, 1);
+  else if (o === 'adiar3') oriAdiar(a, 3);
+  else if (o === 'adiar7') oriAdiar(a, 7);
+});
+document.addEventListener('change', function (ev) {
+  var t = ev.target;
+  if (t && t.getAttribute && t.getAttribute('data-ori-muda') === 'contato') { __oriContato = t.value; oriPainelConteudo(); }
+});
 /* ── V10.4.2: criptografia do cofre (SHA-256, HMAC, PBKDF2) em ES5 puro ── */
 var CF_K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
  0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
@@ -8956,17 +9584,13 @@ function renderRadarComercial() {
   if (!radar) return;
 
   const quentes     = APP.contacts.filter(c => c.temperatura === 'hot').length;
-  const retornos    = contarRetornosPendentes();
-  const visitas     = APP.deals.filter(d => d.etapa === 1 || d.etapa === 2).length;
-  const semContato  = APP.contacts.filter(c => {
-    if (!c.createdAt) return false;
-    const dias = (Date.now() - new Date(c.createdAt)) / (1000 * 60 * 60 * 24);
-    return dias > 14;
-  }).length;
+  const retornos    = oriRetornosPendentes(); // V10.4.6: próximas ações de hoje ou atrasadas
+  const visitas     = APP.deals.filter(d => d.etapa === 2 || d.etapa === 3).length; // V10.4.6: Proposta e Negociação
+  const semContato  = oriContarSemContato(); // V10.4.6: conta pelo último contato registrado, não pelo cadastro
 
   const valorTotal = APP.deals
     .filter(d => d.etapa < 4)
-    .reduce((s, d) => s + (parseFloat(d.valor) || 0), 0);
+    .reduce((s, d) => s + oriValor(d.valor), 0); // V10.4.6: entende 450.000 e 1.250,50
 
   const fmtVal = v => v >= 1000
     ? 'R$' + (v / 1000).toFixed(1).replace('.', ',') + 'k'
@@ -9171,47 +9795,7 @@ function renderAtencao() {
   `).join('');
 }
 
-/* ── Orientador 360° (regras locais) ── */
-function renderOrientador360() {
-  const el = document.getElementById('d360-ori-msg');
-  if (!el) return;
-
-  const retornos = contarRetornosPendentes();
-  const quentes  = APP.contacts.filter(c => c.temperatura === 'hot').length;
-  const prios    = (APP.dashboard.prioridades || []).filter(p => !p.concluida).length;
-  const deals    = APP.deals.filter(d => d.etapa < 4).length;
-  const semCont  = APP.contacts.filter(c => {
-    if (!c.createdAt) return false;
-    return (Date.now() - new Date(c.createdAt)) / 86400000 > 14;
-  }).length;
-  const metasPct = (() => {
-    const f = Object.values(APP.dashboard.metas || {}).reduce((s,m)=>s+(m.feito||0),0);
-    const t = Object.values(APP.dashboard.metas || {}).reduce((s,m)=>s+(m.meta||0),0);
-    return t > 0 ? Math.round(f/t*100) : 0;
-  })();
-
-  let msg = '';
-
-  if (APP.contacts.length === 0) {
-    msg = '👋 Bem-vindo ao PROSPECTARION! Comece adicionando seus primeiros contatos para eu poder orientar você melhor.';
-  } else if (retornos > 0 && quentes > 0) {
-    msg = `Você tem ${retornos} retorno${retornos>1?'s':''} pendente${retornos>1?'s':''} e ${quentes} cliente${quentes>1?'s quentes':'quente'} no radar. 🎯 Priorize quem está aguardando resposta antes de iniciar novas prospecções.`;
-  } else if (retornos > 0) {
-    msg = `📞 Há ${retornos} cliente${retornos>1?'s':''} aguardando retorno. Esse é o momento ideal para fazer contato — quem é lembrado, fecha mais.`;
-  } else if (prios === 0) {
-    msg = '⭐ Você ainda não definiu suas prioridades de hoje. Defina até 3 focos para manter a produtividade alta ao longo do dia.';
-  } else if (semCont > 5) {
-    msg = `⚠️ ${semCont} contatos estão sem nenhum registro há mais de 14 dias. Relacionamento frio = oportunidade perdida. Que tal fazer um contato rápido hoje?`;
-  } else if (metasPct >= 80) {
-    msg = `🏆 Parabéns! Você já atingiu ${metasPct}% das suas metas de hoje. Continue assim — você está perto do objetivo!`;
-  } else if (deals > 0) {
-    msg = `💼 Você tem ${deals} negócio${deals>1?'s':''} em aberto no pipeline. Mantenha o acompanhamento ativo — deals sem movimento esfriam rapidamente.`;
-  } else {
-    msg = '✅ Seu dia está organizado. Foque nas prioridades definidas e registre cada ação — o que é medido, melhora.';
-  }
-
-  el.textContent = msg;
-}
+/* V10.4.6: Orientador 360° novo em orientador.js (renderOrientador360) */
 
 /* ── Registrar Ligação Rápida ── */
 function registrarLigacao() { openModal('modal-ligacao'); }
