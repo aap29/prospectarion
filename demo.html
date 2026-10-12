@@ -72,6 +72,7 @@ body, .modulo, .app-shell {
 }
 /* Permite seleção apenas em campos de texto */
 input, textarea, [contenteditable] {
+  -webkit-touch-callout: default; /* V10.4.9: menu Colar no celular */
   -webkit-user-select: text;
   -moz-user-select: text;
   user-select: text;
@@ -2005,9 +2006,12 @@ body.cofre-travado { overflow: hidden; }
 .cofre-botao.trava-desligar { color: #B91C1C; border-color: #FCA5A5; }
 .inst-cartao.trava-cartao { background: linear-gradient(135deg, #374151, #1F2937); }
 select.cofre-campo { appearance: auto; }
-/* ── V10.4.7: ver a senha ── */
+/* ── V10.4.7: ver a senha · V10.4.9: colar ── */
 .cofre-senha-box { position: relative; }
-.cofre-senha-box .cofre-campo { padding-right: 56px; }
+.cofre-senha-box .cofre-campo { padding-right: 104px; }
+.cofre-colar { position: absolute; right: 52px; top: 50%; transform: translateY(-50%); width: 48px; height: 46px; border: none; background: none; font-size: 20px; cursor: pointer; border-radius: 10px; }
+.cofre-colar:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
+#cofre input, #cofre textarea { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
 .cofre-olho { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 48px; height: 46px; border: none; background: none; font-size: 22px; cursor: pointer; border-radius: 10px; }
 .cofre-olho:focus-visible { outline: 3px solid #1D4ED8; outline-offset: 2px; }
 .cofre-botao.rec-botao { border-color: #F26419; color: #C2410C; }
@@ -5088,8 +5092,26 @@ function cofreTela(conteudo) {
 function cofreCampo(id, rotulo, tipo, extra) {
   var campo = '<input class="cofre-campo" id="' + id + '" type="' + tipo + '" ' + (extra || '') + '>';
   /* V10.4.7: 👁 para ver o que está digitando */
-  if (tipo === 'password') campo = '<div class="cofre-senha-box">' + campo + '<button type="button" class="cofre-olho" aria-label="Mostrar senha" aria-pressed="false" onclick="cofreOlho(\'' + id + '\', this)">👁</button></div>';
+  if (tipo === 'password') campo = '<div class="cofre-senha-box">' + campo +
+    '<button type="button" class="cofre-colar" aria-label="Colar" onclick="cofreColar(\'' + id + '\')">📋</button>' +
+    '<button type="button" class="cofre-olho" aria-label="Mostrar senha" aria-pressed="false" onclick="cofreOlho(\'' + id + '\', this)">👁</button></div>';
   return '<label class="cofre-rotulo" for="' + id + '">' + rotulo + '</label>' + campo;
+}
+/* V10.4.9: colar no campo (app Android pela ponte nativa; navegador pela área de transferência) */
+function cofreColar(id) {
+  var c = document.getElementById(id); if (!c) return;
+  function pos(t) { t = String(t || '').replace(/[\r\n]+/g, ' ').replace(/^\s+|\s+$/g, ''); if (!t) { cofreAvisoColar(); return; } c.value = t; try { c.focus(); } catch (e) {} try { showToast('📋 Colado'); } catch (e) {} }
+  try { if (window.ProspectarionNativo && typeof window.ProspectarionNativo.colar === 'function') { pos(window.ProspectarionNativo.colar()); return; } } catch (e) {}
+  try { if (navigator.clipboard && navigator.clipboard.readText) { navigator.clipboard.readText().then(pos, cofreAvisoColar); return; } } catch (e) {}
+  cofreAvisoColar();
+}
+function cofreAvisoColar() { try { showToast('Toque e segure no campo e escolha "Colar"'); } catch (e) {} }
+/* V10.4.9: a mesma senha digitada de jeitos diferentes (espaço no fim, traço curto ou longo) */
+function cofreSenhaNorm(s) { return String(s || '').replace(/[\u2010-\u2015\u2212]/g, '-').replace(/^\s+|\s+$/g, ''); }
+function cofreSenhaVariantes(s) {
+  var r = [], v = [String(s || ''), cofreSenhaNorm(s), cofreSenhaNorm(s).replace(/-/g, '\u2013'), cofreSenhaNorm(s).replace(/-/g, '\u2014')];
+  for (var i = 0; i < v.length; i++) if (v[i] && r.indexOf(v[i]) < 0) r.push(v[i]);
+  return r;
 }
 function cofreOlho(id, b) {
   var c = document.getElementById(id); if (!c) return;
@@ -5506,8 +5528,9 @@ function travaDerivaResp(r0, r1, sal) { return cfPbkdf2(cfBytes(cofreNorm(r0) + 
 function travaChaveOk(k) { var t = travaDados(); return !!(t && k && cfIgual(cfHex(cfSha256(k)), t.verif) && travaSeloOk(t, k)); }
 function travaAbrirComSenha(senha) {
   var t = travaDados(); if (!t) return null;
-  var d = travaDeriva(senha, t.senha.sal);
-  if (!cfIgual(rapProva(d), t.senha.prova)) return null;
+  var vs = cofreSenhaVariantes(senha), d = null, i; /* V10.4.9: espaço no fim / tipo de traço */
+  for (i = 0; i < vs.length && !d; i++) { var x = travaDeriva(vs[i], t.senha.sal); if (cfIgual(rapProva(x), t.senha.prova)) d = x; }
+  if (!d) return null;
   var k = cfXor(cfDeHex(t.kenc), d);
   return travaChaveOk(k) ? k : null;
 }
@@ -5521,6 +5544,7 @@ function travaAbrirComRespostas(r0, r1) {
 /* Grava a senha (e, na criação, as perguntas). A chave da trava (k) não muda ao trocar a senha:
    as formas rápidas continuam valendo. */
 function travaGravar(k, senha, perguntas, r0, r1) {
+  senha = cofreSenhaNorm(senha); /* V10.4.9 */
   var t = APP.trava || {}, sal = cfHex(cfAleatorio(16)), d = travaDeriva(senha, sal);
   t.ativa = true;
   t.senha = { sal: sal, prova: rapProva(d) };
@@ -10104,6 +10128,7 @@ const SEC = {
   /* ── 1. Bloquear clique direito ── */
   blockContextMenu() {
     document.addEventListener('contextmenu', e => {
+      if (e.target && e.target.closest && e.target.closest('input, textarea, [contenteditable]')) return; // V10.4.9: copiar/colar nos campos
       e.preventDefault();
       SEC.warn('menu');
       return false;
