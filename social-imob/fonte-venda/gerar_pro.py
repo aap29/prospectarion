@@ -34,7 +34,7 @@ var_linha('MUSICA39', '{"perfis":{},"tags":{}}')
 var_linha('TEXTOS39', '{}')
 var_linha('C40', '{"NOVO":{},"SAZ":[],"GANCHO":{},"ME":[],"GMN":{},"BLOG":[],"PAUTAS":{},"HIST":[],"HIST_CONTA":"","ASSUNTOS":{}}')
 rep("var SIG_I = 'Eu sou o corretor Anderson Alves: imóveis com visão, negócios com estratégia.', SIG_C = 'Eu sou Anderson Alves, consultor de investimentos e consórcios.';", "var SIG_I = '', SIG_C = '';")
-rep("var DICAS = [", "PADRAO.perfis = []; PADRAO.hashtags = {}; PADRAO.modelos = {}; PADRAO.whatsapp = ''; PERFIS_EXTRA.length = 0;\n['rev380','rev390','rev393','rev400','rev410','reform370','textosCompletos360','seedNotion'].forEach(function(k){ PADRAO[k] = true; });\nvar DICAS = [")
+rep("var DICAS = [", "PADRAO.perfis = []; PADRAO.hashtags = {}; PADRAO.modelos = {}; PADRAO.whatsapp = ''; PERFIS_EXTRA.length = 0;\n['rev380','rev390','rev393','rev400','rev410','reform370','textosCompletos360','seedNotion','rev510'].forEach(function(k){ PADRAO[k] = true; });\nvar DICAS = [")
 
 s = s.replace('(ex.: wa.me/5551984168848)', '(ex.: wa.me/55 + o seu número com DDD)')
 # painel do criador fora; módulo do cliente dentro

@@ -101,7 +101,7 @@ function cliBarra(u, t){ var pc = Math.min(100, Math.round(u*100/Math.max(1,t)))
 var CAD = {passo:1, d:null};
 function cliCadastro(){
   var c = S.cfg.cli || {};
-  CAD.d = JSON.parse(JSON.stringify(c)); CAD.d.redes = CAD.d.redes || {Instagram:''}; CAD.d.dias = CAD.d.dias || CLI_DIAS_PADRAO.slice(); CAD.d.videos = CAD.d.videos || 3; CAD.d.camera = CAD.d.camera==null ? true : CAD.d.camera; CAD.d.hora = CAD.d.hora || 'noite'; CAD.d.tom = CAD.d.tom || CLI_TOM[0]; CAD.d.obj = CAD.d.obj || CLI_OBJ[0];
+  CAD.d = JSON.parse(JSON.stringify(c)); CAD.d.redes = CAD.d.redes || {Instagram:''}; CAD.d.dias = CAD.d.dias || CLI_DIAS_PADRAO.slice(); CAD.d.videos = CAD.d.videos==null ? 5 : CAD.d.videos; CAD.d.dias = c.dias || [1,2,3,4,5,6]; CAD.d.camera = CAD.d.camera==null ? true : CAD.d.camera; CAD.d.hora = CAD.d.hora || 'noite'; CAD.d.tom = CAD.d.tom || CLI_TOM[0]; CAD.d.obj = CAD.d.obj || CLI_OBJ[0];
   CAD.passo = 1; cliCadRender();
 }
 function cliCadRender(){
@@ -126,7 +126,8 @@ function cliCadRender(){
     s += '<p class="sub">Em quais redes você publica? Escreva o @ ou o nome de cada uma.</p>'+CLI_REDES.map(function(r){ var on = d.redes[r[0]]!=null; return '<div class="row cli-rede"><label class="row" style="gap:8px;min-width:130px"><input type="checkbox" class="chk" data-crede="'+r[0]+'" '+(on?'checked':'')+'><b>'+r[1]+' '+r[0]+'</b></label><input type="text" data-crarr="'+r[0]+'" value="'+esc(d.redes[r[0]]||'')+'" placeholder="'+(r[0]==='WhatsApp'?'Número':r[0]==='Google'?'Nome no Google':'@seuperfil')+'" style="flex:1" '+(on?'':'disabled')+'></div>'; }).join('');
   } else {
     s += '<p class="sub">Sua disponibilidade. O calendário segue o seu ritmo, não o contrário.</p><label class="f">Dias em que você pode publicar</label><div class="chips">'+DIAS.map(function(n, i){ return '<span class="chip'+(d.dias.indexOf(i)>=0?' on':'')+'" data-cdia2="'+i+'">'+n+'</span>'; }).join('')+'</div>'+
-      '<label class="f">Quantos vídeos por semana você consegue gravar?</label><select id="cdVid">'+[0,1,2,3,4,5].map(function(n){ return '<option value="'+n+'" '+(+d.videos===n?'selected':'')+'>'+(n?n+' vídeo'+(n>1?'s':'')+' de até 50 s':'Nenhum (só posts e carrosséis)')+'</option>'; }).join('')+'</select>'+
+      '<div class="cli-ia" style="margin:10px 0"><b>📏 Regra 360 recomendada</b><br>Por semana: 5 Reels, 2 posts de autoridade, 1 carrossel com o resumo da semana e 1 a 2 Stories por dia, todos sobre o tema da semana. YouTube: 1 vídeo por semana. Ajuste abaixo ao seu ritmo.</div>'+
+      '<label class="f">Quantos vídeos (Reels) por semana você consegue gravar?</label><select id="cdVid">'+[0,1,2,3,4,5].map(function(n){ return '<option value="'+n+'" '+(+d.videos===n?'selected':'')+'>'+(n?n+' vídeo'+(n>1?'s':'')+' de até 50 s':'Nenhum (só posts e carrosséis)')+'</option>'; }).join('')+'</select>'+
       '<label class="row" style="gap:8px;margin:12px 0"><input type="checkbox" class="chk" id="cdCam" '+(d.camera?'checked':'')+'><span>Eu apareço nos vídeos (se desmarcar, o app sugere vídeos com tela, texto e bastidores)</span></label>'+
       '<label class="f">Melhor horário para publicar</label><select id="cdHora">'+[['manha','Manhã (8h)'],['almoco','Almoço (12h)'],['tarde','Fim da tarde (17h)'],['noite','Noite (19h)']].map(function(o){ return '<option value="'+o[0]+'" '+(d.hora===o[0]?'selected':'')+'>'+o[1]+'</option>'; }).join('')+'</select>';
   }
@@ -189,41 +190,79 @@ function cliTexto(tm, formato, d, pk){
   return g+'\n\n'+pts.join('\n\n')+'\n\n'+fecho+' '+cta+(d.camera===false ? '\n\nComo gravar sem aparecer: use texto na tela sobre imagens do seu trabalho e grave só a voz.' : '');
 }
 function cliSlots(semanas, desde){
-  var d = S.cfg.cli, dias = (d.dias||CLI_DIAS_PADRAO).slice().sort(function(a,b){ return ((a+6)%7)-((b+6)%7); }), nv = Math.min(+d.videos||0, dias.length);
-  var vdias = [], pdias = [];
+  /* Regra 360: até 5 Reels (vídeos), 2 posts de autoridade e 1 carrossel por semana, nos dias que a pessoa escolheu */
+  var d = S.cfg.cli, dias = (d.dias||CLI_DIAS_PADRAO).slice().sort(function(a,b){ return ((a+6)%7)-((b+6)%7); }), nv = Math.min(d.videos==null?5:+d.videos, dias.length);
+  var vdias = [], pdias = [], cdia = dias.indexOf(6)>=0 ? 6 : dias[dias.length-1];
   if(nv){ var passo = dias.length / nv; for(var i=0;i<nv;i++) vdias.push(dias[Math.floor(i*passo)]); }
-  dias.forEach(function(x){ if(vdias.indexOf(x)<0) pdias.push(x); });
-  if(pdias.length > 3) pdias = pdias.filter(function(x, i){ return i % 2 === 0; });
+  var prefP = [2,4].filter(function(x){ return dias.indexOf(x)>=0 && x!==cdia; });
+  dias.forEach(function(x){ if(prefP.length<2 && prefP.indexOf(x)<0 && x!==cdia && vdias.indexOf(x)<0) prefP.push(x); });
+  dias.forEach(function(x){ if(prefP.length<2 && prefP.indexOf(x)<0 && x!==cdia) prefP.push(x); });
+  pdias = prefP.slice(0,2);
   var out = [], ini = desde || addDias(hoje(), 1);
-  for(var k=0; k<semanas*7; k++){ var dt = addDias(ini, k), w = dow(dt); if(vdias.indexOf(w)>=0) out.push({data:dt, tipo:'video'}); else if(pdias.indexOf(w)>=0) out.push({data:dt, tipo:'post'}); }
+  for(var k=0; k<semanas*7; k++){ var dt = addDias(ini, k), w = dow(dt);
+    if(vdias.indexOf(w)>=0) out.push({data:dt, tipo:'video'});
+    if(pdias.indexOf(w)>=0) out.push({data:dt, tipo:'post'});
+    if(w===cdia && dias.length) out.push({data:dt, tipo:'carrossel'});
+  }
   return out;
 }
 function cliPerfilPrincipal(){ var ps = S.cfg.perfis; return (ps.filter(function(p){ return p.rede==='Instagram'; })[0] || ps.filter(function(p){ return ['TikTok','Facebook','LinkedIn'].indexOf(p.rede)>=0; })[0] || ps[0] || {k:'definir'}).k; }
 function cliNovoConteudo(tm, slot, d, pk){
-  var formato = slot.tipo==='video' ? 'Reel' : (tm.f==='Post' ? 'Post' : 'Carrossel');
+  var formato = slot.tipo==='video' ? 'Reel' : slot.tipo==='carrossel' ? 'Carrossel' : 'Post';
   var k = cliPerfilPrincipal(), hora = CLI_HORAS[d.hora] || '19:00';
   var c = novoConteudo({perfil:k, rede:perfil(k).rede||'Instagram', formato:formato, etapa:'Produção', data:slot.data, hora:slot.tipo==='video' ? hora : (d.hora==='noite' ? '12:00' : hora),
-    titulo:cliSubst(tm.t, d), tema:cliSubst(tm.t, d), gancho:cliSubst(tm.g, d), objetivo:tm.o||'Educação', pilar:tm.o==='Autoridade' ? 'Bastidor' : tm.o==='Engajamento' ? 'Mito ou verdade' : 'Educativo', assunto:'cli-'+tm.a});
+    titulo:cliSubst(tm.t, d), tema:cliSubst(tm.t, d), gancho:cliSubst(tm.g, d), objetivo:slot.tipo==='post' ? 'Autoridade' : (tm.o||'Educação'), pilar:slot.tipo==='post' ? 'Autoridade' : tm.o==='Engajamento' ? 'Mito ou verdade' : 'Educativo', assunto:'cli-'+tm.a});
   c.roteiro = cliTexto(tm, formato, d, pk); c.cta = 'Comente '+pk.palavra+' ou chame no WhatsApp'+(d.wpp?' '+d.wpp:'');
   c.legenda = montarDescricao(c); c.hashtags = S.cfg.hashtags[k] || cliHashtags(pk, d);
   registrar(c, 'Criado pelo Social Imob a partir do seu perfil ('+(d.prof||pk.nome)+').');
   return c;
 }
+/* carrossel da semana: resume os Reels e Stories da semana (Regra 360) */
+function cliCarrosselSemana(reels, slot, d, pk){
+  var k = cliPerfilPrincipal(), tema = reels[0] ? reels[0].titulo : (d.prof||pk.nome);
+  var c = novoConteudo({perfil:k, rede:perfil(k).rede||'Instagram', formato:'Carrossel', etapa:'Produção', data:slot.data, hora:d.hora==='noite' ? '12:00' : (CLI_HORAS[d.hora]||'12:00'),
+    titulo:'Resumo da semana: '+tema, tema:tema, gancho:'O que você precisa guardar desta semana sobre '+lcPrim(tema)+'.', objetivo:'Educação', pilar:'Educativo', assunto:'cli-resumo-'+slot.data, temaSemana51:tema});
+  c.roteiro = 'CARTÃO 1 (capa): '+c.gancho+'\n'+reels.slice(0,5).map(function(r, i){ return 'CARTÃO '+(i+2)+': '+r.titulo+' — '+(r.gancho||''); }).join('\n')+'\nCARTÃO FINAL: Salve este resumo e comente '+pk.palavra+'.'+(d.reg?' · '+d.reg:'');
+  c.cta = 'Salve e comente '+pk.palavra; c.legenda = montarDescricao(c); c.hashtags = S.cfg.hashtags[k] || cliHashtags(pk, d);
+  registrar(c, 'Carrossel da semana (Regra 360): resume os Reels e Stories da semana.');
+  return c;
+}
+function cliYoutubeSemana(sem, reels, d, pk){
+  var yt = (S.cfg.perfis||[]).filter(function(p){ return p.rede==='YouTube'; })[0]; if(!yt) return null;
+  var data = addDias(sem, 5), tipo = reels.length ? tipoYT51(sem) : 'B', tema = reels[0] ? reels[0].titulo : (d.prof||pk.nome), L;
+  if(tipo==='A'){ var ts = reels.slice(0,3).map(function(r){ return r.titulo; });
+    L = {titulo:(ts[0]+(ts.length>1?' e mais '+(ts.length-1)+' temas':'')+': aula da semana').slice(0,100), roteiro:'VÍDEO A · EDUCACIONAL · tema da semana: '+tema+'\n\nABERTURA (0:00–0:40): Apresente-se e diga o que a pessoa vai aprender.\n\n'+ts.map(function(t, i){ return 'BLOCO '+(i+1)+' — '+t.toUpperCase()+': retome o Reel da semana e aprofunde com 3 pontos práticos e um exemplo.'; }).join('\n\n')+'\n\nPERGUNTAS DO PÚBLICO: responda duas dúvidas reais dos comentários ou do direct.\n\nFECHAMENTO: resumo em três frases e a chamada para o WhatsApp.\n\nComo gravar: 6 a 10 minutos. Depois, gere cortes de 30 a 50 s (CapCut ou outro app de cortes) para Reels, Shorts e Stories.', descricao:'', cta:'Inscreva-se e comente sua dúvida'}; }
+  else L = tipo==='B' ? ytB51(yt.k, yt.k, sem, tema) : ytC51(yt.k, yt.k, sem, tema, reels);
+  var c = novoConteudo({perfil:yt.k, rede:'YouTube', formato:'YouTube', etapa:'Produção', data:data, hora:'17:00', titulo:L.titulo, tema:tema, gancho:'', roteiro:L.roteiro, cta:L.cta, objetivo:tipo==='A'?'Educação':'Autoridade', pilar:tipo==='C'?'Live':'Educativo', assunto:'cli-yt-'+sem});
+  c.ytTipo = tipo; c.legenda = (L.descricao || L.titulo).replace(/#\S+(\s+#\S+)*\s*$/,'').trim(); c.hashtags = S.cfg.hashtags[yt.k] || cliHashtags(pk, d); c.topicos = true;
+  registrar(c, 'YouTube da semana (Regra 360): vídeo '+tipo+'.');
+  return c;
+}
 function cliGerarPlano(semanas, desde){
   var d = S.cfg.cli; if(!d) return Promise.resolve(0);
   var pk = cliPack(), livres = cliTemasLivres(), us = d.usados = d.usados || {}, novos = [];
-  var ocup = {}; S.conteudos.forEach(function(c){ if(!c.deriv && c.data) ocup[c.data] = 1; });
+  var ocup = {}; S.conteudos.forEach(function(c){ if(!c.deriv && c.data) ocup[c.data+'|'+(c.formato==='Reel'?'video':c.formato==='Carrossel'?'carrossel':c.formato==='YouTube'?'yt':'post')] = 1; });
   if(!desde){ var ult = S.conteudos.filter(function(c){ return !c.deriv && c.data && c.assunto && /^cli-/.test(c.assunto); }).map(function(c){ return c.data; }).sort().pop(); desde = ult && ult >= hoje() ? addDias(ult, 1) : addDias(hoje(), 1); }
-  cliSlots(semanas, desde).forEach(function(sl){
-    if(ocup[sl.data]) return;
-    var quer = sl.tipo==='video' ? ['Reel'] : ['Carrossel','Post'];
-    var i = -1; for(var j=0;j<livres.length;j++){ if(quer.indexOf(livres[j].t.f)>=0 && !livres[j].u){ i = j; break; } }
-    if(i<0) for(var j2=0;j2<livres.length;j2++){ if(quer.indexOf(livres[j2].t.f)>=0){ i = j2; break; } }
+  var pega = function(quer, pref){ var i = -1, j;
+    for(j=0;j<livres.length;j++){ if(quer.indexOf(livres[j].t.f)>=0 && !livres[j].u && (!pref || livres[j].t.o===pref)){ i = j; break; } }
+    if(i<0) for(j=0;j<livres.length;j++){ if(quer.indexOf(livres[j].t.f)>=0 && !livres[j].u){ i = j; break; } }
+    if(i<0) for(j=0;j<livres.length;j++){ if(quer.indexOf(livres[j].t.f)>=0){ i = j; break; } }
     if(i<0 && livres.length) i = 0;
-    if(i<0) return;
-    var tm = livres.splice(i,1)[0].t, c = cliNovoConteudo(tm, sl, d, pk);
+    return i<0 ? null : livres.splice(i,1)[0].t; };
+  var slots = cliSlots(semanas, desde), semReels = {};
+  slots.filter(function(sl){ return sl.tipo!=='carrossel'; }).forEach(function(sl){
+    if(ocup[sl.data+'|'+sl.tipo]) return;
+    var tm = sl.tipo==='video' ? pega(['Reel']) : pega(['Post','Carrossel'], 'Autoridade'); if(!tm) return;
+    var c = cliNovoConteudo(tm, sl, d, pk); ocup[sl.data+'|'+sl.tipo] = 1;
     us[tm.a] = sl.data; novos.push(c); S.conteudos.push(c);
+    if(sl.tipo==='video'){ var sm = segunda(sl.data); (semReels[sm] = semReels[sm] || []).push(c); }
   });
+  slots.filter(function(sl){ return sl.tipo==='carrossel'; }).forEach(function(sl){
+    if(ocup[sl.data+'|carrossel']) return; var r = semReels[segunda(sl.data)] || [];
+    var c = r.length ? cliCarrosselSemana(r, sl, d, pk) : (function(){ var tm = pega(['Carrossel','Post']); return tm ? cliNovoConteudo(tm, sl, d, pk) : null; })();
+    if(!c) return; ocup[sl.data+'|carrossel'] = 1; novos.push(c); S.conteudos.push(c);
+  });
+  Object.keys(semReels).forEach(function(sm){ if(ocup[addDias(sm,5)+'|yt']) return; var y = cliYoutubeSemana(sm, semReels[sm], d, pk); if(y && y.data >= addDias(hoje(),1)){ ocup[y.data+'|yt'] = 1; novos.push(y); S.conteudos.push(y); } });
   if(!novos.length) return Promise.resolve(0);
   var der = []; try{ der = gerarDerivados39(S.conteudos.filter(function(c){ return c.deriv; })) || []; der.forEach(function(x){ S.conteudos.push(x); }); }catch(e){ der = []; }
   try{ numerar39(); }catch(e){}
@@ -278,7 +317,7 @@ function cliPedidoIA(){
   return 'Você é especialista em marketing de conteúdo para redes sociais, copywriter e estrategista de algoritmo. Crie '+q+' conteúdo(s) INÉDITO(S) para este profissional.\n\n'+
     'PERFIL\n- Nome: '+(d.nome||'')+'\n- Profissão: '+(d.prof||pk.nome)+(d.reg?' ('+d.reg+')':'')+'\n- Cidade e região: '+(d.cidade||'')+'\n- Serviços: '+(d.servicos||'')+'\n- Cliente ideal: '+(d.publico||'')+'\n- Diferencial: '+(d.diferencial||'')+'\n- Objetivo: '+(d.obj||'')+'\n- Tom de voz: '+(d.tom||'')+'\n- Rede deste pedido: '+(p.rede||'Instagram')+' ('+p.arroba+')\n- Publica em: '+dias+'; '+(d.videos||0)+' vídeo(s) por semana; '+(d.camera===false?'NÃO aparece em vídeo (use texto na tela, imagens e narração)':'aparece nos vídeos')+'\n- WhatsApp: '+(d.wpp||'')+'\n'+
     (tema ? '\nPEDIDO ESPECIAL: '+tema+'\n' : '')+
-    '\nREGRAS\n'+pk.regras.map(function(r){ return '- '+r; }).join('\n')+'\n- Gancho específico e concreto nos 3 primeiros segundos; um problema que o cliente reconhece; 2 a 4 pontos práticos; uma única chamada para ação com palavra-chave.\n- Vídeo (Reel) com 30 a 50 segundos de fala (75 a 125 palavras). Um vídeo serve para Reel, Story, Shorts e Status.\n- Carrossel com CARTÃO 1 (capa), CARTÃO 2... e CARTÃO FINAL.\n- Sem estatística sem fonte, sem depoimento inventado, sem promessa de resultado.\n- Misture objetivos: educação, engajamento, autoridade, captação.\n- Português do Brasil.\n'+
+    '\nCADÊNCIA (Regra 360)\n- '+REGRA51_TXT+'\n- Todos os conteúdos deste pedido giram em torno de UM tema da semana, ligados entre si e ao vídeo do YouTube da semana.\n'+'\nREGRAS\n'+pk.regras.map(function(r){ return '- '+r; }).join('\n')+'\n- Gancho específico e concreto nos 3 primeiros segundos; um problema que o cliente reconhece; 2 a 4 pontos práticos; uma única chamada para ação com palavra-chave.\n- Vídeo (Reel) com 30 a 50 segundos de fala (75 a 125 palavras). Um vídeo serve para Reel, Story, Shorts e Status.\n- Carrossel com CARTÃO 1 (capa), CARTÃO 2... e CARTÃO FINAL.\n- Sem estatística sem fonte, sem depoimento inventado, sem promessa de resultado.\n- Misture objetivos: educação, engajamento, autoridade, captação.\n- Português do Brasil.\n'+
     '\nJÁ USADOS (não repetir assunto nem título):\n'+(feitos.join('\n')||'- nenhum')+'\n\n'+
     'Responda SOMENTE com '+q+' bloco(s) neste formato, um por conteúdo:\n### CONTEÚDO\nPerfil: '+k+'\nData: AAAA-MM-DD (a partir de '+dataBR(addDias(hoje(),1))+', nos dias em que publica)\nFormato: Reel | Post | Carrossel | Story\nTítulo: ...\nGancho: ...\nTexto: ... (texto falado completo, ou CARTÃO 1:, CARTÃO 2:...)\nDescrição: ...\nHashtags: ... (3 a 5, do tema e da cidade)\nCTA: ...\nObjetivo: Educação | Engajamento | Autoridade | Lead | Venda\nAssunto: palavra-chave-curta-do-tema\n';
 }
@@ -314,10 +353,13 @@ fecharModal = function(){ var r = __fecharBase.apply(this, arguments); setTimeou
 var __slotBase = slotDe;
 slotDe = function(c){
   var d = S.cfg && S.cfg.cli; if(!d || c.deriv) return __slotBase(c);
-  var sl = cliSlots(1, segunda(hoje())), vd = [], pd = []; sl.forEach(function(x){ (x.tipo==='video'?vd:pd).push(dow(x.data)); });
-  var video = ['Reel','Shorts','Vídeo curto','YouTube'].indexOf(c.formato)>=0, hora = CLI_HORAS[d.hora] || '19:00';
-  if(video) return {dias:vd.length?vd:d.dias, hora:hora, trilha:'reel'};
-  return {dias:pd.length?pd:d.dias, hora:d.hora==='noite'?'12:00':hora, trilha:c.formato==='Story'?'story':'post'};
+  var sl = cliSlots(1, segunda(hoje())), vd = [], pd = [], cd = []; sl.forEach(function(x){ (x.tipo==='video'?vd:x.tipo==='carrossel'?cd:pd).push(dow(x.data)); });
+  var hora = CLI_HORAS[d.hora] || '19:00', hp = d.hora==='noite'?'12:00':hora;
+  if(c.formato==='YouTube' || (redeDe(c)==='YouTube' && c.formato!=='Shorts')) return {dias:[6], hora:'17:00', trilha:'yt'};
+  if(['Reel','Shorts','Vídeo curto'].indexOf(c.formato)>=0) return {dias:vd.length?vd:d.dias, hora:hora, trilha:'reel'};
+  if(c.formato==='Story') return {dias:[0,1,2,3,4,5,6], hora:'09:00', trilha:'story'};
+  if(c.formato==='Carrossel') return {dias:cd.length?cd:d.dias, hora:hp, trilha:'carrossel'};
+  return {dias:pd.length?pd:d.dias, hora:hp, trilha:'post'};
 };
 function ligarCli(){
   $all('#app [data-cusarcli]').forEach(function(b){ b.onclick = function(){ cliUsarTema(b.dataset.cusarcli); }; });
