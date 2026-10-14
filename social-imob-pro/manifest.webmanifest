@@ -1,0 +1,33 @@
+{
+ "name": "Social Imob 360 PRO",
+ "short_name": "Social Imob PRO",
+ "description": "Calendário, roteiros, estúdio de gravação e conteúdo com IA para profissionais de qualquer área.",
+ "id": "./",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#F3F9FF",
+ "theme_color": "#00A9FC",
+ "lang": "pt-BR",
+ "icons": [
+  {
+   "src": "icone-v2-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icone-v2-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icone-v2-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
