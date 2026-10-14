@@ -121,7 +121,10 @@ function cliCadRender(){
       '<label class="f">Quem é o seu cliente ideal</label><input type="text" id="cdPub" value="'+esc(d.publico||'')+'" placeholder="Ex.: mulheres de 30 a 50 anos que querem cuidar da pele">'+
       '<label class="f">O seu diferencial (uma frase)</label><input type="text" id="cdDif" value="'+esc(d.diferencial||'')+'" placeholder="Ex.: atendimento com hora marcada e acompanhamento pelo WhatsApp">'+
       '<label class="f">Objetivo principal</label><select id="cdObj">'+CLI_OBJ.map(function(o){ return '<option '+(d.obj===o?'selected':'')+'>'+o+'</option>'; }).join('')+'</select>'+
-      '<label class="f">Tom de voz</label><select id="cdTom">'+CLI_TOM.map(function(o){ return '<option '+(d.tom===o?'selected':'')+'>'+o+'</option>'; }).join('')+'</select>';
+      '<label class="f">Tom de voz</label><select id="cdTom">'+CLI_TOM.map(function(o){ return '<option '+(d.tom===o?'selected':'')+'>'+o+'</option>'; }).join('')+'</select>'+
+      '<label class="f">Bordão (opcional): a sua frase marca registrada no fim de cada vídeo</label><input type="text" id="cdBord" value="'+esc(d.bordao||'')+'" placeholder="Deixe em branco se não quiser agora">'+
+      '<div class="chips" id="cdBordSug" style="margin-top:6px">'+cliSugBordao(d).map(function(x){ return '<span class="chip" data-cbord="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>'+
+      '<p class="hint">Toque numa sugestão para usar, ou <a href="#" data-cli="bordaoIA">peça 5 opções à IA</a>. Dá para mudar depois em ⚙️ Ajustes → Meu perfil profissional.</p>';
   } else if(p===4){
     s += '<p class="sub">Em quais redes você publica? Escreva o @ ou o nome de cada uma.</p>'+CLI_REDES.map(function(r){ var on = d.redes[r[0]]!=null; return '<div class="row cli-rede"><label class="row" style="gap:8px;min-width:130px"><input type="checkbox" class="chk" data-crede="'+r[0]+'" '+(on?'checked':'')+'><b>'+r[1]+' '+r[0]+'</b></label><input type="text" data-crarr="'+r[0]+'" value="'+esc(d.redes[r[0]]||'')+'" placeholder="'+(r[0]==='WhatsApp'?'Número':r[0]==='Google'?'Nome no Google':'@seuperfil')+'" style="flex:1" '+(on?'':'disabled')+'></div>'; }).join('');
   } else {
@@ -135,13 +138,20 @@ function cliCadRender(){
   abrirModal(s);
   $all('#modal [data-cpack]').forEach(function(b){ b.onclick = function(){ d.pack = b.dataset.cpack; var pk = CLI_PACKS.packs.filter(function(x){ return x.k===d.pack; })[0]; var pf = $('#cdProf'); if(pf && (!pf.value || CLI_PACKS.packs.some(function(x){ return x.prof===pf.value; }))) pf.value = pk.prof; d.prof = pf ? pf.value : d.prof; cliCadRender(); }; });
   $all('#modal [data-crede]').forEach(function(b){ b.onchange = function(){ var r = b.dataset.crede; if(b.checked) d.redes[r] = d.redes[r]||''; else delete d.redes[r]; var i = $('#modal [data-crarr="'+r+'"]'); if(i) i.disabled = !b.checked; }; });
+  $all('#modal [data-cbord]').forEach(function(b){ b.onclick = function(){ var i = $('#cdBord'); if(i){ i.value = b.dataset.cbord; i.focus(); } }; });
   $all('#modal [data-cdia2]').forEach(function(b){ b.onclick = function(){ var i = +b.dataset.cdia2, k = d.dias.indexOf(i); if(k>=0) d.dias.splice(k,1); else d.dias.push(i); d.dias.sort(); b.classList.toggle('on'); }; });
 }
+function cliSugBordao(d){
+  var nome = (d.nome||'').trim() || 'Seu nome', prof = (d.prof||'profissional').trim(), cid = String(d.cidade||'').split(/,| e /)[0].trim();
+  return ['Eu sou '+nome+': '+prof+' que explica para você decidir com segurança.', nome+', '+prof+(cid?' em '+cid:'')+': quem cuida, explica.', 'Eu sou '+nome+'. '+prof.charAt(0).toUpperCase()+prof.slice(1)+' com propósito, atendimento com verdade.'];
+}
+function cliPedidoBordao(){ var d = Object.assign({}, S.cfg.cli||{}, CAD.d||{});
+  return 'Crie 5 opções de BORDÃO (frase marca registrada, curta, até 12 palavras, fácil de falar no fim de cada vídeo) para este profissional:\n- Nome: '+(d.nome||'')+'\n- Profissão: '+(d.prof||'')+'\n- Cidade: '+(d.cidade||'')+'\n- Diferencial: '+(d.diferencial||'')+'\n- Tom de voz: '+(d.tom||'')+'\nRegras: sem promessa de resultado, respeitando as regras de publicidade da profissão; pode começar com "Eu sou [nome]". Responda só com as 5 frases, uma por linha.'; }
 function cliCadLer(){
   var d = CAD.d, v = function(id){ var e = $('#'+id); return e ? e.value.trim() : null; };
   if(CAD.passo===1){ d.prof = v('cdProf') || d.prof; }
   if(CAD.passo===2){ d.nome = v('cdNome'); d.reg = v('cdReg'); d.cidade = v('cdCidade'); d.wpp = v('cdWpp'); }
-  if(CAD.passo===3){ d.servicos = v('cdServ'); d.publico = v('cdPub'); d.diferencial = v('cdDif'); d.obj = v('cdObj'); d.tom = v('cdTom'); }
+  if(CAD.passo===3){ d.servicos = v('cdServ'); d.publico = v('cdPub'); d.diferencial = v('cdDif'); d.obj = v('cdObj'); d.tom = v('cdTom'); d.bordao = v('cdBord'); }
   if(CAD.passo===4){ $all('#modal [data-crarr]').forEach(function(i){ if(d.redes[i.dataset.crarr]!=null) d.redes[i.dataset.crarr] = i.value.trim(); }); }
   if(CAD.passo===5){ d.videos = +v('cdVid'); d.camera = $('#cdCam').checked; d.hora = v('cdHora'); }
 }
@@ -159,7 +169,7 @@ function cliAplicarCadastro(d){
   var primeira = !S.cfg.cli, pk = CLI_PACKS.packs.filter(function(x){ return x.k===d.pack; })[0] || cliPack();
   S.cfg.cli = d;
   var cores = ['#1F76C2','#E2445C','#FF0000','#1877F2','#0A66C2','#FDAB3D','#00C875'], cta = 'Comente '+pk.palavra+' ou chame no WhatsApp'+(d.wpp?' '+d.wpp:'');
-  var ass = 'Eu sou '+d.nome+(d.prof?', '+d.prof:'')+(d.cidade?' em '+d.cidade.split(/[,e]\s/)[0]:'')+'.';
+  var ass = d.bordao ? d.bordao : 'Eu sou '+d.nome+(d.prof?', '+d.prof:'')+(d.cidade?' em '+d.cidade.split(/[,e]\s/)[0]:'')+'.';
   Object.keys(d.redes).forEach(function(r, i){
     var k = 'p'+norm(r).slice(0,6), ex = S.cfg.perfis.filter(function(p){ return p.k===k; })[0];
     garantirRede(r);
@@ -184,7 +194,7 @@ function cliTemas(){ var pk = cliPack(); return pk.temas.map(function(t){ return
 function cliTemasLivres(){ var us = (S.cfg.cli||{}).usados || {}, l = cliTemas().filter(function(x){ return !us[x.t.a]; }); if(l.length) return l; var lim = addDias(hoje(), -60); return cliTemas().filter(function(x){ return us[x.t.a] && us[x.t.a] < lim; }); }
 function cliTexto(tm, formato, d, pk){
   var pts = tm.p.map(function(x){ x = cliSubst(x, d); return CLI_GUIA_RE.test(x) ? '['+x+']' : x; }), g = cliSubst(tm.g, d);
-  var fecho = 'Eu sou '+d.nome+(d.prof?', '+d.prof:'')+(d.cidade?' em '+d.cidade.split(/,/)[0]:'')+'.', cta = 'Comente '+pk.palavra+' que eu te explico melhor.';
+  var fecho = d.bordao ? d.bordao : 'Eu sou '+d.nome+(d.prof?', '+d.prof:'')+(d.cidade?' em '+d.cidade.split(/,/)[0]:'')+'.', cta = 'Comente '+pk.palavra+' que eu te explico melhor.';
   if(formato==='Carrossel') return 'CARTÃO 1 (capa): '+g+'\n'+pts.map(function(x, i){ return 'CARTÃO '+(i+2)+': '+x; }).join('\n')+'\nCARTÃO FINAL: '+cta+(d.reg?' · '+d.reg:'');
   if(formato==='Post') return g+'\n\n'+pts.join('\n\n')+'\n\n'+fecho+' '+cta;
   return g+'\n\n'+pts.join('\n\n')+'\n\n'+fecho+' '+cta+(d.camera===false ? '\n\nComo gravar sem aparecer: use texto na tela sobre imagens do seu trabalho e grave só a voz.' : '');
@@ -317,7 +327,7 @@ function cliPedidoIA(){
   return 'Você é especialista em marketing de conteúdo para redes sociais, copywriter e estrategista de algoritmo. Crie '+q+' conteúdo(s) INÉDITO(S) para este profissional.\n\n'+
     'PERFIL\n- Nome: '+(d.nome||'')+'\n- Profissão: '+(d.prof||pk.nome)+(d.reg?' ('+d.reg+')':'')+'\n- Cidade e região: '+(d.cidade||'')+'\n- Serviços: '+(d.servicos||'')+'\n- Cliente ideal: '+(d.publico||'')+'\n- Diferencial: '+(d.diferencial||'')+'\n- Objetivo: '+(d.obj||'')+'\n- Tom de voz: '+(d.tom||'')+'\n- Rede deste pedido: '+(p.rede||'Instagram')+' ('+p.arroba+')\n- Publica em: '+dias+'; '+(d.videos||0)+' vídeo(s) por semana; '+(d.camera===false?'NÃO aparece em vídeo (use texto na tela, imagens e narração)':'aparece nos vídeos')+'\n- WhatsApp: '+(d.wpp||'')+'\n'+
     (tema ? '\nPEDIDO ESPECIAL: '+tema+'\n' : '')+
-    '\nCADÊNCIA (Regra 360)\n- '+REGRA51_TXT+'\n- Todos os conteúdos deste pedido giram em torno de UM tema da semana, ligados entre si e ao vídeo do YouTube da semana.\n'+'\nREGRAS\n'+pk.regras.map(function(r){ return '- '+r; }).join('\n')+'\n- Gancho específico e concreto nos 3 primeiros segundos; um problema que o cliente reconhece; 2 a 4 pontos práticos; uma única chamada para ação com palavra-chave.\n- Vídeo (Reel) com 30 a 50 segundos de fala (75 a 125 palavras). Um vídeo serve para Reel, Story, Shorts e Status.\n- Carrossel com CARTÃO 1 (capa), CARTÃO 2... e CARTÃO FINAL.\n- Sem estatística sem fonte, sem depoimento inventado, sem promessa de resultado.\n- Misture objetivos: educação, engajamento, autoridade, captação.\n- Português do Brasil.\n'+
+    '\nCADÊNCIA (Regra 360)\n- '+REGRA51_TXT+'\n- Todos os conteúdos deste pedido giram em torno de UM tema da semana, ligados entre si e ao vídeo do YouTube da semana.\n'+(d.bordao ? '\nBORDÃO: todo vídeo termina com a frase "'+d.bordao+'", depois da chamada.\n' : '\nBORDÃO: a pessoa ainda não tem. Depois dos blocos, pergunte se ela gostaria de criar um bordão (frase marca registrada no fim de cada vídeo) e sugira 3 opções curtas ligadas à profissão.\n')+'\nREGRAS\n'+pk.regras.map(function(r){ return '- '+r; }).join('\n')+'\n- Gancho específico e concreto nos 3 primeiros segundos; um problema que o cliente reconhece; 2 a 4 pontos práticos; uma única chamada para ação com palavra-chave.\n- Vídeo (Reel) com 30 a 50 segundos de fala (75 a 125 palavras). Um vídeo serve para Reel, Story, Shorts e Status.\n- Carrossel com CARTÃO 1 (capa), CARTÃO 2... e CARTÃO FINAL.\n- Sem estatística sem fonte, sem depoimento inventado, sem promessa de resultado.\n- Misture objetivos: educação, engajamento, autoridade, captação.\n- Português do Brasil.\n'+
     '\nJÁ USADOS (não repetir assunto nem título):\n'+(feitos.join('\n')||'- nenhum')+'\n\n'+
     'Responda SOMENTE com '+q+' bloco(s) neste formato, um por conteúdo:\n### CONTEÚDO\nPerfil: '+k+'\nData: AAAA-MM-DD (a partir de '+dataBR(addDias(hoje(),1))+', nos dias em que publica)\nFormato: Reel | Post | Carrossel | Story\nTítulo: ...\nGancho: ...\nTexto: ... (texto falado completo, ou CARTÃO 1:, CARTÃO 2:...)\nDescrição: ...\nHashtags: ... (3 a 5, do tema e da cidade)\nCTA: ...\nObjetivo: Educação | Engajamento | Autoridade | Lead | Venda\nAssunto: palavra-chave-curta-do-tema\n';
 }
@@ -367,6 +377,7 @@ function ligarCli(){
 document.addEventListener('click', function(ev){
   var b = ev.target.closest && ev.target.closest('[data-cli]'); if(!b) return;
   var a = b.dataset.cli;
+  if(a==='bordaoIA'){ ev.preventDefault(); copiar(cliPedidoBordao()); toast('Pedido copiado: cole no Claude, ChatGPT ou Gemini e traga a frase escolhida'); }
   if(a==='planos') cliTelaPlanos();
   if(a==='cadastro') cliCadastro();
   if(a==='cadSeguir' || a==='cadVoltar' || a==='cadFim'){

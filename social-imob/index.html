@@ -424,7 +424,7 @@ table.mt td:last-child{border-radius:0 10px 10px 0}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '5.2.1';
+var APP_VER = '5.3.0';
 var EDICAO = 'anderson'; // 'anderson' = app do Anderson · 'cliente' = versão de venda (gerada por gerar_pro.py)
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob/';
 var DB_NAME = 'SOCIAL_IMOB_360_PRO';
@@ -3837,6 +3837,7 @@ function iniciar(){
     if(S.conteudos.length && (!S.cfg.rev380 || !S.cfg.rev390)){ var r38 = !S.cfg.rev380; S.cfg.rev380 = true; S.cfg.rev390 = true; (r38 ? revisarTextos() : Promise.resolve()).then(function(){ return planejarTudo(); }).then(function(r){ render(); avisoPlano(r); }); }
     if(S.conteudos.length && S.cfg.rev400 && !S.cfg.rev410){ S.cfg.rev410 = true; salvarCfg(); setTimeout(function(){ planejarTudo().then(function(r){ render(); if(r && r.alteracoes) toastAcao('🎬 1 vídeo para Reel, Story, Shorts e Status + Stories criativos', 'Ver', function(){ UI.view='coord'; UI.coordAba='stories'; render(); }); }); }, 5500); }
     if(S.conteudos.length && S.cfg.rev390 && !S.cfg.rev400){ S.cfg.rev410 = true;  S.cfg.rev400 = true; salvarCfg(); setTimeout(function(){ planejarTudo().then(function(r){ render(); if(r && r.alteracoes){ avisoPlano(r); toastAcao('🧭 Coordenador 360: conteúdos inéditos aplicados', 'Abrir', function(){ UI.view='coord'; render(); }); } }); }, 5500); }
+    if(S.conteudos.length && !S.cfg.rev530){ S.cfg.rev530 = true; salvarCfg(); setTimeout(function(){ aplicarBordaoTodos().then(function(n){ if(n){ render(); toastAcao('🎤 Bordão incluído no fim de '+n+' vídeos e roteiros.', 'Desfazer', desfazerGlobal); } }); }, 1600); }
     if(S.conteudos.length && S.cfg.rev410 && !S.cfg.rev510){ S.cfg.rev510 = true; salvarCfg(); setTimeout(function(){ planejarTudo().then(function(r){ render(); if(r && r.alteracoes) toastAcao('📏 Regra 360 aplicada: 5 Reels, 2 posts, 1 carrossel e Stories por semana, tudo no tema da semana; YouTube 1 por canal.', 'Ver semana', function(){ UI.view='coord'; UI.coordAba='semana'; render(); }); }); }, 900); }
     if(S.conteudos.length && !S.cfg.rev393){ S.cfg.rev393 = true; salvarCfg(); setTimeout(function(){ revisarTudo393().then(function(r){ render(); if(r && r.alteracoes) toastAcao('🔎 '+(r.ganchos+r.titulos+r.textos+r.imoveis)+' títulos, ganchos e textos revisados', 'Ver', function(){ telaRevisao393(r); }); }); }, 2500); }
     setTimeout(checarAtualizacao, 1500);
@@ -4049,6 +4050,58 @@ montarPedidoClaude = function(){
     t = t.replace(/Cadência do perfil: [^\n]*\n/, extra);
     UI.clTema51 = null; var ta = $('#clPedido'); if(ta) ta.value = t; copiar(t);
   }
+  return t;
+};
+
+/* ================= v5.3 — BORDÃO: a frase marca registrada no fim de cada vídeo ================= */
+function bordaoDe(k){
+  var p = perfil(k), a = String(p.assinatura||'').trim(); if(a) return a;
+  if(S.cfg && S.cfg.cli) return String(S.cfg.cli.bordao||'').trim();
+  var n = nichoDe(k);
+  if(n==='imoveis') return String(perfil('imoveis').assinatura||SIG_I||'').trim();
+  if(n==='consorcios') return String(SIG_C||'').trim();
+  return '';
+}
+function chaveBordao(b){ return norm(String(b||'').replace(/\s*At[ée] a pr[óo]xima.*$/i,'')).slice(-34); }
+function temBordao(txt, b){ var k = chaveBordao(b); return !k || norm(txt||'').indexOf(k) >= 0; }
+function ehRoteiroVideo(c){ return ['Reel','Vídeo curto','Shorts','YouTube'].indexOf(c.formato)>=0 && c.deriv!=='storycriativo'; }
+function comBordao(txt, b){
+  if(!b || temBordao(txt, b)) return txt;
+  var linhas = String(txt||'').split('\n'), i = linhas.length;
+  for(var j=0;j<linhas.length;j++){ if(/^\s*(Como (gravar|produzir|postar)|Depois:|COMO POSTAR)/i.test(linhas[j])){ i = j; break; } }
+  var corpo = linhas.slice(0,i).join('\n').replace(/\s+$/,''), notas = linhas.slice(i).join('\n');
+  var topicos = /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 ·—-]{5,}\s*(\(|:)/m.test(corpo);
+  corpo = corpo + (topicos ? '\n\nBORDÃO (fechamento): ' + b : (/\n\n/.test(corpo) ? '\n\n' : ' ') + b);
+  return corpo + (notas ? '\n' + notas : '');
+}
+function garantirBordao(c){
+  if(!c || c.etapa==='Publicado' || !ehRoteiroVideo(c) || !String(c.roteiro||'').trim()) return false;
+  var b = bordaoDe(c.perfil); if(!b || temBordao(c.roteiro, b)) return false;
+  c.roteiro = comBordao(c.roteiro, b); registrar(c, 'Bordão incluído no fim do vídeo: "'+b+'"'); return true;
+}
+function aplicarBordaoTodos(){
+  if(HIST.ocupado) return Promise.resolve(0);
+  var pares = [], mud = [];
+  S.conteudos.forEach(function(c){ var a = JSON.stringify(c); if(garantirBordao(c)){ pares.push([JSON.parse(a), c]); mud.push(c); } });
+  if(!mud.length) return Promise.resolve(0);
+  registrarLote(pares, 'bordão nos vídeos ('+mud.length+')');
+  return gravar('conteudos', mud).then(function(){ return mud.length; });
+}
+/* teleprompter: o bordão sempre fecha o texto */
+var textoGravacao52 = textoGravacao;
+textoGravacao = function(c){ var t = textoGravacao52(c), b = c && ehRoteiroVideo(c) ? bordaoDe(c.perfil) : ''; return b && !temBordao(t, b) ? t.replace(/\s+$/,'') + '\n\n' + b : t; };
+/* tudo que entra ou é replanejado já sai com o bordão */
+var planejarTudo52 = planejarTudo;
+planejarTudo = function(){ S.conteudos.forEach(garantirBordao); return planejarTudo52.apply(this, arguments); };
+var gerarDerivados52 = gerarDerivados39;
+gerarDerivados39 = function(manter){ var out = gerarDerivados52.apply(this, arguments); (out||[]).forEach(garantirBordao); return out; };
+var importarDoClaude52 = importarDoClaude;
+importarDoClaude = function(txt){ return importarDoClaude52(txt).then(function(n){ var mud = S.conteudos.filter(function(c){ return garantirBordao(c); }); return (mud.length ? gravar('conteudos', mud) : Promise.resolve()).then(function(){ return n; }); }); };
+/* pedido ao Claude: lembrar o bordão */
+var montarPedidoClaude52 = montarPedidoClaude;
+montarPedidoClaude = function(){
+  var t = montarPedidoClaude52.apply(this, arguments), b = bordaoDe(UI.clPerfil);
+  if(b && t.indexOf('BORDÃO')<0){ t = t.replace('\nJÁ PUBLICADOS', 'BORDÃO: todo vídeo (Reel e YouTube) termina com a frase "'+b+'", depois da chamada.\n\nJÁ PUBLICADOS'); var ta = $('#clPedido'); if(ta) ta.value = t; copiar(t); }
   return t;
 };
 

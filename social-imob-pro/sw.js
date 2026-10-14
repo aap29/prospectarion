@@ -2,7 +2,7 @@
    Com internet: busca a versão mais nova e guarda uma cópia.
    Sem internet: abre a última cópia guardada.
    Os dados ficam no aparelho (IndexedDB) e nunca passam por aqui. */
-var CACHE = 'socialimobpro-v5-2-1';
+var CACHE = 'socialimobpro-v5-3-0';
 var ARQUIVOS = ['./', 'index.html', 'manifest.webmanifest', 'icone-v2-192.png', 'icone-v2-512.png', 'icone-v2-maskable-512.png'];
 
 self.addEventListener('install', function (e) {
