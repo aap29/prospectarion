@@ -132,10 +132,9 @@ body.no-scroll{overflow:hidden}
 .st-prog{max-width:560px;margin:0 auto}
 .st-fim{display:flex;gap:12px;align-items:center;font-size:15px}
 /* v5.2 teleprompter sobre a câmera: só a letra, suave, na linha do pescoço */
-.modo-camera.com-texto.pos-pescoco .st-texto{top:50%;bottom:auto;height:34%}
-.modo-camera.com-texto .st-texto{background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,var(--op)) 25%,rgba(0,0,0,var(--op)) 75%,rgba(0,0,0,0))}
-.modo-camera.com-texto .st-scroll,.modo-tele.com-cam.pip-fundo .st-scroll{-webkit-mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent)}
-.modo-camera .st-conteudo,.modo-tele.com-cam.pip-fundo .st-conteudo{color:rgba(255,255,255,var(--lt,.8));font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 10px rgba(0,0,0,.3);filter:blur(var(--bl,.3px))}
+.modo-camera.com-texto.pos-pescoco .st-texto{top:26%;bottom:0;height:auto}
+.modo-camera.com-texto .st-texto{background:rgba(0,0,0,var(--op))}
+.modo-camera .st-conteudo,.modo-tele.com-cam.pip-fundo .st-conteudo{color:rgba(255,255,255,var(--lt,.8));font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.6);filter:blur(var(--bl,0px))}
 .modo-camera .st-foco{border-top-color:#FF7A4555}.modo-camera .st-foco::before{opacity:.6}
 /* v5.0 versão de venda */
 body.cli-sem-imoveis [data-v="imoveis"]{display:none}
@@ -425,7 +424,7 @@ table.mt td:last-child{border-radius:0 10px 10px 0}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '5.2.0';
+var APP_VER = '5.2.1';
 var EDICAO = 'cliente'; // 'anderson' = app do Anderson · 'cliente' = versão de venda (gerada por gerar_pro.py)
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob-pro/';
 var DB_NAME = 'SOCIAL_IMOB_PRO_CLIENTE';
@@ -838,9 +837,9 @@ function textosIncompletos(){ return S.conteudos.filter(function(c){ var t = TEM
 function autoAltura(el){ if(!el) return; el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight + 4, 220) + 'px'; }
 
 /* ================= ESTÚDIO: câmera + teleprompter ================= */
-var EST_PADRAO = {vel:20, fonte:44, espaco:1.5, largura:90, foco:35, espelho:'nenhum', central:false, loop:false, toque:true, contagem:3, camera:'user', qualidade:'1080', posTexto:'pescoco', opacidade:0, pip:'canto', rolarAoGravar:true, luzTexto:80, suave:30, luz:0};
+var EST_PADRAO = {vel:20, fonte:44, espaco:1.5, largura:90, foco:35, espelho:'nenhum', central:false, loop:false, toque:true, contagem:3, camera:'user', qualidade:'1080', posTexto:'pescoco', opacidade:0, pip:'canto', rolarAoGravar:true, luzTexto:90, suave:0, luz:0, focoCam:6};
 var EST = {modo:null, cam:false, texto:true, rolando:false, pos:0, ultimo:0, stream:null, rec:null, partes:[], gravando:false, inicioRec:0, timer:null, wake:null, conteudo:null, titulo:'', txt:''};
-function cfgEst(){ if(!S.cfg.estudio){ S.cfg.estudio = {}; if((window.innerWidth||800) < 600) S.cfg.estudio.fonte = 30; } Object.keys(EST_PADRAO).forEach(function(k){ if(S.cfg.estudio[k]==null) S.cfg.estudio[k] = EST_PADRAO[k]; }); if(!S.cfg.estudio.t52){ S.cfg.estudio.t52 = true; if(S.cfg.estudio.posTexto==='topo') S.cfg.estudio.posTexto = 'pescoco'; S.cfg.estudio.opacidade = 0; } if(!S.cfg.estudio.q42){ if(S.cfg.estudio.qualidade==='720') S.cfg.estudio.qualidade = '1080'; S.cfg.estudio.q42 = true; } return S.cfg.estudio; }
+function cfgEst(){ if(!S.cfg.estudio){ S.cfg.estudio = {}; if((window.innerWidth||800) < 600) S.cfg.estudio.fonte = 30; } Object.keys(EST_PADRAO).forEach(function(k){ if(S.cfg.estudio[k]==null) S.cfg.estudio[k] = EST_PADRAO[k]; }); if(!S.cfg.estudio.t521){ S.cfg.estudio.t521 = true; S.cfg.estudio.suave = 0; if((S.cfg.estudio.luzTexto||80) < 90) S.cfg.estudio.luzTexto = 90; S.cfg.estudio.focoCam = 6; } if(!S.cfg.estudio.t52){ S.cfg.estudio.t52 = true; if(S.cfg.estudio.posTexto==='topo') S.cfg.estudio.posTexto = 'pescoco'; S.cfg.estudio.opacidade = 0; } if(!S.cfg.estudio.q42){ if(S.cfg.estudio.qualidade==='720') S.cfg.estudio.qualidade = '1080'; S.cfg.estudio.q42 = true; } return S.cfg.estudio; }
 var QUALI42 = {'720':[1280,720,5000000], '1080':[1920,1080,12000000], '4k':[3840,2160,35000000]};
 function quali(){ return QUALI42[cfgEst().qualidade] || QUALI42['1080']; }
 function comecaCom(t, g){ t = String(t||'').replace(ROTULO_RE,'').replace(/^ABERTURA\s*\([^)]*\)\s*:\s*/,''); var a = norm(String(t||'').slice(0,120)), b = norm(g||''); return !!b && a.indexOf(b.slice(0,40))===0; }
@@ -914,16 +913,17 @@ function aplicarEstiloTexto(){
   c.style.fontSize = e.fonte+'px'; c.style.lineHeight = e.espaco; c.style.width = e.largura+'%'; c.style.textAlign = e.central ? 'center' : 'left';
   var tr = e.espelho==='horizontal' ? 'scaleX(-1)' : e.espelho==='vertical' ? 'scaleY(-1)' : 'none';
   $('#stScroll').style.transform = tr;
-  $('#stFoco').style.top = e.foco+'%';
-  tx.style.setProperty('--op', (e.opacidade/100).toFixed(2)); tx.style.setProperty('--lt', ((e.luzTexto||80)/100).toFixed(2)); tx.style.setProperty('--bl', ((e.suave==null?30:e.suave)/100).toFixed(2)+'px');
+  $('#stFoco').style.top = focoAtual()+'%';
+  tx.style.setProperty('--op', (e.opacidade/100).toFixed(2)); tx.style.setProperty('--lt', ((e.luzTexto||80)/100).toFixed(2)); tx.style.setProperty('--bl', ((e.suave||0)/100).toFixed(2)+'px');
   var v = $('#stVideo'); if(v) v.style.transform = (e.camera==='user') ? 'scaleX(-1)' : 'none';
   var sv = $('#stVel'); if(sv) sv.textContent = 'Velocidade '+e.vel+' · Letra '+e.fonte+' px'+(EST.cam && EST.camInfo ? ' · Câmera '+EST.camInfo : '');
 }
+function focoAtual(){ var e = cfgEst(); return (EST.modo==='camera' && e.posTexto==='pescoco') ? (e.focoCam==null ? 6 : e.focoCam) : e.foco; }
 function pxPorSeg(){ return 8 + cfgEst().vel * 2.4; }
 function maxPos(){ var s = $('#stScroll'), c = $('#stConteudo'); if(!s || !c) return 0; return Math.max(0, c.offsetHeight + s.clientHeight*0.6); }
 function posicionar(){
   var c = $('#stConteudo'), s = $('#stScroll'); if(!c || !s) return;
-  var topo = s.clientHeight * (cfgEst().foco/100);
+  var topo = s.clientHeight * (focoAtual()/100);
   c.style.transform = 'translateY('+(topo - EST.pos)+'px)';
   atualizarTempo();
 }
@@ -1035,9 +1035,9 @@ function folhaAjustes(){
   var sh = $('#stSheet');
   sh.innerHTML = '<div class="st-aj"><div class="row"><h3 style="flex:1">⚙️ Ajustes do teleprompter e da câmera</h3><button class="btn sm" data-st="fecharSheet">Fechar</button></div>'+
     faixa('vel','Velocidade de rolagem',1,100)+faixa('fonte','Tamanho da letra',20,96,2,' px')+faixa('espaco','Espaçamento entre linhas',1,2.5,0.1)+
-    faixa('largura','Largura do texto',50,100,5,'%')+faixa('foco','Linha de leitura (foco)',10,80,5,'%')+faixa('opacidade','Fundo escuro atrás do texto (0 = só a letra)',0,90,5,'%')+faixa('luzTexto','Brilho da letra',40,100,5,'%')+faixa('suave','Letra suave (desfoque leve)',0,100,10,'%')+(EST.expCap ? faixa('luz','Luz da câmera',Math.round(EST.expCap.min*10)/10,Math.round(EST.expCap.max*10)/10,EST.expCap.step||0.1,'') : '')+
+    faixa('largura','Largura do texto',50,100,5,'%')+faixa('foco','Linha de leitura (foco)',10,80,5,'%')+faixa('opacidade','Fundo escuro atrás do texto (0 = só a letra)',0,90,5,'%')+faixa('luzTexto','Brilho da letra',40,100,5,'%')+faixa('suave','Letra suave (desfoque leve)',0,100,10,'%')+faixa('focoCam','Linha de leitura com a câmera',0,60,2,'%')+(EST.expCap ? faixa('luz','Luz da câmera',Math.round(EST.expCap.min*10)/10,Math.round(EST.expCap.max*10)/10,EST.expCap.step||0.1,'') : '')+
     opc('espelho','Espelho',[['nenhum','Sem espelho'],['horizontal','Horizontal (vidro de teleprompter)'],['vertical','Vertical']])+
-    opc('posTexto','Posição do texto com a câmera ligada',[['pescoco','Na linha do pescoço (recomendado)'],['topo','No topo (perto da lente)'],['meio','No meio'],['baixo','Embaixo']])+
+    opc('posTexto','Posição do texto com a câmera ligada',[['pescoco','Dos olhos para baixo (recomendado)'],['topo','No topo (perto da lente)'],['meio','No meio'],['baixo','Embaixo']])+
     opc('pip','Câmera no modo teleprompter',[['canto','Janela pequena no canto'],['fundo','Tela inteira atrás do texto']])+
     opc('contagem','Contagem antes de gravar',[[0,'Sem contagem'],[3,'3 segundos'],[5,'5 segundos']])+
     opc('camera','Câmera',[['user','Frontal (selfie)'],['environment','Traseira']])+
@@ -1047,7 +1047,7 @@ function folhaAjustes(){
   sh.classList.add('on'); ligarEstudio();
   $all('[data-ek]', sh).forEach(function(i){ i.oninput = i.onchange = function(){
     var k = i.dataset.ek, v = i.type==='checkbox' ? i.checked : (i.type==='range' ? +i.value : (k==='contagem' ? +i.value : i.value));
-    var antes = e[k]; e[k] = v; var lb = $('#v_'+k); if(lb) lb.textContent = v + ({fonte:' px', largura:'%', foco:'%', opacidade:'%', luzTexto:'%', suave:'%'}[k]||'');
+    var antes = e[k]; e[k] = v; var lb = $('#v_'+k); if(lb) lb.textContent = v + ({fonte:' px', largura:'%', foco:'%', opacidade:'%', luzTexto:'%', suave:'%', focoCam:'%'}[k]||'');
     if(k==='luz') aplicarLuz();
     if(k==='pip' || k==='posTexto'){ var stg = $('#stStage'); stg.className = stg.className.replace(/pip-\w+/, 'pip-'+e.pip).replace(/pos-\w+/, 'pos-'+e.posTexto); }
     aplicarEstiloTexto(); posicionar();
