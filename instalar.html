@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Instalação — Prospectarion</title>
+<style>
+:root {
+  --laranja: #F26419;
+  --laranja-escuro: #D4561A;
+  --laranja-claro: #FF7A2E;
+  --laranja-suave: #FFF3EC;
+  --preto: #1A1A1A;
+  --cinza: #6B6B6B;
+  --cinza-claro: #F5F5F5;
+  --branco: #FFFFFF;
+  --verde: #22C55E;
+  --verde-suave: #F0FFF4;
+  --amarelo: #F59E0B;
+  --amarelo-suave: #FFFBEB;
+  --vermelho: #EF4444;
+  --vermelho-suave: #FEF2F2;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F2F5; color: var(--preto); }
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, var(--preto) 0%, #2A1A0E 100%);
+  padding: 32px 20px 28px; text-align: center;
+}
+.logo { color: var(--laranja); font-size: 24px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px; }
+header h1 { color: var(--branco); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+header p { color: rgba(255,255,255,0.55); font-size: 13px; }
+
+/* PROGRESS BAR */
+.progress-wrap {
+  background: var(--branco); padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 10;
+}
+.progress-label { font-size: 12px; color: var(--cinza); margin-bottom: 6px; font-weight: 600; }
+.progress-bar { height: 6px; background: var(--cinza-claro); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--laranja), var(--laranja-claro)); border-radius: 10px; transition: width .4s; width: 0%; }
+.steps-dots { display: flex; justify-content: space-between; margin-top: 8px; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--cinza-claro); background: var(--branco); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--cinza); transition: all .3s; cursor: pointer; }
+.step-dot.done { background: var(--verde); border-color: var(--verde); color: var(--branco); }
+.step-dot.active { background: var(--laranja); border-color: var(--laranja); color: var(--branco); }
+
+/* MAIN */
+.container { max-width: 640px; margin: 0 auto; padding: 0 16px 60px; }
+
+/* STEP CARD */
+.step-card {
+  background: var(--branco); border-radius: 18px;
+  margin-top: 20px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  display: none;
+}
+.step-card.active { display: block; }
+
+.step-card-header {
+  background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-escuro) 100%);
+  padding: 20px 24px; display: flex; align-items: center; gap: 14px;
+}
+.step-num-big {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900; color: var(--branco); flex-shrink: 0;
+}
+.step-card-header h2 { color: var(--branco); font-size: 17px; font-weight: 800; line-height: 1.3; }
+.step-card-header p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 3px; }
+
+.step-body { padding: 20px 24px; }
+
+/* INSTRUCOES */
+.instrucao {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 0; border-bottom: 1px solid #F5F5F5;
+}
+.instrucao:last-of-type { border-bottom: none; }
+.instr-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--laranja-suave); color: var(--laranja);
+  font-size: 12px; font-weight: 800; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.instr-texto h4 { font-size: 15px; font-weight: 700; color: var(--preto); margin-bottom: 3px; }
+.instr-texto p { font-size: 14px; color: var(--cinza); line-height: 1.55; }
+.instr-texto code { background: var(--cinza-claro); padding: 2px 7px; border-radius: 5px; font-size: 13px; color: var(--laranja-escuro); font-family: monospace; }
+
+/* ALERTA */
+.alerta {
+  border-radius: 12px; padding: 14px 16px; margin: 14px 0;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.alerta.aviso { background: var(--amarelo-suave); border-left: 3px solid var(--amarelo); }
+.alerta.dica { background: var(--verde-suave); border-left: 3px solid var(--verde); }
+.alerta.importante { background: var(--vermelho-suave); border-left: 3px solid var(--vermelho); }
+.alerta-icon { font-size: 18px; flex-shrink: 0; }
+.alerta h4 { font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+.alerta p { font-size: 13px; color: var(--cinza); line-height: 1.5; }
+
+/* IMAGEM PLACEHOLDER */
+.img-placeholder {
+  background: var(--cinza-claro); border-radius: 12px;
+  padding: 20px; text-align: center; margin: 14px 0;
+  border: 2px dashed rgba(242,100,25,0.3);
+}
+.img-placeholder .phone-mock {
+  width: 120px; height: 200px; background: var(--preto);
+  border-radius: 18px; margin: 0 auto 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; position: relative;
+}
+.img-placeholder .phone-mock::before {
+  content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px;
+}
+.img-placeholder p { font-size: 12px; color: var(--cinza); }
+
+/* BOTÕES DE NAVEGAÇÃO */
+.nav-btns {
+  display: flex; gap: 10px; margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--cinza-claro);
+}
+.btn-voltar {
+  padding: 12px 20px; border-radius: 10px;
+  background: var(--cinza-claro); color: var(--cinza);
+  border: none; font-size: 14px; font-weight: 700; cursor: pointer;
+  flex: 0; white-space: nowrap;
+  transition: background .2s;
+}
+.btn-voltar:hover { background: #E0E0E0; }
+.btn-avancar {
+  padding: 12px 20px; border-radius: 10px;
+  background: var(--laranja); color: var(--branco);
+  border: none; font-size: 14px; font-weight: 700; cursor: pointer;
+  flex: 1; transition: background .2s;
+}
+.btn-avancar:hover { background: var(--laranja-claro); }
+
+/* CHECKBOX CONFIRMAÇÃO */
+.checklist { margin: 14px 0; }
+.check-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  transition: background .15s; margin-bottom: 6px;
+}
+.check-item:hover { background: var(--cinza-claro); }
+.check-item input { display: none; }
+.check-box {
+  width: 22px; height: 22px; border: 2px solid var(--cinza-claro);
+  border-radius: 6px; flex-shrink: 0; display: flex;
+  align-items: center; justify-content: center;
+  transition: all .2s; background: var(--branco);
+}
+.check-item.checked .check-box { background: var(--verde); border-color: var(--verde); }
+.check-item.checked .check-box::after { content: '✓'; color: var(--branco); font-size: 13px; font-weight: 800; }
+.check-item span { font-size: 14px; color: var(--preto); font-weight: 500; }
+.check-item.checked span { color: var(--cinza); text-decoration: line-through; }
+
+/* CONCLUSÃO */
+.conclusao {
+  text-align: center; padding: 32px 20px;
+}
+.conclusao .bigicon { font-size: 64px; margin-bottom: 16px; }
+.conclusao h2 { font-size: 22px; font-weight: 900; color: var(--preto); margin-bottom: 8px; }
+.conclusao p { font-size: 15px; color: var(--cinza); margin-bottom: 24px; line-height: 1.6; }
+.btn-wpp {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #25D366; color: var(--branco);
+  padding: 14px 28px; border-radius: 12px;
+  font-size: 15px; font-weight: 800; text-decoration: none;
+  transition: all .2s;
+}
+.btn-wpp:hover { background: #20BE5C; }
+.btn-app {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--laranja); color: var(--branco);
+  padding: 14px 28px; border-radius: 12px;
+  font-size: 15px; font-weight: 800; text-decoration: none;
+  margin-top: 10px; transition: all .2s;
+}
+.btn-app:hover { background: var(--laranja-claro); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PROSPECTARION</div>
+  <h1>Manual de Primeira Instalação</h1>
+  <p>Siga os passos abaixo — leva menos de 2 minutos ⏱</p>
+</header>
+
+<!-- BARRA DE PROGRESSO -->
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Passo 1 de 5 — Receber o link</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="steps-dots">
+    <div class="step-dot active" id="dot-1" onclick="goStep(1)">1</div>
+    <div class="step-dot" id="dot-2" onclick="goStep(2)">2</div>
+    <div class="step-dot" id="dot-3" onclick="goStep(3)">3</div>
+    <div class="step-dot" id="dot-4" onclick="goStep(4)">4</div>
+    <div class="step-dot" id="dot-5" onclick="goStep(5)">5</div>
+    <div class="step-dot" id="dot-6" onclick="goStep(6)">✓</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== PASSO 1 ===== -->
+<div class="step-card active" id="step-1">
+  <div class="step-card-header">
+    <div class="step-num-big">1</div>
+    <div>
+      <h2>Receber o link oficial</h2>
+      <p>Você vai instalar pelo navegador do celular</p>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="instrucao">
+      <div class="instr-num">1</div>
+      <div class="instr-texto">
+        <h4>Abra a conversa no WhatsApp com Anderson</h4>
+        <p>O link do Prospectarion será enviado diretamente por WhatsApp. Não baixe de outros lugares.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">2</div>
+      <div class="instr-texto">
+        <h4>Localize a mensagem com o link do APK</h4>
+        <p>O link termina com <code>.apk</code> — é um arquivo de instalação do Android.</p>
+      </div>
+    </div>
+
+    <div class="alerta aviso">
+      <div class="alerta-icon">⚠️</div>
+      <div>
+        <h4>Só baixe o link enviado pelo Anderson</h4>
+        <p>Nunca instale um APK enviado por desconhecidos, grupos de WhatsApp ou links de redes sociais.</p>
+      </div>
+    </div>
+
+    <div class="alerta dica">
+      <div class="alerta-icon">💡</div>
+      <div>
+        <h4>Ainda não tem o link?</h4>
+        <p>Fale com Anderson no WhatsApp pelo (51) 98416-8848 para receber o link oficial agora.</p>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-avancar" onclick="nextStep(2)">Tenho o link → Próximo passo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASSO 2 ===== -->
+<div class="step-card" id="step-2">
+  <div class="step-card-header">
+    <div class="step-num-big">2</div>
+    <div>
+      <h2>Baixar o arquivo APK</h2>
+      <p>Toque no link e salve no celular</p>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="instrucao">
+      <div class="instr-num">1</div>
+      <div class="instr-texto">
+        <h4>Toque no link no WhatsApp</h4>
+        <p>O link vai abrir no navegador padrão do seu celular (Chrome, por exemplo).</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">2</div>
+      <div class="instr-texto">
+        <h4>Aparecerá uma opção de download — toque em "Baixar"</h4>
+        <p>O Android pode perguntar: <code>Abrir</code> ou <code>Baixar</code>. Toque em <strong>Baixar</strong>.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">3</div>
+      <div class="instr-texto">
+        <h4>Aguarde o download terminar</h4>
+        <p>Uma barra de progresso vai aparecer na parte de cima ou de baixo da tela. Quando terminar, aparecerá uma notificação.</p>
+      </div>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="phone-mock">📥</div>
+      <p>Tela do celular durante o download do APK</p>
+    </div>
+
+    <div class="alerta dica">
+      <div class="alerta-icon">✅</div>
+      <div>
+        <h4>Download concluído?</h4>
+        <p>Você verá a notificação "Download concluído" ou poderá encontrar o arquivo em <strong>Arquivos → Downloads</strong>.</p>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-voltar" onclick="goStep(1)">← Voltar</button>
+      <button class="btn-avancar" onclick="nextStep(3)">Download feito → Próximo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASSO 3 ===== -->
+<div class="step-card" id="step-3">
+  <div class="step-card-header">
+    <div class="step-num-big">3</div>
+    <div>
+      <h2>O aviso de segurança</h2>
+      <p>Normal! Entenda por que ele aparece</p>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="alerta importante">
+      <div class="alerta-icon">🛡️</div>
+      <div>
+        <h4>Por que aparece esse aviso?</h4>
+        <p>O Android exibe esse aviso em <strong>todo app instalado fora da Google Play Store</strong>. Não significa que o app é vírus — significa que ele não passou pela loja da Google. É padrão do sistema operacional.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">1</div>
+      <div class="instr-texto">
+        <h4>Toque na notificação de download ou abra os Arquivos</h4>
+        <p>Vá em <strong>Arquivos</strong> (ícone de pasta) → pasta <strong>Downloads</strong> → toque no arquivo <code>prospectarion.apk</code>.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">2</div>
+      <div class="instr-texto">
+        <h4>Aparecerá um alerta amarelo ou vermelho</h4>
+        <p>Vai dizer algo como: <em>"Este tipo de arquivo pode danificar o dispositivo"</em> ou <em>"Instalar app desconhecido"</em>. Isso é normal — continue.</p>
+      </div>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="phone-mock">⚠️</div>
+      <p>Exemplo do aviso de segurança do Android</p>
+    </div>
+
+    <div class="alerta dica">
+      <div class="alerta-icon">💡</div>
+      <div>
+        <h4>Comparação simples</h4>
+        <p>É igual quando você instala um programa no computador fora da loja Microsoft — aparece um aviso de "publisher desconhecido". O aviso é automático, não é diagnóstico de vírus.</p>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-voltar" onclick="goStep(2)">← Voltar</button>
+      <button class="btn-avancar" onclick="nextStep(4)">Entendi → Como liberar?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASSO 4 ===== -->
+<div class="step-card" id="step-4">
+  <div class="step-card-header">
+    <div class="step-num-big">4</div>
+    <div>
+      <h2>Liberar a instalação</h2>
+      <p>Um toque nas configurações — só uma vez</p>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="instrucao">
+      <div class="instr-num">1</div>
+      <div class="instr-texto">
+        <h4>Toque em "Configurações" no aviso</h4>
+        <p>No popup de aviso, toque no botão <code>Configurações</code> (ou <code>Settings</code>). O Android vai abrir as configurações do navegador que você usou para baixar.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">2</div>
+      <div class="instr-texto">
+        <h4>Ative "Permitir desta fonte" ou "Instalar apps desconhecidos"</h4>
+        <p>Você verá um botão toggle (chave). Ligue-o. Isso autoriza apenas o seu navegador a instalar apps externos — não afeta outros apps.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">3</div>
+      <div class="instr-texto">
+        <h4>Volte para a instalação</h4>
+        <p>Após ativar, o Android vai retornar para a tela de instalação automaticamente. Se não voltar, abra o arquivo APK em <strong>Downloads</strong> novamente.</p>
+      </div>
+    </div>
+
+    <div class="alerta aviso">
+      <div class="alerta-icon">📌</div>
+      <div>
+        <h4>Só precisa fazer isso uma vez</h4>
+        <p>Depois da primeira instalação, você pode desativar essa permissão novamente nas configurações se preferir.</p>
+      </div>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="phone-mock">⚙️</div>
+      <p>Tela de configurações com o toggle para ativar</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-voltar" onclick="goStep(3)">← Voltar</button>
+      <button class="btn-avancar" onclick="nextStep(5)">Liberado → Instalar agora!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASSO 5 ===== -->
+<div class="step-card" id="step-5">
+  <div class="step-card-header">
+    <div class="step-num-big">5</div>
+    <div>
+      <h2>Instalar e abrir o app</h2>
+      <p>Último passo — quase lá!</p>
+    </div>
+  </div>
+  <div class="step-body">
+
+    <div class="instrucao">
+      <div class="instr-num">1</div>
+      <div class="instr-texto">
+        <h4>Toque em "Instalar"</h4>
+        <p>A tela de instalação mostrará o nome <strong>Prospectarion</strong> e as permissões do app. Toque em <code>Instalar</code>.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">2</div>
+      <div class="instr-texto">
+        <h4>Aguarde a instalação (5–10 segundos)</h4>
+        <p>Uma barra de progresso vai aparecer. Quando terminar, verá a mensagem <em>"App instalado"</em>.</p>
+      </div>
+    </div>
+
+    <div class="instrucao">
+      <div class="instr-num">3</div>
+      <div class="instr-texto">
+        <h4>Toque em "Abrir"</h4>
+        <p>O app vai abrir direto. O ícone laranja do Prospectarion também aparecerá na tela inicial do celular.</p>
+      </div>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="phone-mock">🟠</div>
+      <p>Ícone do Prospectarion na tela inicial</p>
+    </div>
+
+    <div class="checklist">
+      <label class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox">
+        <div class="check-box"></div>
+        <span>Instalei o app com sucesso</span>
+      </label>
+      <label class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox">
+        <div class="check-box"></div>
+        <span>O ícone apareceu na tela inicial</span>
+      </label>
+      <label class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox">
+        <div class="check-box"></div>
+        <span>O app abriu normalmente</span>
+      </label>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-voltar" onclick="goStep(4)">← Voltar</button>
+      <button class="btn-avancar" onclick="nextStep(6)">🎉 Tudo certo!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONCLUSÃO ===== -->
+<div class="step-card" id="step-6">
+  <div class="step-body">
+    <div class="conclusao">
+      <div class="bigicon">🎉</div>
+      <h2>Instalação concluída!</h2>
+      <p>O Prospectarion está pronto no seu celular.<br>Agora é hora de começar seu <strong>Teste Grátis de 3 dias</strong>.</p>
+
+      <a class="btn-app" href="https://aap29.github.io/prospectarion/app" target="_blank">
+        🟠 Abrir o Prospectarion
+      </a>
+      <br>
+      <a class="btn-wpp" href="https://wa.me/5551984168848?text=Ol%C3%A1%20Anderson%2C%20instalei%20o%20Prospectarion%20e%20quero%20ativar%20meu%20plano!" target="_blank">
+        💬 Falar com Anderson
+      </a>
+
+      <p style="font-size:13px;color:var(--cinza);margin-top:20px">
+        Dúvidas? Fale com Anderson pelo WhatsApp (51) 98416-8848
+      </p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+var currentStep = 1;
+var totalSteps = 6;
+var labels = [
+  'Passo 1 de 5 — Receber o link',
+  'Passo 2 de 5 — Baixar o APK',
+  'Passo 3 de 5 — O aviso de segurança',
+  'Passo 4 de 5 — Liberar a instalação',
+  'Passo 5 de 5 — Instalar o app',
+  'Instalação concluída!'
+];
+
+function goStep(n) {
+  document.querySelectorAll('.step-card').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('step-' + n).classList.add('active');
+  for (var i = 1; i <= totalSteps; i++) {
+    var dot = document.getElementById('dot-' + i);
+    dot.classList.remove('active', 'done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+  var pct = ((n - 1) / (totalSteps - 1)) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = labels[n - 1];
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextStep(n) { goStep(n); }
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+goStep(1);
+</script>
+</body>
+</html>

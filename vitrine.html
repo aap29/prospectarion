@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROSPECTARION — CRM para Corretores e Consultores</title>
+<meta name="description" content="CRM completo para corretores de imóveis e consultores de consórcio. Organize seus leads, feche mais negócios e acompanhe sua carteira com o Prospectarion.">
+<style>
+:root {
+  --laranja: #F26419;
+  --laranja-escuro: #D4561A;
+  --laranja-claro: #FF7A2E;
+  --laranja-suave: #FFF3EC;
+  --preto: #1A1A1A;
+  --cinza-escuro: #2D2D2D;
+  --cinza: #6B6B6B;
+  --cinza-claro: #F5F5F5;
+  --branco: #FFFFFF;
+  --verde: #22C55E;
+  --azul: #3B82F6;
+  --sombra: 0 4px 20px rgba(242,100,25,0.15);
+  --sombra-card: 0 2px 16px rgba(0,0,0,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--branco); color: var(--preto); line-height: 1.6; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--preto);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 20px; font-weight: 900; letter-spacing: -0.5px;
+  color: var(--laranja);
+}
+.nav-logo span { color: var(--branco); }
+.nav-cta {
+  background: var(--laranja); color: var(--branco);
+  border: none; padding: 10px 20px; border-radius: 8px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: background .2s;
+}
+.nav-cta:hover { background: var(--laranja-claro); }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--preto) 0%, #2A1A0E 60%, var(--cinza-escuro) 100%);
+  padding: 60px 20px 80px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(242,100,25,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(242,100,25,0.2); border: 1px solid rgba(242,100,25,0.4);
+  color: var(--laranja-claro); padding: 6px 16px; border-radius: 20px;
+  font-size: 13px; font-weight: 600; margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+.hero h1 {
+  font-size: clamp(28px, 7vw, 52px);
+  font-weight: 900; color: var(--branco);
+  line-height: 1.15; margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+.hero h1 .destaque { color: var(--laranja); }
+.hero p {
+  font-size: clamp(16px, 4vw, 20px); color: rgba(255,255,255,0.75);
+  max-width: 560px; margin: 0 auto 36px;
+}
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-principal {
+  background: var(--laranja); color: var(--branco);
+  padding: 16px 32px; border-radius: 12px;
+  font-size: 16px; font-weight: 800;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s; box-shadow: 0 4px 20px rgba(242,100,25,0.4);
+}
+.btn-principal:hover { background: var(--laranja-claro); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(242,100,25,0.5); }
+.btn-secundario {
+  background: rgba(255,255,255,0.08); color: var(--branco);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 16px 28px; border-radius: 12px;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s;
+}
+.btn-secundario:hover { background: rgba(255,255,255,0.15); }
+.hero-note { color: rgba(255,255,255,0.45); font-size: 13px; margin-top: 16px; }
+
+/* SOCIAL PROOF */
+.social-proof {
+  background: var(--laranja-suave); padding: 16px 20px;
+  text-align: center; border-bottom: 1px solid rgba(242,100,25,0.15);
+}
+.social-proof p { font-size: 14px; color: var(--laranja-escuro); font-weight: 600; }
+
+/* SECTION COMUM */
+section { padding: 64px 20px; }
+.container { max-width: 700px; margin: 0 auto; }
+.section-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--laranja); text-transform: uppercase; margin-bottom: 8px;
+}
+.section-title {
+  font-size: clamp(22px, 5vw, 34px); font-weight: 900;
+  color: var(--preto); line-height: 1.2; margin-bottom: 12px;
+}
+.section-sub { font-size: 16px; color: var(--cinza); margin-bottom: 40px; }
+
+/* FUNCIONALIDADES */
+.features-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 40px;
+}
+@media(max-width:480px) { .features-grid { grid-template-columns: 1fr; } }
+.feat-card {
+  background: var(--cinza-claro); border-radius: 14px;
+  padding: 20px; border: 1px solid rgba(0,0,0,0.06);
+  transition: all .2s;
+}
+.feat-card:hover { border-color: rgba(242,100,25,0.3); box-shadow: var(--sombra-card); }
+.feat-icon { font-size: 26px; margin-bottom: 10px; }
+.feat-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 6px; color: var(--preto); }
+.feat-card p { font-size: 13px; color: var(--cinza); line-height: 1.5; }
+.feat-card.destaque {
+  background: linear-gradient(135deg, var(--preto) 0%, #2A1A0E 100%);
+  border-color: rgba(242,100,25,0.3);
+}
+.feat-card.destaque h3 { color: var(--laranja-claro); }
+.feat-card.destaque p { color: rgba(255,255,255,0.65); }
+
+/* ORIENTADOR */
+.orientador-box {
+  background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-escuro) 100%);
+  border-radius: 18px; padding: 28px 24px; color: var(--branco); margin-bottom: 16px;
+}
+.orientador-box h3 { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+.orientador-box p { font-size: 14px; opacity: .85; margin-bottom: 16px; }
+.orientador-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.orientador-item {
+  background: rgba(255,255,255,0.2); border-radius: 8px;
+  padding: 6px 12px; font-size: 13px; font-weight: 600;
+}
+
+/* PLANOS */
+.planos-section { background: var(--cinza-claro); }
+.planos-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 16px;
+}
+.plano-card {
+  background: var(--branco); border-radius: 16px;
+  padding: 24px; border: 2px solid rgba(0,0,0,0.06);
+  position: relative; transition: all .2s;
+}
+.plano-card:hover { border-color: var(--laranja); box-shadow: var(--sombra); }
+.plano-card.popular {
+  border-color: var(--laranja);
+  box-shadow: 0 4px 24px rgba(242,100,25,0.2);
+}
+.popular-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--laranja); color: var(--branco);
+  font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px;
+  letter-spacing: 0.5px; white-space: nowrap;
+}
+.plano-nome { font-size: 12px; font-weight: 700; color: var(--laranja); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.plano-preco { font-size: 34px; font-weight: 900; color: var(--preto); line-height: 1; }
+.plano-preco sup { font-size: 16px; vertical-align: top; margin-top: 6px; font-weight: 700; }
+.plano-preco span { font-size: 14px; font-weight: 500; color: var(--cinza); }
+.plano-economia { font-size: 13px; color: var(--verde); font-weight: 600; margin: 6px 0 14px; }
+.plano-divider { border: none; border-top: 1px solid var(--cinza-claro); margin: 14px 0; }
+.plano-items { list-style: none; margin-bottom: 20px; }
+.plano-items li { font-size: 14px; color: var(--cinza-escuro); padding: 5px 0; display: flex; align-items: flex-start; gap: 8px; }
+.plano-items li::before { content: '✓'; color: var(--verde); font-weight: 800; flex-shrink: 0; }
+.btn-plano {
+  display: block; width: 100%; padding: 14px;
+  border-radius: 10px; font-size: 15px; font-weight: 800;
+  text-align: center; cursor: pointer; border: none;
+  text-decoration: none; transition: all .2s;
+}
+.btn-plano.laranja { background: var(--laranja); color: var(--branco); }
+.btn-plano.laranja:hover { background: var(--laranja-claro); }
+.btn-plano.outline { background: transparent; color: var(--laranja); border: 2px solid var(--laranja); }
+.btn-plano.outline:hover { background: var(--laranja-suave); }
+
+/* TRIAL */
+.trial-section {
+  background: linear-gradient(135deg, var(--preto) 0%, #1E0E03 100%);
+  color: var(--branco); text-align: center;
+}
+.trial-section .section-title { color: var(--branco); }
+.trial-section .section-sub { color: rgba(255,255,255,0.6); }
+.trial-items {
+  display: flex; justify-content: center; gap: 24px;
+  flex-wrap: wrap; margin: 28px 0;
+}
+.trial-item { text-align: center; }
+.trial-item .num { font-size: 36px; font-weight: 900; color: var(--laranja); line-height: 1; }
+.trial-item .label { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.trial-divider { width: 1px; background: rgba(255,255,255,0.15); align-self: stretch; }
+
+/* DEPOIMENTO / SOBRE */
+.sobre-box {
+  background: var(--laranja-suave); border-left: 4px solid var(--laranja);
+  border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0;
+}
+.sobre-box p { font-size: 15px; color: var(--cinza-escuro); line-height: 1.7; }
+.sobre-box strong { color: var(--laranja-escuro); }
+
+/* SEGURANÇA */
+.seg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:480px) { .seg-grid { grid-template-columns: 1fr; } }
+.seg-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--cinza-claro); border-radius: 12px; padding: 16px;
+}
+.seg-icon { font-size: 22px; flex-shrink: 0; }
+.seg-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.seg-item p { font-size: 12px; color: var(--cinza); }
+
+/* FAQ */
+.faq-list { display: flex; flex-direction: column; gap: 12px; }
+.faq-item {
+  background: var(--cinza-claro); border-radius: 12px; padding: 18px 20px;
+  cursor: pointer;
+}
+.faq-q { font-size: 15px; font-weight: 700; color: var(--preto); display: flex; justify-content: space-between; align-items: center; }
+.faq-q::after { content: '+'; color: var(--laranja); font-size: 20px; font-weight: 300; flex-shrink: 0; margin-left: 10px; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a { font-size: 14px; color: var(--cinza); margin-top: 10px; display: none; line-height: 1.6; }
+.faq-item.open .faq-a { display: block; }
+
+/* CTA FINAL */
+.cta-final {
+  background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-escuro) 100%);
+  text-align: center; padding: 64px 20px;
+}
+.cta-final h2 { font-size: clamp(24px, 5vw, 36px); font-weight: 900; color: var(--branco); margin-bottom: 12px; }
+.cta-final p { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 28px; }
+.cta-final .btn-branco {
+  background: var(--branco); color: var(--laranja);
+  padding: 16px 32px; border-radius: 12px;
+  font-size: 16px; font-weight: 800;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.cta-final .btn-branco:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,0,0,0.25); }
+.cta-final .wpp-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: rgba(255,255,255,0.7); font-size: 14px;
+  text-decoration: none; margin-top: 16px;
+}
+.cta-final .wpp-link:hover { color: var(--branco); }
+
+/* FOOTER */
+footer {
+  background: var(--preto); color: rgba(255,255,255,0.5);
+  padding: 28px 20px; text-align: center; font-size: 13px;
+}
+footer strong { color: var(--laranja); }
+footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+footer a:hover { color: var(--laranja); }
+
+/* RESPONSIVO */
+@media(min-width:600px) {
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .planos-grid { grid-template-columns: 1fr 1fr; }
+}
+@media(min-width:900px) {
+  .planos-grid { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">PROSPECT<span>ARION</span></div>
+  <a class="nav-cta" href="https://aap29.github.io/prospectarion/teste" target="_blank">Testar Grátis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">📱 App para celular · sem mensalidade de servidor</div>
+  <h1>Feche mais negócios.<br><span class="destaque">Sem deixar nenhum lead esquecido.</span></h1>
+  <p>CRM completo para corretores de imóveis e consultores de consórcio. Organize, acompanhe e venda mais — tudo no seu celular, sem internet.</p>
+  <div class="hero-btns">
+    <a class="btn-principal" href="https://aap29.github.io/prospectarion/teste" target="_blank">🆓 Testar 3 dias grátis</a>
+    <a class="btn-secundario" href="#planos">Ver planos</a>
+  </div>
+  <p class="hero-note">Sem cartão de crédito · Sem cadastro complicado · Grátis para começar</p>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="social-proof">
+  <p>🏆 Desenvolvido especialmente para corretores de imóveis e consultores de consórcio no Brasil</p>
+</div>
+
+<!-- FUNCIONALIDADES -->
+<section>
+  <div class="container">
+    <div class="section-label">O que você vai ter</div>
+    <h2 class="section-title">Tudo o que você precisa para vender mais</h2>
+    <p class="section-sub">Cada função foi pensada para o dia a dia de quem trabalha com imóveis e consórcio.</p>
+
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">👥</div>
+        <h3>Carteira de Clientes</h3>
+        <p>Perfil completo de cada lead: histórico de contatos, documentos, interesses, prioridade e muito mais.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤝</div>
+        <h3>Negócios em andamento</h3>
+        <p>Funil de vendas por etapas — prospecção, proposta, negociação, fechamento. Veja exatamente onde cada negócio está.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <h3>Agenda e Atividades</h3>
+        <p>Compromissos, visitas e tarefas. Receba lembretes de quem precisa de atenção antes que o prazo passe.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Radar Comercial</h3>
+        <p>Painel visual com clientes sem contato, retornos pendentes, negócios em proposta e muito mais. Sua carteira em uma tela.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📣</div>
+        <h3>Conteúdo para Redes</h3>
+        <p>Ideias prontas de posts para Instagram e WhatsApp, com legenda e hashtags — imóveis ou consórcio, conforme a sua área.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📁</div>
+        <h3>Backup seguro</h3>
+        <p>Seus dados ficam no seu celular — você exporta e importa quando quiser. Sem servidores, sem assinatura extra.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <h3>Mensagens prontas no WhatsApp</h3>
+        <p>Botão de WhatsApp em cada cliente com mensagem personalizada já escrita. Um toque e está enviando.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📈</div>
+        <h3>Relatórios de produção</h3>
+        <p>Veja quanto você investiu em contatos e quanto fechou por período. Controle real da sua performance.</p>
+      </div>
+    </div>
+
+    <!-- ORIENTADOR 360 -->
+    <div class="orientador-box">
+      <h3>🧭 Orientador 360° — Seu guia diário de vendas</h3>
+      <p>Toda manhã o app te mostra exatamente o que fazer: compromissos do dia, leads quentes sem contato, negócios parados, indicações a cultivar e dicas personalizadas para desbloquear vendas travadas.</p>
+      <div class="orientador-items">
+        <span class="orientador-item">⚡ Ações prioritárias</span>
+        <span class="orientador-item">🔓 Destravar negócios</span>
+        <span class="orientador-item">📢 Ideias de conteúdo</span>
+        <span class="orientador-item">🎯 Prospecção guiada</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRIAL -->
+<section class="trial-section">
+  <div class="container">
+    <div class="section-label" style="color:var(--laranja-claro)">Começa sem risco</div>
+    <h2 class="section-title">Teste Grátis por 3 dias</h2>
+    <p class="section-sub">Cadastre até 5 leads e experimente o Prospectarion sem nenhum compromisso.</p>
+
+    <div class="trial-items">
+      <div class="trial-item">
+        <div class="num">3</div>
+        <div class="label">dias grátis</div>
+      </div>
+      <div class="trial-divider"></div>
+      <div class="trial-item">
+        <div class="num">5</div>
+        <div class="label">leads para testar</div>
+      </div>
+      <div class="trial-divider"></div>
+      <div class="trial-item">
+        <div class="num">R$0</div>
+        <div class="label">sem cartão de crédito</div>
+      </div>
+    </div>
+
+    <a class="btn-principal" href="https://aap29.github.io/prospectarion/teste" target="_blank" style="display:inline-flex;margin:0 auto">
+      🆓 Começar o teste agora
+    </a>
+    <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:14px">Após o teste, entre em contato para ativar o plano que preferir</p>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="planos-section" id="planos">
+  <div class="container">
+    <div class="section-label">Planos e preços</div>
+    <h2 class="section-title">Escolha o plano ideal para você</h2>
+    <p class="section-sub">Pague uma vez, use pelo tempo do seu plano. Sem surpresas na fatura.</p>
+
+    <div class="planos-grid">
+
+      <!-- MENSAL -->
+      <div class="plano-card">
+        <div class="plano-nome">Mensal</div>
+        <div class="plano-preco"><sup>R$</sup>49<span>,90/mês</span></div>
+        <div class="plano-economia">Ideal para começar</div>
+        <hr class="plano-divider">
+        <ul class="plano-items">
+          <li>Até 300 leads ativos</li>
+          <li>Todos os módulos</li>
+          <li>Agenda e atividades</li>
+          <li>Radar comercial</li>
+          <li>Backup ilimitado</li>
+          <li>App Android</li>
+        </ul>
+        <a class="btn-plano outline" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20quero%20ativar%20o%20Plano%20Mensal%20do%20Prospectarion%20(R%2449%2C90)" target="_blank">Quero esse plano</a>
+      </div>
+
+      <!-- SEMESTRAL -->
+      <div class="plano-card">
+        <div class="plano-nome">Semestral</div>
+        <div class="plano-preco"><sup>R$</sup>179<span>,90/6 meses</span></div>
+        <div class="plano-economia">Equivale a R$29,98/mês • Economize 40%</div>
+        <hr class="plano-divider">
+        <ul class="plano-items">
+          <li>Até 600 leads ativos</li>
+          <li>Todos os módulos</li>
+          <li>Agenda e atividades</li>
+          <li>Radar comercial</li>
+          <li>Backup ilimitado</li>
+          <li>App Android</li>
+        </ul>
+        <a class="btn-plano outline" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20quero%20ativar%20o%20Plano%20Semestral%20do%20Prospectarion%20(R%24179%2C90)" target="_blank">Quero esse plano</a>
+      </div>
+
+      <!-- ANUAL -->
+      <div class="plano-card popular">
+        <div class="popular-badge">⭐ MAIS ESCOLHIDO</div>
+        <div class="plano-nome">Anual</div>
+        <div class="plano-preco"><sup>R$</sup>297<span>/ano</span></div>
+        <div class="plano-economia">Equivale a R$24,75/mês • Economize 50%</div>
+        <hr class="plano-divider">
+        <ul class="plano-items">
+          <li>Até 1.000 leads ativos</li>
+          <li>Todos os módulos</li>
+          <li>Agenda e atividades</li>
+          <li>Radar comercial</li>
+          <li>Backup ilimitado</li>
+          <li>App Android</li>
+          <li>Orientador 360°</li>
+        </ul>
+        <a class="btn-plano laranja" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20quero%20ativar%20o%20Plano%20Anual%20do%20Prospectarion%20(R%24297)" target="_blank">Quero o plano anual</a>
+      </div>
+
+      <!-- VITALÍCIO -->
+      <div class="plano-card">
+        <div class="plano-nome">Vitalício ♾️</div>
+        <div class="plano-preco"><sup>R$</sup>997<span> único</span></div>
+        <div class="plano-economia">Pague uma vez, use para sempre</div>
+        <hr class="plano-divider">
+        <ul class="plano-items">
+          <li>Leads ilimitados</li>
+          <li>Todos os módulos</li>
+          <li>Todas as atualizações</li>
+          <li>Agenda e atividades</li>
+          <li>Radar comercial</li>
+          <li>App Android</li>
+          <li>Orientador 360°</li>
+          <li>Sem renovação nunca</li>
+        </ul>
+        <a class="btn-plano outline" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20quero%20ativar%20o%20Plano%20Vit%C3%A1licio%20do%20Prospectarion%20(R%24997)" target="_blank">Quero o vitalício</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;color:var(--cinza);font-size:13px;margin-top:24px">
+      Pagamento via Pix · Ativação rápida por WhatsApp · Dados ficam 100% no seu aparelho
+    </p>
+  </div>
+</section>
+
+<!-- SEGURANÇA -->
+<section>
+  <div class="container">
+    <div class="section-label">Privacidade e segurança</div>
+    <h2 class="section-title">Seus dados pertencem só a você</h2>
+    <p class="section-sub">Nenhum dado de clientes é enviado para nenhum servidor. Tudo fica no seu celular.</p>
+
+    <div class="seg-grid">
+      <div class="seg-item">
+        <div class="seg-icon">🔐</div>
+        <div>
+          <h4>Dados 100% no seu aparelho</h4>
+          <p>Sem servidor, sem nuvem obrigatória. Sua carteira não depende de internet para funcionar.</p>
+        </div>
+      </div>
+      <div class="seg-item">
+        <div class="seg-icon">📋</div>
+        <div>
+          <h4>Backup na palma da mão</h4>
+          <p>Exporte e importe seu backup quando quiser. Troque de celular sem perder nada.</p>
+        </div>
+      </div>
+      <div class="seg-item">
+        <div class="seg-icon">🔑</div>
+        <div>
+          <h4>Senha de proteção</h4>
+          <p>Proteja o app com senha, impressão digital ou PIN. Seus clientes ficam protegidos.</p>
+        </div>
+      </div>
+      <div class="seg-item">
+        <div class="seg-icon">📱</div>
+        <div>
+          <h4>Funciona sem internet</h4>
+          <p>Visite um imóvel, faça anotações e atualize o lead mesmo sem sinal. Sincroniza quando voltar.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sobre-box">
+      <p>O Prospectarion foi criado por <strong>Anderson Alves</strong>, Estrategista Patrimonial da <strong>Innovar Imobiliária</strong> e consultor da <strong>HS Consórcios</strong>, que sentiu na pele a falta de um CRM que realmente entendesse o mercado imobiliário brasileiro — sem mensalidade de servidor, sem complicação, e que funcionasse offline no celular.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background:var(--cinza-claro)">
+  <div class="container">
+    <div class="section-label">Dúvidas comuns</div>
+    <h2 class="section-title">Perguntas frequentes</h2>
+    <br>
+    <div class="faq-list">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Como funciona o Teste Grátis?</div>
+        <div class="faq-a">Você acessa o link de teste, cadastra até 5 leads e usa o app completo por 3 dias. Sem cartão de crédito, sem cadastro. Se quiser continuar, entre em contato para ativar seu plano e seus dados do teste são mantidos.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">O app funciona sem internet?</div>
+        <div class="faq-a">Sim. O Prospectarion funciona 100% offline. Você cadastra leads, faz anotações, atualiza negócios e consulta o histórico sem precisar de internet. Isso é fundamental para quem trabalha em visitas a imóveis.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Preciso instalar algo?</div>
+        <div class="faq-a">Você pode usar pelo navegador do celular (sem instalar nada) ou instalar o app Android direto pelo nosso link. Para instalar no Android, basta baixar o APK e instalar como qualquer app.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Como é feito o pagamento?</div>
+        <div class="faq-a">Pagamento via Pix. Após o pagamento, você recebe um código de ativação por WhatsApp e seu plano é liberado imediatamente.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Posso trocar de celular sem perder os dados?</div>
+        <div class="faq-a">Sim. Basta exportar o backup no celular antigo e importar no novo. Seus leads, negócios e histórico completo serão restaurados.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Serve para imóveis e consórcio ao mesmo tempo?</div>
+        <div class="faq-a">Sim. O Prospectarion foi desenvolvido especialmente para quem trabalha com imóveis e/ou consórcio. Você pode configurar sua área de atuação e o app adapta o conteúdo, as sugestões e os campos para a sua realidade.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <h2>Pronto para organizar sua carteira?</h2>
+    <p>Comece gratuitamente agora. Nenhum cartão de crédito necessário.</p>
+    <a class="btn-branco" href="https://aap29.github.io/prospectarion/teste" target="_blank">
+      🆓 Testar grátis por 3 dias
+    </a>
+    <br>
+    <a class="wpp-link" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20quero%20saber%20mais%20sobre%20o%20Prospectarion" target="_blank">
+      💬 Falar no WhatsApp com Anderson
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>PROSPECTARION</strong> · CRM para Corretores e Consultores<br>
+  <br>
+  <a href="https://aap29.github.io/prospectarion/app" target="_blank">Acessar o App</a> ·
+  <a href="https://aap29.github.io/prospectarion/teste" target="_blank">Teste Grátis</a> ·
+  <a href="https://wa.me/5551984168848" target="_blank">WhatsApp</a>
+  <br><br>
+  <span>© 2025 Prospectarion · Anderson Alves · Porto Alegre, RS</span>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+// Smooth scroll para âncoras
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
