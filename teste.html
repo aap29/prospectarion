@@ -8125,15 +8125,53 @@ function moveDeal(id){const d=APP.deals.find(x=>x.id===id);if(!d)return;d.etapa=
 
 /* Notas */
 function renderNotes(){
-  const q=(document.getElementById('note-search')?.value||'').toLowerCase();
-  let notes=[...APP.notes].reverse();
-  if(q) notes=notes.filter(n=>n.texto.toLowerCase().includes(q)||(n.contato||'').toLowerCase().includes(q));
-  const list=document.getElementById('notes-list');
-  if(!notes.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">📝</div><h3>Sem anotações</h3><p>Capture conversas e lembretes</p></div>`;return;}
-  list.innerHTML=notes.map(n=>`<div class="convo-item"><div class="avatar av-sm" style="background:var(--accent)">📝</div><div class="convo-info"><div class="convo-name">${n.contato||'Nota pessoal'}</div><div class="convo-preview">${n.texto}</div><div style="display:flex;gap:6px;margin-top:5px"><span class="tag tag-cinza">${n.canal}</span><span style="font-size:10px;color:var(--muted)">${new Date(n.createdAt).toLocaleDateString('pt-BR')}</span></div></div></div>`).join('');
+  var q=(document.getElementById('note-search')&&document.getElementById('note-search').value||'').toLowerCase();
+  var notes=[].concat(APP.notes).reverse();
+  if(q) notes=notes.filter(function(n){return n.texto.toLowerCase().indexOf(q)>-1||(n.contato||'').toLowerCase().indexOf(q)>-1;});
+  var list=document.getElementById('notes-list');
+  if(!notes.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">📝</div><h3>Sem anotações</h3><p>Capture conversas e lembretes</p></div>';return;}
+  list.innerHTML=notes.map(function(n){
+    var ct=n.contato?APP.contacts.filter(function(c){return c.nome.toLowerCase()===(n.contato||'').toLowerCase();})[0]:null;
+    var ctId=ct?ct.id:(n.contactId||'');
+    var tel=ct&&ct.tel?ct.tel.replace(/\D/g,''):'';
+    var onclk=ctId?'openDrawer(\''+ctId+'\')':'abrirDetalheNota(\''+n.id+'\')';
+    var btnWA=tel?'<button class="btn btn-sm" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;margin-left:8px;flex-shrink:0" onclick="event.stopPropagation();window.open(\'https://wa.me/'+tel+'\',\'_blank\')" title="WhatsApp">💬 WA</button>':'';
+    return '<div class="convo-item" style="cursor:pointer;align-items:center" onclick="'+onclk+'">'
+      +'<div class="avatar av-sm" style="background:'+(ct?avColor(n.contato):'var(--accent)')+'">'+((ct&&n.contato)?n.contato[0].toUpperCase():'📝')+'</div>'
+      +'<div class="convo-info" style="flex:1;min-width:0">'
+      +'<div class="convo-name">'+(n.contato||'Nota pessoal')+'</div>'
+      +'<div class="convo-preview" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+n.texto+'</div>'
+      +'<div style="display:flex;gap:6px;margin-top:5px;align-items:center">'
+      +'<span class="tag tag-cinza">'+n.canal+'</span>'
+      +'<span style="font-size:10px;color:var(--muted)">'+new Date(n.createdAt).toLocaleDateString('pt-BR')+'</span>'
+      +'</div>'
+      +'</div>'
+      +btnWA
+      +'</div>';
+  }).join('');
+}
+function abrirDetalheNota(nid){
+  var n=APP.notes.filter(function(x){return x.id===nid;})[0];
+  if(!n) return;
+  var panel=document.getElementById('drawer-content');
+  var data=new Date(n.createdAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  panel.innerHTML='<div style="padding:0 0 80px">'
+    +'<div class="c360-header" style="margin:-16px -16px 16px">'
+    +'<div class="c360-header-top">'
+    +'<div class="c360-avatar-wrap"><div class="c360-avatar" style="background:var(--accent);font-size:22px">📝</div></div>'
+    +'<div class="c360-header-info"><div class="c360-nome">Nota pessoal</div><div class="c360-empresa">'+n.canal+' · '+data+'</div></div>'
+    +'<div class="c360-close-btn" onclick="closeDrawer()">&#x2715;</div>'
+    +'</div></div>'
+    +'<div style="background:var(--card);border-radius:var(--r);padding:16px;font-size:15px;line-height:1.6;white-space:pre-wrap;color:var(--fg)">'+n.texto+'</div>'
+    +'<div style="display:flex;gap:10px;margin-top:16px">'
+    +'<button class="btn btn-primary btn-full" onclick="excluirNota(\''+nid+'\');closeDrawer()">&#x1F5D1; Excluir nota</button>'
+    +'</div>'
+    +'</div>';
+  document.getElementById('drawer-contact').classList.add('open');
 }
 function openNewNote(){openModal('modal-note');}
-function salvarNota(){const t=document.getElementById('fn-texto').value.trim();if(!t){showToast('Digite o conteúdo');return;}APP.notes.push({id:'n'+Date.now(),contato:document.getElementById('fn-contato').value.trim(),texto:t,canal:document.getElementById('fn-canal').value,createdAt:new Date().toISOString()});document.getElementById('fn-texto').value='';document.getElementById('fn-contato').value='';saveAll();closeModal('modal-note');renderNotes();renderStats();updateBadges();showToast('Nota salva ✓');}
+function salvarNota(){var t=document.getElementById('fn-texto').value.trim();if(!t){showToast('Digite o conteúdo');return;}APP.notes.push({id:'n'+Date.now(),contato:document.getElementById('fn-contato').value.trim(),texto:t,canal:document.getElementById('fn-canal').value,createdAt:new Date().toISOString()});document.getElementById('fn-texto').value='';document.getElementById('fn-contato').value='';saveAll();closeModal('modal-note');renderNotes();renderStats();updateBadges();showToast('Nota salva ✓');}
+function excluirNota(nid){APP.notes=APP.notes.filter(function(n){return n.id!==nid;});saveAll();renderNotes();renderStats();updateBadges();showToast('Nota excluída');}
 
 /* Import */
 function importarContatos(){openModal('modal-import');}
