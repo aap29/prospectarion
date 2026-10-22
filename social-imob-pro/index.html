@@ -136,6 +136,40 @@ body.no-scroll{overflow:hidden}
 .modo-camera.com-texto .st-texto{background:rgba(0,0,0,var(--op))}
 .modo-camera .st-conteudo,.modo-tele.com-cam.pip-fundo .st-conteudo{color:rgba(255,255,255,var(--lt,.8));font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.6);filter:blur(var(--bl,0px))}
 .modo-camera .st-foco{border-top-color:#FF7A4555}.modo-camera .st-foco::before{opacity:.6}
+/* v5.4 tela dividida (texto em cima, câmera embaixo), bolha de velocidade, arrastar o texto, direções de cena, biblioteca de roteiros */
+.st-texto{touch-action:none}
+#studio .st-stage.split #stVideo{display:block;inset:auto;left:0;right:0;bottom:0;top:var(--div,50%);width:100%;height:calc(100% - var(--div,50%));max-height:none;object-fit:cover;aspect-ratio:auto;border:0;border-radius:0;z-index:1}
+#studio .st-stage.split .st-texto{display:block;top:0;bottom:auto;height:var(--div,50%);background:#000}
+#studio .st-stage.split .st-conteudo{color:#fff;filter:none;text-shadow:none}
+#studio .st-stage.split .st-foco{border-top-color:#FF7A4580}
+.st-divisor{display:none;position:absolute;left:0;right:0;top:var(--div,50%);height:30px;margin-top:-15px;z-index:6;touch-action:none;cursor:ns-resize;align-items:center;justify-content:center}
+.st-divisor::before{content:'';width:64px;height:6px;border-radius:3px;background:#FF7A45;box-shadow:0 0 0 3px #0008}
+#studio .st-stage.split .st-divisor{display:flex}
+.st-bolha{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:#151517e6;color:#fff;border:1px solid #ffffff30;border-radius:22px;padding:8px 18px;font-weight:700;font-size:16px;z-index:8;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+.st-bolha.on{opacity:1}
+.st-dir{display:block;font-size:.55em;font-style:italic;color:#9fa3ad;line-height:1.35;border-left:3px solid #FF7A45;padding-left:.5em}
+#studio .st-grade.g6{grid-template-columns:repeat(6,minmax(0,1fr));max-width:480px}
+.st-roteiro{display:flex;gap:12px;align-items:center;background:#26262a;border:1px solid #FF7A4566;border-radius:16px;padding:14px;margin-bottom:14px}
+.st-roteiro div{flex:1;min-width:0}.st-roteiro small{color:#FFB38A;display:block;font-size:12px}.st-roteiro b{display:block;color:#fff;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.st-roteiro span{color:#aaa;font-size:13px}
+.st-roteiro .btn{flex:none}
+.st-bib{flex:1 1 auto;overflow:auto;padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 96px);max-width:820px;margin:0 auto;width:100%;box-sizing:border-box}
+.st-bib input[type=search],.st-bib select{width:100%;box-sizing:border-box;background:#1c1c1e;color:#fff;border:1px solid #3a3a3e;border-radius:12px;padding:11px 12px;font:inherit;font-size:15px}
+.st-chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
+.st-chip{flex:none;border:1px solid #3a3a3e;background:#1c1c1e;color:#ddd;border-radius:20px;padding:7px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.st-chip.on{background:#FF7A45;border-color:#FF7A45;color:#fff}
+.st-card{background:#fff;color:#1f1f23;border-radius:12px;padding:12px 14px;margin:10px 0;cursor:pointer;box-shadow:0 1px 3px #0005;display:flex;gap:10px;align-items:flex-start}
+.st-card .tx{flex:1;min-width:0}
+.st-card h4{margin:0 0 3px;font-size:16px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-card small{display:block;color:#676879;font-size:12.5px}
+.st-card p{margin:6px 0 0;color:#555;font-size:13.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.st-card .ac{display:flex;flex-direction:column;gap:6px}
+.st-card .ac button{border:1px solid #ddd;background:#f6f6f8;border-radius:10px;width:40px;height:36px;font-size:16px;cursor:pointer}
+.st-fab{position:absolute;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);width:62px;height:62px;border-radius:50%;border:0;background:#FF7A45;color:#fff;font-size:32px;line-height:1;box-shadow:0 4px 14px #0008;cursor:pointer;z-index:6}
+.st-fab-menu{position:absolute;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 94px);background:#fff;border-radius:14px;box-shadow:0 6px 24px #000a;overflow:hidden;z-index:7;min-width:240px}
+.st-fab-menu button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #eee;background:#fff;color:#1f1f23;padding:15px 16px;font:inherit;font-size:16px;cursor:pointer}
+.st-novo label{display:block;color:#bbb;font-size:13px;margin:12px 0 4px}
+.st-novo input,.st-novo textarea{width:100%;box-sizing:border-box;background:#1c1c1e;color:#fff;border:1px solid #3a3a3e;border-radius:12px;padding:11px 12px;font:inherit;font-size:16px}
+.st-novo textarea{min-height:45vh;line-height:1.5}
 /* v5.0 versão de venda */
 body.cli-sem-imoveis [data-v="imoveis"]{display:none}
 body.ed-cliente [data-act="reorganizar"],body.ed-cliente [data-act="revisar393"],body.ed-cliente [data-act="revisarTextos"],body.ed-cliente [data-act="carregarNotion"]{display:none!important}
@@ -424,7 +458,7 @@ table.mt td:last-child{border-radius:0 10px 10px 0}
    SOCIAL IMOB 360 PRO v3 — arquivo único, 100% offline
    Dados ficam no aparelho (IndexedDB). Sem servidor, sem custo.
    ========================================================= */
-var APP_VER = '5.3.0';
+var APP_VER = '5.4.0';
 var EDICAO = 'cliente'; // 'anderson' = app do Anderson · 'cliente' = versão de venda (gerada por gerar_pro.py)
 var URL_APP = 'https://aap29.github.io/prospectarion/social-imob-pro/';
 var DB_NAME = 'SOCIAL_IMOB_PRO_CLIENTE';
@@ -837,26 +871,41 @@ function textosIncompletos(){ return S.conteudos.filter(function(c){ var t = TEM
 function autoAltura(el){ if(!el) return; el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight + 4, 220) + 'px'; }
 
 /* ================= ESTÚDIO: câmera + teleprompter ================= */
-var EST_PADRAO = {vel:20, fonte:44, espaco:1.5, largura:90, foco:35, espelho:'nenhum', central:false, loop:false, toque:true, contagem:3, camera:'user', qualidade:'1080', posTexto:'pescoco', opacidade:0, pip:'canto', rolarAoGravar:true, luzTexto:90, suave:0, luz:0, focoCam:6};
+var EST_PADRAO = {vel:20, fonte:44, espaco:1.5, largura:90, foco:35, espelho:'nenhum', central:false, loop:false, toque:true, contagem:3, camera:'user', qualidade:'1080', posTexto:'pescoco', opacidade:0, pip:'canto', rolarAoGravar:true, luzTexto:90, suave:0, luz:0, focoCam:6, direcoes:true, divisao:50};
 var EST = {modo:null, cam:false, texto:true, rolando:false, pos:0, ultimo:0, stream:null, rec:null, partes:[], gravando:false, inicioRec:0, timer:null, wake:null, conteudo:null, titulo:'', txt:''};
-function cfgEst(){ if(!S.cfg.estudio){ S.cfg.estudio = {}; if((window.innerWidth||800) < 600) S.cfg.estudio.fonte = 30; } Object.keys(EST_PADRAO).forEach(function(k){ if(S.cfg.estudio[k]==null) S.cfg.estudio[k] = EST_PADRAO[k]; }); if(!S.cfg.estudio.t521){ S.cfg.estudio.t521 = true; S.cfg.estudio.suave = 0; if((S.cfg.estudio.luzTexto||80) < 90) S.cfg.estudio.luzTexto = 90; S.cfg.estudio.focoCam = 6; } if(!S.cfg.estudio.t52){ S.cfg.estudio.t52 = true; if(S.cfg.estudio.posTexto==='topo') S.cfg.estudio.posTexto = 'pescoco'; S.cfg.estudio.opacidade = 0; } if(!S.cfg.estudio.q42){ if(S.cfg.estudio.qualidade==='720') S.cfg.estudio.qualidade = '1080'; S.cfg.estudio.q42 = true; } return S.cfg.estudio; }
+function cfgEst(){ if(!S.cfg.estudio){ S.cfg.estudio = {}; if((window.innerWidth||800) < 600) S.cfg.estudio.fonte = 30; } Object.keys(EST_PADRAO).forEach(function(k){ if(S.cfg.estudio[k]==null) S.cfg.estudio[k] = EST_PADRAO[k]; }); if(!S.cfg.estudio.t521){ S.cfg.estudio.t521 = true; S.cfg.estudio.suave = 0; if((S.cfg.estudio.luzTexto||80) < 90) S.cfg.estudio.luzTexto = 90; S.cfg.estudio.focoCam = 6; } if(!S.cfg.estudio.t52){ S.cfg.estudio.t52 = true; if(S.cfg.estudio.posTexto==='topo') S.cfg.estudio.posTexto = 'pescoco'; S.cfg.estudio.opacidade = 0; } if(!S.cfg.estudio.t54){ S.cfg.estudio.t54 = true; S.cfg.estudio.posTexto = 'dividida'; } if(!S.cfg.estudio.q42){ if(S.cfg.estudio.qualidade==='720') S.cfg.estudio.qualidade = '1080'; S.cfg.estudio.q42 = true; } return S.cfg.estudio; }
 var QUALI42 = {'720':[1280,720,5000000], '1080':[1920,1080,12000000], '4k':[3840,2160,35000000]};
 function quali(){ return QUALI42[cfgEst().qualidade] || QUALI42['1080']; }
 function comecaCom(t, g){ t = String(t||'').replace(ROTULO_RE,'').replace(/^ABERTURA\s*\([^)]*\)\s*:\s*/,''); var a = norm(String(t||'').slice(0,120)), b = norm(g||''); return !!b && a.indexOf(b.slice(0,40))===0; }
-function textoGravacao(c){ var r = semNotas(c.roteiro); return [comecaCom(r, c.gancho) ? '' : String(c.gancho||'').trim(), r, (c.cta && r.indexOf(c.cta)<0) ? String(c.cta).trim() : ''].filter(Boolean).join('\n\n'); }
+/* v5.4: no teleprompter só entra a fala — sem o cabeçalho "Roteiro para Reel — até 40 s" e sem a descrição/legenda/hashtags que vêm depois */
+function textoFala(t){
+  var ls = String(t||'').replace(/\r/g,'').split('\n'), out = [];
+  for(var i=0;i<ls.length;i++){
+    var l = ls[i], n = norm(l), cru = l.trim();
+    var temFala = out.join('').trim().length > 0;
+    if(temFala && ((n.length < 45 && /^(descricao|legenda)(para|$)/.test(n)) || /^hashtags?$/.test(n) || /^hashtags?[:\s]/i.test(cru) || /^como(gravar|produzir)/.test(n) || /^#[\wÀ-ÿ]/.test(cru))) break;
+    if(!temFala && n.length < 70 && /^roteiro(para|do|de|da)?/.test(n) && /(segundos|seg|reel|shorts|stories|story|video|tiktok|youtube)/.test(n)) continue;
+    out.push(l);
+  }
+  return out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+function textoGravacao(c){ var r = textoFala(semNotas(c.roteiro)); return [comecaCom(r, c.gancho) ? '' : String(c.gancho||'').trim(), r, (c.cta && r.indexOf(c.cta)<0) ? String(c.cta).trim() : ''].filter(Boolean).join('\n\n'); }
 function abrirEstudio(c, modo){
   cfgEst();
-  EST.conteudo = c || null; EST.titulo = c ? (c.titulo||'Sem título') : 'Gravação livre'; EST.txt = c ? textoGravacao(c) : (EST.txt||'');
+  EST.conteudo = c || null; EST.tela = null; if(c) EST.avulso = null; EST.titulo = c ? (c.titulo||'Sem título') : (EST.avulso && EST.txt ? EST.titulo : 'Gravação livre'); EST.txt = c ? textoGravacao(c) : (EST.txt||'');
   EST.pos = 0; EST.rolando = false;
   var st = $('#studio'); st.classList.add('on'); document.body.classList.add('no-scroll'); navPush('studio');
   try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').then(function(w){ EST.wake = w; }).catch(function(){}); }catch(e){}
   if(modo) escolherModo(modo); else telaEscolha();
 }
 function telaEscolha(){
-  EST.modo = null; pararCamera();
+  EST.modo = null; EST.tela = null; pararCamera();
+  var inf = infoTempo(textoFala(EST.txt), '');
   $('#studio').innerHTML = '<div class="st-top"><button class="st-b txt" data-st="fechar">← Voltar</button><b class="st-tit">🎥 Gravar · '+esc(EST.titulo)+'</b></div>'+
-    '<div class="st-escolha"><p>Como você quer gravar?</p>'+
-    '<div class="st-op" data-st="modoCamera"><b>📷</b><div><h3>Câmera</h3><span>Grava pela câmera do aparelho. O teleprompter fica disponível embaixo, se você quiser.</span></div></div>'+
+    '<div class="st-escolha">'+
+    '<div class="st-roteiro"><div><small>'+(EST.txt ? 'Roteiro carregado' : 'Nenhum roteiro escolhido')+'</small><b>'+esc(EST.txt ? tituloLimpo(EST.titulo)||EST.titulo : 'Escolha, crie ou cole um roteiro')+'</b>'+(EST.txt ? '<span>'+inf.palavras+' palavras faladas ≈ '+fmtTempo(inf.seg)+'</span>' : '')+'</div><button class="btn acc" data-st="biblioteca">📚 '+(EST.txt?'Trocar':'Roteiros')+'</button></div>'+
+    '<p>Como você quer gravar?</p>'+
+    '<div class="st-op" data-st="modoCamera"><b>📷</b><div><h3>Câmera + teleprompter</h3><span>Tela dividida: o texto rola em cima, perto da lente, e você se vê embaixo enquanto grava. Dá para trocar para texto sobre a câmera no botão ◫.</span></div></div>'+
     '<div class="st-op" data-st="modoTele"><b>📜</b><div><h3>Teleprompter</h3><span>Texto rolando em tela preta. A câmera fica disponível embaixo, se você quiser se gravar lendo.</span></div></div>'+
     '<div class="st-op" data-st="camExterna"><b>📱</b><div><h3>Câmera do aparelho (Nativa ou OpenCamera)</h3><span>Abre o app de câmera do sistema. Ali o texto não aparece por cima; depois o vídeo volta para cá para salvar ou compartilhar.</span></div></div>'+
     '<input type="file" id="stArquivo" accept="video/*" capture="user" hidden></div>';
@@ -866,21 +915,25 @@ function telaEscolha(){
 function escolherModo(m){
   var e = cfgEst(); EST.modo = m;
   EST.cam = (m==='camera'); EST.texto = (m==='tele') || EST.textoNaCamera===true;
-  if(m==='camera' && EST.textoNaCamera==null) EST.texto = false;
+  if(m==='camera' && EST.textoNaCamera==null) EST.texto = !!String(EST.txt||'').trim();
   montarPalco();
   if(EST.cam) ligarCamera();
 }
 function montarPalco(){
   var e = cfgEst();
   $('#studio').innerHTML =
-    '<div class="st-stage modo-'+EST.modo+(EST.cam?' com-cam':'')+(EST.texto?' com-texto':'')+' pip-'+e.pip+' pos-'+e.posTexto+'" id="stStage">'+
+    '<div class="'+classePalco()+'" id="stStage" style="--div:'+(e.divisao||50)+'%">'+
       '<video id="stVideo" playsinline muted autoplay></video>'+
+      '<div class="st-divisor" id="stDivisor" title="Arraste para mudar o tamanho do texto e da câmera"></div>'+
+      '<div class="st-bolha" id="stBolha"></div>'+
       '<div class="st-texto" id="stTexto"><div class="st-foco" id="stFoco"></div><div class="st-scroll" id="stScroll"><div class="st-conteudo" id="stConteudo"></div></div></div>'+
       '<div class="st-rec" id="stRecInd">● REC <span id="stRecTempo">00:00</span></div>'+
       '<div class="st-conta" id="stConta"></div>'+
     '</div>'+
     '<div class="st-top st-top-flutua"><button class="st-b txt" data-st="voltar">← Voltar</button><b class="st-tit">'+esc(EST.titulo)+'</b>'+
-      '<button class="st-b" data-st="importar" title="Importar texto">📥</button><button class="st-b" data-st="ajustes" title="Ajustes">⚙️</button></div>'+
+      '<button class="st-b" data-st="layout" id="stLayout" title="Tela dividida: texto em cima, câmera embaixo">◫</button>'+
+      '<button class="st-b" data-st="camAjuste" title="Luz, zoom e lanterna da câmera" '+(EST.cam?'':'disabled')+'>☀️</button>'+
+      '<button class="st-b" data-st="biblioteca" title="Meus roteiros">📚</button><button class="st-b" data-st="ajustes" title="Ajustes">⚙️</button></div>'+
     '<div class="st-bar">'+
       '<div class="st-prog"><span id="stT1">00:00</span><input type="range" id="stProg" min="0" max="1000" value="0"><span id="stT2">00:00</span></div>'+
       '<div class="st-grade">'+
@@ -890,22 +943,27 @@ function montarPalco(){
         '<button class="st-b" data-st="virar" title="Trocar câmera" '+(EST.cam?'':'disabled')+'>🔄<small>Virar</small></button>'+
         '<button class="st-b" data-st="gravar" id="stRecBtn" title="Gravar ou parar" '+(EST.cam?'':'disabled')+'><i class="bol"></i><small>Gravar</small></button>'+
       '</div>'+
-      '<div class="st-grade">'+
+      '<div class="st-grade g6">'+
         '<button class="st-b" data-st="menos" title="Mais devagar">−<small>Devagar</small></button>'+
         '<button class="st-b" data-st="mais" title="Mais rápido">+<small>Rápido</small></button>'+
         '<button class="st-b" data-st="fonteMenos" title="Letra menor">A−<small>Letra</small></button>'+
         '<button class="st-b" data-st="fonteMais" title="Letra maior">A+<small>Letra</small></button>'+
         '<button class="st-b '+(e.frases?'on':'')+'" data-st="frases" title="Uma frase por linha">¶<small>Frases</small></button>'+
+        '<button class="st-b '+(e.espelho!=='nenhum'?'on':'')+'" data-st="espelho" id="stEspelho" title="Espelhar o texto (vidro de teleprompter)">⇋<small>Espelho</small></button>'+
       '</div>'+
       '<div class="st-status" id="stVel"></div>'+
     '</div>'+
     '<div class="st-sheet" id="stSheet"></div>';
   aplicarEstiloTexto(); preencherTexto(); ligarEstudio(); atualizarTempo();
+  var bl = $('#stLayout'); if(bl) bl.classList.toggle('on', emSplit());
 }
+function remontarPalco(){ var pos = EST.pos; montarPalco(); EST.pos = pos; posicionar(); if(EST.cam){ if(EST.stream){ var v = $('#stVideo'); v.srcObject = EST.stream; v.play().catch(function(){}); aplicarEstiloTexto(); } else ligarCamera(); } }
 function preencherTexto(){
-  var t = EST.txt || '';
-  if(cfgEst().frases) t = t.replace(/([.!?])\s+/g, '$1\n\n');
-  $('#stConteudo').innerHTML = t ? esc(t).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>') : '<p class="st-vazio">Sem texto. Toque em 📥 para importar o roteiro de um conteúdo ou colar um texto.</p>';
+  var e = cfgEst(), t = textoFala(EST.txt || '');
+  if(e.frases) t = t.replace(/([.!?])\s+(?![^\[]*\])/g, '$1\n\n');
+  var h = esc(t).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');
+  h = h.replace(/\[([^\]<]{2,400})\]/g, function(m, d){ return e.direcoes ? '<span class="st-dir">🎬 '+d+'</span>' : ''; }).replace(/<p>(\s|<br>)*<\/p>/g,'');
+  $('#stConteudo').innerHTML = t ? h : '<p class="st-vazio">Sem texto. Toque em 📚 Roteiros ou 📥 para escolher o roteiro de um conteúdo, criar um novo ou colar um texto.</p>';
   EST.pos = 0; posicionar();
 }
 function aplicarEstiloTexto(){
@@ -918,7 +976,12 @@ function aplicarEstiloTexto(){
   var v = $('#stVideo'); if(v) v.style.transform = (e.camera==='user') ? 'scaleX(-1)' : 'none';
   var sv = $('#stVel'); if(sv) sv.textContent = 'Velocidade '+e.vel+' · Letra '+e.fonte+' px'+(EST.cam && EST.camInfo ? ' · Câmera '+EST.camInfo : '');
 }
-function focoAtual(){ var e = cfgEst(); return (EST.modo==='camera' && e.posTexto==='pescoco') ? (e.focoCam==null ? 6 : e.focoCam) : e.foco; }
+function emSplit(){ var e = cfgEst(); return !!(EST.cam && EST.texto && ((EST.modo==='camera' && e.posTexto==='dividida') || (EST.modo==='tele' && e.pip==='dividida'))); }
+function classePalco(){ var e = cfgEst(); return 'st-stage modo-'+EST.modo+(EST.cam?' com-cam':'')+(EST.texto?' com-texto':'')+' pip-'+e.pip+' pos-'+e.posTexto+(emSplit()?' split':''); }
+function atualizarPalco(){ var stg = $('#stStage'); if(!stg) return; stg.className = classePalco(); stg.style.setProperty('--div', (cfgEst().divisao||50)+'%'); var b = $('#stLayout'); if(b) b.classList.toggle('on', emSplit()); aplicarEstiloTexto(); posicionar(); }
+function bolha(msg){ var b = $('#stBolha'); if(!b) return; b.textContent = msg; b.classList.add('on'); clearTimeout(bolha.t); bolha.t = setTimeout(function(){ b.classList.remove('on'); }, 1200); }
+function bolhaVel(){ var mx = maxPos(); bolha('Velocidade: '+cfgEst().vel+(mx ? ' · '+mmss(mx/pxPorSeg()) : '')); }
+function focoAtual(){ var e = cfgEst(); if(emSplit()) return 8; return (EST.modo==='camera' && e.posTexto==='pescoco') ? (e.focoCam==null ? 6 : e.focoCam) : e.foco; }
 function pxPorSeg(){ return 8 + cfgEst().vel * 2.4; }
 function maxPos(){ var s = $('#stScroll'), c = $('#stConteudo'); if(!s || !c) return 0; return Math.max(0, c.offsetHeight + s.clientHeight*0.6); }
 function posicionar(){
@@ -964,6 +1027,8 @@ function ligarCamera(){
     var tr = s.getVideoTracks()[0];
     try{ var cp = tr.getCapabilities ? tr.getCapabilities() : {}, adv = []; ['focusMode','exposureMode','whiteBalanceMode'].forEach(function(k){ if(cp[k] && cp[k].indexOf && cp[k].indexOf('continuous')>=0){ var o = {}; o[k] = 'continuous'; adv.push(o); } }); if(adv.length) tr.applyConstraints({advanced:adv}).catch(function(){}); }catch(err){}
     try{ var cp2 = tr.getCapabilities ? tr.getCapabilities() : {}; EST.expCap = (cp2.exposureCompensation && cp2.exposureCompensation.max > cp2.exposureCompensation.min) ? cp2.exposureCompensation : null; aplicarLuz(); }catch(err){ EST.expCap = null; }
+    try{ var cp3 = tr.getCapabilities ? tr.getCapabilities() : {}, st3 = tr.getSettings ? tr.getSettings() : {}; EST.zoomCap = (cp3.zoom && cp3.zoom.max > cp3.zoom.min) ? cp3.zoom : null; EST.zoom = st3.zoom || (EST.zoomCap ? EST.zoomCap.min : 1); EST.torchCap = !!cp3.torch; EST.torch = false; }catch(err){ EST.zoomCap = null; EST.torchCap = false; }
+    var bca = $('[data-st="camAjuste"]'); if(bca) bca.disabled = false;
     try{ var st2 = tr.getSettings(); if(st2.width) EST.camInfo = Math.max(st2.width, st2.height)+'×'+Math.min(st2.width, st2.height)+(st2.frameRate?' · '+Math.round(st2.frameRate)+' fps':''); }catch(err){}
     aplicarEstiloTexto();
   }).catch(function(err){
@@ -975,6 +1040,21 @@ function aplicarLuz(){
   var tr = EST.stream && EST.stream.getVideoTracks()[0], c = EST.expCap, e = cfgEst(); if(!tr || !c) return;
   var v = Math.max(c.min, Math.min(c.max, +e.luz || 0));
   try{ tr.applyConstraints({advanced:[{exposureMode:'continuous', exposureCompensation:v}]}).catch(function(){}); }catch(err){}
+}
+function folhaCamera(){
+  if(!EST.cam || !EST.stream){ toast('Ligue a câmera primeiro'); return; }
+  var e = cfgEst(), sh = $('#stSheet'), tr = EST.stream.getVideoTracks()[0];
+  var h = '<div class="st-aj"><div class="row"><h3 style="flex:1">☀️ Câmera: luz, zoom e lanterna</h3><button class="btn sm" data-st="fecharSheet">Fechar</button></div>';
+  if(EST.expCap) h += '<label class="st-l">Luz (imagem estourada → puxe para a esquerda · escura → para a direita) <b id="cLuzV">'+(+e.luz||0)+'</b></label><input type="range" id="cLuz" min="'+EST.expCap.min+'" max="'+EST.expCap.max+'" step="'+(EST.expCap.step||0.1)+'" value="'+(+e.luz||0)+'">';
+  else h += '<p class="hint">Este aparelho não libera o ajuste de luz da câmera para o navegador. Se a imagem estourar, vire de lado para a janela ou diminua a luz atrás de você.</p>';
+  if(EST.zoomCap) h += '<label class="st-l">Zoom <b id="cZoomV">'+(Math.round(EST.zoom*10)/10)+'×</b></label><input type="range" id="cZoom" min="'+EST.zoomCap.min+'" max="'+EST.zoomCap.max+'" step="'+(EST.zoomCap.step||0.1)+'" value="'+EST.zoom+'">';
+  if(EST.torchCap) h += '<label class="st-sw"><span><b>🔦 Lanterna</b><small>Só na câmera traseira</small></span><input type="checkbox" id="cTorch" '+(EST.torch?'checked':'')+'></label>';
+  h += '<div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn" data-st="virar" style="flex:1">🔄 '+(e.camera==='user'?'Usar a traseira':'Usar a frontal')+'</button></div>'+
+    '<p class="hint">'+(EST.camInfo ? 'Gravando em '+esc(EST.camInfo)+'. ' : '')+'Qualidade e câmera padrão ficam em ⚙️ Ajustes. Nem todo aparelho libera zoom e lanterna para o navegador; o que não aparece aqui não foi liberado.</p></div>';
+  sh.innerHTML = h; sh.classList.add('on'); ligarEstudio();
+  var l = $('#cLuz'); if(l) l.oninput = function(){ e.luz = +l.value; $('#cLuzV').textContent = l.value; aplicarLuz(); clearTimeout(folhaCamera.t); folhaCamera.t = setTimeout(salvarCfg, 400); };
+  var z = $('#cZoom'); if(z) z.oninput = function(){ EST.zoom = +z.value; $('#cZoomV').textContent = (Math.round(EST.zoom*10)/10)+'×'; try{ tr.applyConstraints({advanced:[{zoom:EST.zoom}]}).catch(function(){}); }catch(er){} };
+  var t = $('#cTorch'); if(t) t.onchange = function(){ EST.torch = t.checked; try{ tr.applyConstraints({advanced:[{torch:EST.torch}]}).catch(function(){ toast('A lanterna não respondeu neste aparelho'); }); }catch(er){} };
 }
 function pararCamera(){ if(EST.stream){ EST.stream.getTracks().forEach(function(t){ t.stop(); }); EST.stream = null; } }
 function avisoEstudio(msg){ var sh = $('#stSheet'); if(!sh){ toast(msg); return; } sh.innerHTML = '<div class="st-aviso">'+esc(msg)+'<button class="btn sm" data-st="fecharSheet">OK</button></div>'; sh.classList.add('on'); ligarEstudio(); }
@@ -1035,21 +1115,23 @@ function folhaAjustes(){
   var sh = $('#stSheet');
   sh.innerHTML = '<div class="st-aj"><div class="row"><h3 style="flex:1">⚙️ Ajustes do teleprompter e da câmera</h3><button class="btn sm" data-st="fecharSheet">Fechar</button></div>'+
     faixa('vel','Velocidade de rolagem',1,100)+faixa('fonte','Tamanho da letra',20,96,2,' px')+faixa('espaco','Espaçamento entre linhas',1,2.5,0.1)+
-    faixa('largura','Largura do texto',50,100,5,'%')+faixa('foco','Linha de leitura (foco)',10,80,5,'%')+faixa('opacidade','Fundo escuro atrás do texto (0 = só a letra)',0,90,5,'%')+faixa('luzTexto','Brilho da letra',40,100,5,'%')+faixa('suave','Letra suave (desfoque leve)',0,100,10,'%')+faixa('focoCam','Linha de leitura com a câmera',0,60,2,'%')+(EST.expCap ? faixa('luz','Luz da câmera',Math.round(EST.expCap.min*10)/10,Math.round(EST.expCap.max*10)/10,EST.expCap.step||0.1,'') : '')+
+    faixa('largura','Largura do texto',50,100,5,'%')+faixa('foco','Linha de leitura (foco)',10,80,5,'%')+faixa('opacidade','Fundo escuro atrás do texto (0 = só a letra)',0,90,5,'%')+faixa('luzTexto','Brilho da letra',40,100,5,'%')+faixa('suave','Letra suave (desfoque leve)',0,100,10,'%')+faixa('focoCam','Linha de leitura com a câmera',0,60,2,'%')+faixa('divisao','Tela dividida: altura do texto',25,75,5,'%')+(EST.expCap ? faixa('luz','Luz da câmera',Math.round(EST.expCap.min*10)/10,Math.round(EST.expCap.max*10)/10,EST.expCap.step||0.1,'') : '')+
     opc('espelho','Espelho',[['nenhum','Sem espelho'],['horizontal','Horizontal (vidro de teleprompter)'],['vertical','Vertical']])+
-    opc('posTexto','Posição do texto com a câmera ligada',[['pescoco','Dos olhos para baixo (recomendado)'],['topo','No topo (perto da lente)'],['meio','No meio'],['baixo','Embaixo']])+
-    opc('pip','Câmera no modo teleprompter',[['canto','Janela pequena no canto'],['fundo','Tela inteira atrás do texto']])+
+    opc('posTexto','Posição do texto com a câmera ligada',[['dividida','Tela dividida: texto em cima, câmera embaixo (recomendado)'],['pescoco','Sobre a câmera, dos olhos para baixo'],['topo','No topo (perto da lente)'],['meio','No meio'],['baixo','Embaixo']])+
+    opc('pip','Câmera no modo teleprompter',[['dividida','Tela dividida: texto em cima, câmera embaixo'],['canto','Janela pequena no canto'],['fundo','Tela inteira atrás do texto']])+
     opc('contagem','Contagem antes de gravar',[[0,'Sem contagem'],[3,'3 segundos'],[5,'5 segundos']])+
     opc('camera','Câmera',[['user','Frontal (selfie)'],['environment','Traseira']])+
     opc('qualidade','Qualidade',[['720','HD 720p (arquivo menor)'],['1080','Full HD 1080p (recomendado)'],['4k','4K (se a câmera permitir; arquivo bem maior)']])+
-    chave('rolarAoGravar','Rolar o texto ao começar a gravar')+chave('central','Texto centralizado')+chave('loop','Repetir (loop)')+chave('toque','Toque no texto para pausar/continuar')+
-    '<p class="hint">Atalhos com teclado ou controle Bluetooth: espaço = rolar/pausar · ↑/↓ = velocidade · ←/→ = voltar/avançar · R = gravar.</p></div>';
+    chave('rolarAoGravar','Rolar o texto ao começar a gravar')+chave('direcoes','Mostrar direções de cena','Trechos entre [colchetes] aparecem pequenos e em cinza, com 🎬. Desligado, somem do teleprompter.')+chave('central','Texto centralizado')+chave('loop','Repetir (loop)')+chave('toque','Toque no texto para pausar/continuar')+
+    '<p class="hint">Arraste o texto com o dedo para voltar ou avançar. Na tela dividida, arraste a barra laranja para mudar o tamanho. Atalhos com teclado ou controle Bluetooth: espaço = rolar/pausar · ↑/↓ = velocidade · ←/→ = voltar/avançar · R = gravar.</p></div>';
   sh.classList.add('on'); ligarEstudio();
   $all('[data-ek]', sh).forEach(function(i){ i.oninput = i.onchange = function(){
     var k = i.dataset.ek, v = i.type==='checkbox' ? i.checked : (i.type==='range' ? +i.value : (k==='contagem' ? +i.value : i.value));
-    var antes = e[k]; e[k] = v; var lb = $('#v_'+k); if(lb) lb.textContent = v + ({fonte:' px', largura:'%', foco:'%', opacidade:'%', luzTexto:'%', suave:'%', focoCam:'%'}[k]||'');
+    var antes = e[k]; e[k] = v; var lb = $('#v_'+k); if(lb) lb.textContent = v + ({fonte:' px', largura:'%', foco:'%', opacidade:'%', luzTexto:'%', suave:'%', focoCam:'%', divisao:'%'}[k]||'');
     if(k==='luz') aplicarLuz();
-    if(k==='pip' || k==='posTexto'){ var stg = $('#stStage'); stg.className = stg.className.replace(/pip-\w+/, 'pip-'+e.pip).replace(/pos-\w+/, 'pos-'+e.posTexto); }
+    if(k==='pip' || k==='posTexto' || k==='divisao' || k==='espelho') atualizarPalco();
+    if(k==='direcoes') preencherTexto();
+    if(k==='espelho'){ var be = $('#stEspelho'); if(be) be.classList.toggle('on', v!=='nenhum'); }
     aplicarEstiloTexto(); posicionar();
     if((k==='camera' || k==='qualidade') && EST.cam && antes!==v && !EST.gravando) ligarCamera();
     clearTimeout(folhaAjustes.t); folhaAjustes.t = setTimeout(salvarCfg, 400);
@@ -1067,11 +1149,91 @@ function folhaImportar(){
   $('#stBusca').oninput = function(){ var q = norm(this.value); $all('#stLista .st-item').forEach(function(el){ el.style.display = norm(el.textContent).indexOf(q)>=0 ? '' : 'none'; }); };
   $all('[data-imp]', sh).forEach(function(el){ el.onclick = function(){ var x = S.conteudos.filter(function(y){ return y.id===el.dataset.imp; })[0]; if(!x) return; EST.conteudo = x; EST.titulo = x.titulo; EST.txt = textoGravacao(x); fecharSheet(); var t = $('.st-tit'); if(t) t.textContent = EST.titulo; preencherTexto(); toast('Texto importado ✔'); }; });
 }
+/* v5.4 biblioteca de roteiros (estilo Elegant Teleprompter): todos os roteiros salvos, busca, filtros, criar, importar e colar */
+var BIB = {q:'', f:'todos', ord:'rec'};
+function roteirosAvulsos(){ if(!Array.isArray(S.cfg.roteiros)) S.cfg.roteiros = []; return S.cfg.roteiros; }
+function itensBib(){
+  var it = S.conteudos.filter(function(x){ return String(x.roteiro||'').trim(); }).map(function(x){ var p = perfil(x.perfil); return {tipo:'c', id:x.id, titulo:x.titulo||'Sem título', sub:p.arroba+' · '+(x.formato||'')+(x.data?' · '+x.data.split('-').reverse().join('/'):''), txt:textoFala(semNotas(x.roteiro)), quando:x.atualizadoEm||x.criadoEm||x.data||'', grupo:x.perfil||'definir', cor:p.cor}; });
+  roteirosAvulsos().forEach(function(a){ it.push({tipo:'a', id:a.id, titulo:a.titulo||'Sem título', sub:'📝 Roteiro avulso'+(a.rotulo?' · '+a.rotulo:''), txt:textoFala(a.texto), quando:a.atualizadoEm||a.criadoEm||'', grupo:'avulsos', rotulo:a.rotulo||'', cor:'#FF7A45'}); });
+  return it;
+}
+function telaBiblioteca(){
+  EST.tela = 'bib'; pausar();
+  var it = itensBib(), grupos = {}, rot = {};
+  it.forEach(function(x){ grupos[x.grupo] = (grupos[x.grupo]||0) + 1; if(x.rotulo) rot[x.rotulo] = (rot[x.rotulo]||0) + 1; });
+  var chips = [['todos','Todos os roteiros ('+it.length+')'], ['avulsos','📝 Avulsos ('+(grupos.avulsos||0)+')']];
+  (S.cfg.perfis||[]).forEach(function(p){ if(grupos[p.k]) chips.push([p.k, (p.ic||'')+' '+p.arroba+' ('+grupos[p.k]+')']); });
+  if(grupos.definir) chips.push(['definir','⚪ definir perfil ('+grupos.definir+')']);
+  Object.keys(rot).sort().forEach(function(r){ chips.push(['r:'+r, '🏷 '+r+' ('+rot[r]+')']); });
+  if(!chips.some(function(c){ return c[0]===BIB.f; })) BIB.f = 'todos';
+  $('#studio').innerHTML = '<div class="st-top"><button class="st-b txt" data-st="bibVoltar">← Voltar</button><b class="st-tit">📚 Meus roteiros</b></div>'+
+    '<div class="st-bib"><input type="search" id="bibBusca" placeholder="🔍 Buscar pelo título ou pelo texto" value="'+esc(BIB.q)+'">'+
+    '<div class="st-chips">'+chips.map(function(c){ return '<button class="st-chip '+(BIB.f===c[0]?'on':'')+'" data-bibf="'+esc(c[0])+'">'+esc(c[1])+'</button>'; }).join('')+'</div>'+
+    '<select id="bibOrd"><option value="rec" '+(BIB.ord==='rec'?'selected':'')+'>Mais recentes primeiro</option><option value="az" '+(BIB.ord==='az'?'selected':'')+'>Título de A a Z</option><option value="data" '+(BIB.ord==='data'?'selected':'')+'>Data de publicação</option></select>'+
+    '<div id="bibLista"></div></div>'+
+    '<button class="st-fab" data-st="bibMenu" title="Criar ou importar roteiro">+</button><div id="bibMenu"></div>'+
+    '<input type="file" id="bibArq" accept=".txt,.md,text/plain" hidden><div class="st-sheet" id="stSheet"></div>';
+  ligarEstudio(); desenharBib();
+  $('#bibBusca').oninput = function(){ BIB.q = this.value; desenharBib(); };
+  $('#bibOrd').onchange = function(){ BIB.ord = this.value; desenharBib(); };
+  $all('[data-bibf]').forEach(function(b){ b.onclick = function(){ BIB.f = b.dataset.bibf; $all('[data-bibf]').forEach(function(o){ o.classList.toggle('on', o===b); }); desenharBib(); }; });
+  var fa = $('#bibArq'); fa.onchange = function(){ var f = fa.files && fa.files[0]; if(!f) return; var r = new FileReader(); r.onload = function(){ telaNovoRoteiro(null, {titulo:f.name.replace(/\.[^.]+$/,''), texto:String(r.result||'')}); }; r.readAsText(f); };
+}
+function desenharBib(){
+  var q = norm(BIB.q), it = itensBib().filter(function(x){
+    if(BIB.f==='avulsos' && x.tipo!=='a') return false;
+    if(BIB.f.indexOf('r:')===0 && x.rotulo!==BIB.f.slice(2)) return false;
+    if(BIB.f!=='todos' && BIB.f!=='avulsos' && BIB.f.indexOf('r:')!==0 && x.grupo!==BIB.f) return false;
+    return !q || norm(x.titulo+' '+x.txt).indexOf(q) >= 0;
+  });
+  it.sort(function(a,b){ if(BIB.ord==='az') return a.titulo.localeCompare(b.titulo,'pt'); if(BIB.ord==='data'){ var da = (a.sub.match(/\d\d\/\d\d\/\d{4}/)||[''])[0].split('/').reverse().join(''), db = (b.sub.match(/\d\d\/\d\d\/\d{4}/)||[''])[0].split('/').reverse().join(''); return db<da?-1:db>da?1:0; } return String(b.quando).localeCompare(String(a.quando)); });
+  var ls = $('#bibLista'); if(!ls) return;
+  var atual = EST.avulso ? 'a'+EST.avulso : EST.conteudo ? 'c'+EST.conteudo.id : '';
+  ls.innerHTML = it.length ? it.slice(0, 300).map(function(x){
+    var t = infoTempo(x.txt, '');
+    return '<div class="st-card" data-bib="'+x.tipo+'|'+esc(x.id)+'" style="border-left:5px solid '+x.cor+(atual===x.tipo+x.id?';outline:3px solid #FF7A45':'')+'"><div class="tx"><h4>'+esc(tituloLimpo(x.titulo)||x.titulo)+'</h4><small>'+esc(x.sub)+' · '+t.palavras+' palavras ≈ '+fmtTempo(t.seg)+'</small><p>'+esc(x.txt.slice(0,220))+'</p></div>'+
+      (x.tipo==='a' ? '<div class="ac"><button data-bibed="'+esc(x.id)+'" title="Editar">✏️</button><button data-bibdel="'+esc(x.id)+'" title="Excluir">🗑</button></div>' : '')+'</div>';
+  }).join('') + (it.length > 300 ? '<p class="hint" style="color:#aaa">Mostrando 300 de '+it.length+'. Use a busca para achar os outros.</p>' : '')
+  : '<p style="color:#aaa;text-align:center;margin:30px 0">Nenhum roteiro encontrado.<br>Toque no <b>+</b> para criar, importar um arquivo de texto ou colar.</p>';
+  $all('[data-bib]', ls).forEach(function(el){ el.onclick = function(){ var p = el.dataset.bib.split('|'); usarRoteiro(p[0], p.slice(1).join('|')); }; });
+  $all('[data-bibed]', ls).forEach(function(el){ el.onclick = function(ev){ ev.stopPropagation(); telaNovoRoteiro(el.dataset.bibed); }; });
+  $all('[data-bibdel]', ls).forEach(function(el){ el.onclick = function(ev){ ev.stopPropagation(); var a = roteirosAvulsos().filter(function(r){ return r.id===el.dataset.bibdel; })[0]; if(!a || !confirm('Excluir o roteiro avulso "'+a.titulo+'"? Esta ação não pode ser desfeita.')) return; S.cfg.roteiros = roteirosAvulsos().filter(function(r){ return r.id!==a.id; }); if(EST.avulso===a.id){ EST.avulso = null; } salvarCfg(); telaBiblioteca(); toast('Roteiro excluído'); }; });
+}
+function usarRoteiro(tipo, id){
+  if(tipo==='c'){ var x = S.conteudos.filter(function(y){ return y.id===id; })[0]; if(!x) return; EST.conteudo = x; EST.avulso = null; EST.titulo = x.titulo||'Sem título'; EST.txt = textoGravacao(x); }
+  else { var a = roteirosAvulsos().filter(function(r){ return r.id===id; })[0]; if(!a) return; EST.conteudo = null; EST.avulso = a.id; EST.titulo = a.titulo||'Roteiro avulso'; EST.txt = a.texto||''; }
+  EST.pos = 0; voltarDaBiblioteca(); toast('Roteiro carregado ✔');
+}
+function voltarDaBiblioteca(){ EST.tela = null; if(EST.modo) remontarPalco(); else telaEscolha(); }
+function telaNovoRoteiro(id, pre){
+  EST.tela = 'novo';
+  var a = id ? roteirosAvulsos().filter(function(r){ return r.id===id; })[0] : null; pre = pre || {};
+  var rotulos = {}; roteirosAvulsos().forEach(function(r){ if(r.rotulo) rotulos[r.rotulo] = 1; });
+  $('#studio').innerHTML = '<div class="st-top"><button class="st-b txt" data-st="novoVoltar">← Voltar</button><b class="st-tit">'+(a?'✏️ Editar roteiro':'📝 Novo roteiro')+'</b><button class="st-b txt" data-st="novoSalvar">💾 Salvar</button></div>'+
+    '<div class="st-bib st-novo"><input type="hidden" id="nrId" value="'+esc(a?a.id:'')+'">'+
+    '<label>Título</label><input id="nrTit" placeholder="Ex.: Ponto comercial Rio Branco" value="'+esc(a?a.titulo:(pre.titulo||''))+'">'+
+    '<label>Rótulo (opcional, para filtrar depois)</label><input id="nrRot" list="nrRots" placeholder="Ex.: Imóveis comerciais" value="'+esc(a?a.rotulo||'':'')+'"><datalist id="nrRots">'+Object.keys(rotulos).map(function(r){ return '<option value="'+esc(r)+'">'; }).join('')+'</datalist>'+
+    '<label>Texto que você vai falar</label><textarea id="nrTxt" placeholder="Cole ou escreva o roteiro. Trechos entre [colchetes] viram direções de cena (aparecem pequenos e em cinza). Linhas depois de “Descrição para o Instagram” ou “Hashtags” não entram no teleprompter.">'+esc(a?a.texto:(pre.texto||''))+'</textarea>'+
+    '<p class="hint" id="nrTempo" style="color:#bbb"></p>'+
+    '<div class="row" style="gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn acc" data-st="novoLer" style="flex:1">▶ Salvar e abrir no teleprompter</button>'+(a?'<button class="btn" data-st="novoExcluir">🗑 Excluir</button>':'')+'</div></div><div class="st-sheet" id="stSheet"></div>';
+  ligarEstudio();
+  var tx = $('#nrTxt'), tp = function(){ var i = infoTempo(textoFala(tx.value), ''); $('#nrTempo').textContent = '⏱ '+i.palavras+' palavras faladas ≈ '+fmtTempo(i.seg)+' (Reel: ideal até 40 s)'; };
+  tx.oninput = tp; tp(); if(!a && !pre.texto) $('#nrTit').focus();
+}
+function salvarNovoRoteiro(){
+  var id = $('#nrId').value, tit = $('#nrTit').value.trim(), txt = $('#nrTxt').value, rot = $('#nrRot').value.trim();
+  if(!txt.trim()){ toast('Escreva ou cole o texto do roteiro'); return null; }
+  if(!tit) tit = txt.trim().split('\n')[0].slice(0, 50);
+  var agora = new Date().toISOString(), lst = roteirosAvulsos(), a = id ? lst.filter(function(r){ return r.id===id; })[0] : null;
+  if(a){ a.titulo = tit; a.texto = txt; a.rotulo = rot; a.atualizadoEm = agora; }
+  else { a = {id:uid('rot'), titulo:tit, texto:txt, rotulo:rot, criadoEm:agora, atualizadoEm:agora}; lst.unshift(a); }
+  salvarCfg(); toast('Roteiro salvo ✔'); return a;
+}
 function fecharSheet(){ var sh = $('#stSheet'); if(sh){ sh.classList.remove('on'); sh.innerHTML = ''; } }
 function fecharEstudio(){
   if(EST.gravando && !confirm('Está gravando. Parar e sair? O vídeo será perdido se não salvar.')) return;
   if(EST.gravando){ EST.gravando=false; try{ EST.rec.onstop=null; EST.rec.stop(); }catch(e){} clearInterval(EST.timer); }
-  pausar(); pararCamera();
+  pausar(); pararCamera(); EST.tela = null;
   try{ if(EST.wake) EST.wake.release(); }catch(e){} EST.wake = null;
   try{ if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){}); }catch(e){}
   var st = $('#studio'); st.classList.remove('on'); st.innerHTML = ''; document.body.classList.remove('no-scroll');
@@ -1086,11 +1248,32 @@ function acaoEstudio(a){
     case 'modoTele': escolherModo('tele'); break;
     case 'camExterna': $('#stArquivo').click(); break;
     case 'play': if(EST.rolando) pausar(); else rolar(); break;
-    case 'mais': e.vel = Math.min(100, e.vel+2); aplicarEstiloTexto(); atualizarTempo(); salvarCfg(); break;
-    case 'menos': e.vel = Math.max(1, e.vel-2); aplicarEstiloTexto(); atualizarTempo(); salvarCfg(); break;
+    case 'mais': e.vel = Math.min(100, e.vel+2); aplicarEstiloTexto(); atualizarTempo(); bolhaVel(); salvarCfg(); break;
+    case 'menos': e.vel = Math.max(1, e.vel-2); aplicarEstiloTexto(); atualizarTempo(); bolhaVel(); salvarCfg(); break;
+    case 'espelho': e.espelho = e.espelho==='nenhum' ? 'horizontal' : 'nenhum'; aplicarEstiloTexto(); var be = $('#stEspelho'); if(be) be.classList.toggle('on', e.espelho!=='nenhum'); bolha(e.espelho==='nenhum' ? 'Espelho desligado' : 'Espelho ligado (vidro)'); salvarCfg(); break;
+    case 'layout':
+      if(emSplit()){ if(EST.modo==='camera') e.posTexto = 'pescoco'; else e.pip = 'canto'; atualizarPalco(); bolha('Texto sobre a câmera'); }
+      else {
+        if(EST.modo==='camera') e.posTexto = 'dividida'; else e.pip = 'dividida';
+        if(EST.gravando && (!EST.cam || !EST.texto)){ toast('Pare a gravação antes'); break; }
+        if(!EST.cam || !EST.texto){ EST.cam = true; EST.texto = true; EST.textoNaCamera = true; remontarPalco(); } else atualizarPalco();
+        bolha('Tela dividida: texto em cima, câmera embaixo');
+      }
+      salvarCfg(); break;
+    case 'camAjuste': folhaCamera(); break;
+    case 'bibVoltar': voltarDaBiblioteca(); break;
+    case 'bibMenu': var mn = $('#bibMenu'); if(mn.innerHTML){ mn.innerHTML = ''; break; } mn.innerHTML = '<div class="st-fab-menu"><button data-st="bibNovo">📝 Criar novo roteiro</button><button data-st="bibColar">📋 Colar texto</button><button data-st="bibArquivo">📄 Importar arquivo de texto (.txt)</button></div>'; ligarEstudio(); break;
+    case 'bibNovo': telaNovoRoteiro(null); break;
+    case 'bibColar': if(navigator.clipboard && navigator.clipboard.readText){ navigator.clipboard.readText().then(function(t){ telaNovoRoteiro(null, {texto:t||''}); }).catch(function(){ telaNovoRoteiro(null); toast('Toque e segure na caixa de texto → Colar'); }); } else { telaNovoRoteiro(null); toast('Toque e segure na caixa de texto → Colar'); } break;
+    case 'bibArquivo': $('#bibMenu').innerHTML = ''; $('#bibArq').click(); break;
+    case 'novoVoltar': telaBiblioteca(); break;
+    case 'novoSalvar': if(salvarNovoRoteiro()) telaBiblioteca(); break;
+    case 'novoLer': var nr = salvarNovoRoteiro(); if(nr) usarRoteiro('a', nr.id); break;
+    case 'novoExcluir': var idx = $('#nrId').value, ax = roteirosAvulsos().filter(function(r){ return r.id===idx; })[0]; if(!ax || !confirm('Excluir o roteiro avulso "'+ax.titulo+'"? Esta ação não pode ser desfeita.')) break; S.cfg.roteiros = roteirosAvulsos().filter(function(r){ return r.id!==idx; }); if(EST.avulso===idx) EST.avulso = null; salvarCfg(); telaBiblioteca(); toast('Roteiro excluído'); break;
+    case 'biblioteca': if(EST.gravando){ toast('Pare a gravação antes de trocar o roteiro'); break; } pausar(); telaBiblioteca(); break;
     case 'togTexto': EST.texto = !EST.texto; EST.textoNaCamera = EST.texto; if(!EST.texto) pausar(); montarPalco(); if(EST.cam && EST.stream){ $('#stVideo').srcObject = EST.stream; } if(EST.cam && !EST.stream) ligarCamera(); break;
     case 'togCam': if(EST.gravando){ toast('Pare a gravação antes'); break; } EST.cam = !EST.cam; if(!EST.cam){ pararCamera(); if(!EST.texto) EST.texto = true; } montarPalco(); if(EST.cam) ligarCamera(); break;
-    case 'virar': if(EST.gravando){ toast('Pare a gravação antes de trocar a câmera'); break; } e.camera = e.camera==='user' ? 'environment' : 'user'; salvarCfg(); ligarCamera(); break;
+    case 'virar': if(EST.gravando){ toast('Pare a gravação antes de trocar a câmera'); break; } fecharSheet(); e.camera = e.camera==='user' ? 'environment' : 'user'; salvarCfg(); ligarCamera(); break;
     case 'gravar': if(EST.gravando) pararGravacao(); else iniciarGravacao(); break;
     case 'ajustes': folhaAjustes(); break;
     case 'importar': folhaImportar(); break;
@@ -1110,15 +1293,27 @@ function ligarEstudio(){
   var st = $('#studio');
   $all('[data-st]', st).forEach(function(el){ el.onclick = function(ev){ ev.stopPropagation(); acaoEstudio(el.dataset.st); }; });
   var p = $('#stProg'); if(p){ p.oninput = function(){ EST.pos = (+p.value/1000)*maxPos(); posicionar(); }; }
-  var tx = $('#stTexto'); if(tx){ tx.onclick = function(){ if(cfgEst().toque && !$('#stSheet').classList.contains('on')){ if(EST.rolando) pausar(); else rolar(); } }; }
+  var tx = $('#stTexto'); if(tx){
+    var y0 = null, p0 = 0;
+    tx.onpointerdown = function(ev){ y0 = ev.clientY; p0 = EST.pos; EST.arrastou = false; };
+    tx.onpointermove = function(ev){ if(y0==null) return; var dy = ev.clientY - y0; if(!EST.arrastou && Math.abs(dy) > 10) EST.arrastou = true; if(EST.arrastou){ var sg = cfgEst().espelho==='vertical' ? -1 : 1; EST.pos = Math.max(0, Math.min(maxPos(), p0 - dy*sg)); posicionar(); } };
+    tx.onpointerup = tx.onpointercancel = tx.onpointerleave = function(){ y0 = null; };
+    tx.onclick = function(){ if(EST.arrastou){ EST.arrastou = false; return; } if(cfgEst().toque && !$('#stSheet').classList.contains('on')){ if(EST.rolando) pausar(); else rolar(); } };
+  }
+  var dv = $('#stDivisor'); if(dv){
+    var arr = false;
+    dv.onpointerdown = function(ev){ arr = true; try{ dv.setPointerCapture(ev.pointerId); }catch(er){} ev.preventDefault(); };
+    dv.onpointermove = function(ev){ if(!arr) return; var stg = $('#stStage'), r = stg.getBoundingClientRect(); var pc = Math.round(Math.max(25, Math.min(75, (ev.clientY - r.top) / r.height * 100))); cfgEst().divisao = pc; stg.style.setProperty('--div', pc+'%'); posicionar(); };
+    dv.onpointerup = dv.onpointercancel = function(){ if(arr){ arr = false; salvarCfg(); } };
+  }
 }
 document.addEventListener('keydown', function(ev){
-  var st = document.getElementById('studio'); if(!st || !st.classList.contains('on') || !EST.modo) return;
+  var st = document.getElementById('studio'); if(!st || !st.classList.contains('on') || !EST.modo || EST.tela) return;
   if(/input|textarea|select/i.test((ev.target||{}).tagName||'')) return;
   var e = cfgEst(), k = ev.key;
   if(k===' ' || k==='Enter' || k==='MediaPlayPause'){ ev.preventDefault(); if(EST.rolando) pausar(); else rolar(); }
-  else if(k==='ArrowUp' || k==='PageUp'){ ev.preventDefault(); e.vel = Math.min(100, e.vel+2); aplicarEstiloTexto(); atualizarTempo(); }
-  else if(k==='ArrowDown' || k==='PageDown'){ ev.preventDefault(); e.vel = Math.max(1, e.vel-2); aplicarEstiloTexto(); atualizarTempo(); }
+  else if(k==='ArrowUp' || k==='PageUp'){ ev.preventDefault(); e.vel = Math.min(100, e.vel+2); aplicarEstiloTexto(); atualizarTempo(); bolhaVel(); }
+  else if(k==='ArrowDown' || k==='PageDown'){ ev.preventDefault(); e.vel = Math.max(1, e.vel-2); aplicarEstiloTexto(); atualizarTempo(); bolhaVel(); }
   else if(k==='ArrowLeft'){ EST.pos = Math.max(0, EST.pos-120); posicionar(); }
   else if(k==='ArrowRight'){ EST.pos = Math.min(maxPos(), EST.pos+120); posicionar(); }
   else if(k==='r' || k==='R'){ if(EST.cam) acaoEstudio('gravar'); }
@@ -1194,7 +1389,7 @@ var NAV = {pronto:false};
 function navPush(tipo){ try{ history.pushState({si:tipo, t:Date.now()}, ''); }catch(e){} }
 window.addEventListener('popstate', function(ev){
   var st = document.getElementById('studio');
-  if(st && st.classList.contains('on')){ if(typeof fecharEstudio==='function') fecharEstudio(true); return; }
+  if(st && st.classList.contains('on')){ if(EST.tela){ navPush('studio'); if(EST.tela==='novo') telaBiblioteca(); else voltarDaBiblioteca(); return; } if(typeof fecharEstudio==='function') fecharEstudio(true); return; }
   if($('#ov') && $('#ov').classList.contains('on')){ fecharModalSeguro(true); return; }
   if(ev.state && ev.state.v && ev.state.v!==UI.view){ UI.view = ev.state.v; render(); return; }
 });
