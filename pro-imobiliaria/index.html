@@ -1197,8 +1197,9 @@ function render(dataOnly){
 }
 
 /* ACESSO: REGISTRO, PIN E PERFIL DO APARELHO */
+(function(){const st=document.createElement('style');st.textContent='.pinf{-webkit-text-security:disc;text-security:disc;letter-spacing:4px}';document.head.appendChild(st)})();
 async function hashPin(pin){
-  const txt='PROINNOVAR|'+pin;
+  const txt='PROINNOVAR|'+String(pin||'').replace(/\D/g,'');
   try{if(crypto&&crypto.subtle){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return 's256:'+Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}}catch(e){}
   let h=5381;for(let i=0;i<txt.length;i++)h=((h<<5)+h+txt.charCodeAt(i))>>>0;return 'djb:'+h.toString(16);
 }
@@ -1220,7 +1221,7 @@ function vRegistro(){
   <form class="panel sec" id="regForm" autocomplete="off" style="gap:14px">
     <h2>Dados do proprietário</h2>
     ${camposConta(CONTA_PADRAO,'r_')}
-    <div class="grid2"><label>Crie um PIN (4 a 8 números) *<input type="password" id="r_pin" inputmode="numeric" pattern="[0-9]{4,8}" required></label><label>Repita o PIN *<input type="password" id="r_pin2" inputmode="numeric" pattern="[0-9]{4,8}" required></label></div>
+    <div class="grid2"><label>Crie um PIN (4 a 8 números) *<input type="text" class="pinf" id="r_pin" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8" pattern="[0-9]{4,8}" required></label><label>Repita o PIN *<input type="text" class="pinf" id="r_pin2" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8" pattern="[0-9]{4,8}" required></label></div>
     <p class="small muted" style="margin:0">O PIN protege o perfil principal neste e em outros aparelhos. Guarde-o: ele não pode ser recuperado, só redefinido com o seu WhatsApp e e-mail.</p>
     <p class="small" id="regErr" style="margin:0;color:var(--hot);font-weight:700" hidden></p>
     <div class="row"><button class="btn pri" type="submit">Registrar e entrar</button></div>
@@ -1234,13 +1235,13 @@ function vPin(){
   </div><div class="hero-side"><div class="portrait"><img src="${IMG.retrato}" alt=""></div></div></section>
   <form class="panel sec" id="pinForm" autocomplete="off" style="gap:12px;max-width:460px">
     <h2>Digite o seu PIN</h2>
-    <label>PIN<input type="password" id="p_pin" inputmode="numeric" autofocus></label>
+    <label>PIN<input type="text" class="pinf" id="p_pin" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8" autofocus></label>
     <p class="small" id="pinErr" style="margin:0;color:var(--hot);font-weight:700" hidden>PIN incorreto. Tente de novo.</p>
     <div class="row"><button class="btn pri" type="submit">Entrar</button><button class="btn ghost" type="button" data-trocaperfil="1">Entrar como estação</button></div>
     <details><summary class="small" style="cursor:pointer;font-weight:600">Esqueci o PIN</summary>
-      <div class="sec" style="gap:10px;margin-top:10px"><p class="small muted" style="margin:0">Confirme o WhatsApp e o e-mail principal do registro para criar um PIN novo.</p>
-      <div class="grid2"><label>WhatsApp do registro<input type="tel" id="rp_whats"></label><label>E-mail principal<input type="text" id="rp_email"></label></div>
-      <div class="grid2"><label>Novo PIN<input type="password" id="rp_pin" inputmode="numeric"></label><label>Repita<input type="password" id="rp_pin2" inputmode="numeric"></label></div>
+      <div class="sec" style="gap:10px;margin-top:10px"><p class="small muted" style="margin:0">Confirme o WhatsApp do registro${CONTA&&CONTA.whats?' (final '+esc(digits(CONTA.whats).slice(-4))+')':''} e crie um PIN novo.</p>
+      <label>WhatsApp do registro<input type="tel" id="rp_whats" autocomplete="off"></label>
+      <div class="grid2"><label>Novo PIN<input type="text" class="pinf" id="rp_pin" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></label><label>Repita<input type="text" class="pinf" id="rp_pin2" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></label></div>
       <div class="row"><button class="btn" type="button" id="rpGo">Redefinir PIN</button></div></div>
     </details>
   </form>`;
@@ -1262,7 +1263,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('submit',async e=>{
   if(e.target.id==='regForm'){
     e.preventDefault();
-    const c=lerConta('r_'),p1=$('#r_pin').value,p2=$('#r_pin2').value,err=$('#regErr');
+    const c=lerConta('r_'),p1=$('#r_pin').value.trim(),p2=$('#r_pin2').value.trim(),err=$('#regErr');
     const msg=!c.nome?'Informe o seu nome.':!c.whats?'Informe o WhatsApp.':!/^\d{4,8}$/.test(p1)?'O PIN precisa ter de 4 a 8 números.':p1!==p2?'Os dois PINs estão diferentes.':'';
     if(msg){err.textContent=msg;err.hidden=false;return}
     c.pinHash=await hashPin(p1);c.criado=new Date().toISOString();c.link='';
@@ -1277,8 +1278,8 @@ document.addEventListener('submit',async e=>{
 });
 document.addEventListener('click',async e=>{
   if(e.target.id!=='rpGo')return;
-  const w=digits($('#rp_whats').value),em=$('#rp_email').value.trim().toLowerCase(),p1=$('#rp_pin').value,p2=$('#rp_pin2').value;
-  if(w.slice(-8)!==digits(CONTA.whats).slice(-8)||em!==String(CONTA.email||'').toLowerCase()){toast('WhatsApp ou e-mail não conferem com o registro.');return}
+  const w=digits($('#rp_whats').value),p1=digits($('#rp_pin').value),p2=digits($('#rp_pin2').value);
+  if(w.length<8||w.slice(-8)!==digits(CONTA.whats).slice(-8)){toast('Esse WhatsApp não confere com o registro deste aparelho.');return}
   if(!/^\d{4,8}$/.test(p1)||p1!==p2){toast('O novo PIN precisa ter de 4 a 8 números e ser igual nos dois campos.');return}
   CONTA.pinHash=await hashPin(p1);LS.set('conta',CONTA);SS.set('ok','1');S.role='owner';start();toast('PIN redefinido.');
 });
@@ -3162,7 +3163,7 @@ function cfgHTML(){
     <p class="small muted" style="margin:0">Perfil atual: <b>${S.role==='owner'?'Principal':'Estação '+MODS[S.role].curto}</b>.</p>
     <div class="row"><button class="btn" type="button" data-trocaperfil="1">Trocar perfil deste aparelho</button>${own?'<button class="btn ghost" type="button" id="cfgSair">Bloquear (pedir PIN)</button>':''}</div>
   </fieldset>
-  ${own?`<fieldset class="fs"><legend>Trocar PIN</legend><div class="grid3"><label>PIN atual<input type="password" id="cp_old" inputmode="numeric"></label><label>Novo PIN<input type="password" id="cp_new" inputmode="numeric"></label><label>Repita<input type="password" id="cp_new2" inputmode="numeric"></label></div><div class="row"><button class="btn" type="button" id="cfgPin">Trocar PIN</button></div></fieldset>
+  ${own?`<fieldset class="fs"><legend>Trocar PIN</legend><div class="grid3"><label>PIN atual<input type="text" class="pinf" id="cp_old" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></label><label>Novo PIN<input type="text" class="pinf" id="cp_new" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></label><label>Repita<input type="text" class="pinf" id="cp_new2" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></label></div><div class="row"><button class="btn" type="button" id="cfgPin">Trocar PIN</button></div></fieldset>
   <fieldset class="fs"><legend>Apagar dados deste aparelho</legend><p class="small muted" style="margin:0">Remove leads, agenda e planos só deste aparelho. Exporte o backup antes.</p><div class="row"><button class="btn ghost" type="button" id="cfgZerar">Apagar dados</button></div></fieldset>`:''}
   <p class="small muted" style="margin:0">PRO IMOBILIÁRIA - ANDERSON ALVES · versão independente · funciona sem internet depois de aberto uma vez.</p>
   </div>`;
