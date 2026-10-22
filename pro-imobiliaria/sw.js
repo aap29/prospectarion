@@ -1,6 +1,6 @@
 /* PRO IMOBILIÁRIA - ANDERSON ALVES — funciona offline depois da primeira abertura.
    Ao publicar uma nova versão, aumente o número abaixo. */
-const CACHE = 'proinnovar-v19';
+const CACHE = 'proinnovar-v20';
 const ARQUIVOS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable.png'];
 
 self.addEventListener('install', e => {

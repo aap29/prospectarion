@@ -1850,6 +1850,10 @@ function vSiteLeads(){
   <p class="small muted" style="margin:0;max-width:78ch">Quem pede visita, simulação, proposta ou consórcio em imoveiseinvestimentosrs.com.br cai na planilha “Leads do site”. Aqui o app busca os novos e cria o lead com a intenção, o imóvel e o link. ${n?`<b>${n}</b> lead(s) do site no app.`:''}${c.ultimo?` Última busca: ${fmtDH(c.ultimo)}.`:''}</p>
   <details ${c.url?'':'open'}><summary class="small" style="cursor:pointer;font-weight:600">Ligar a planilha</summary><div class="grid3" style="margin-top:8px"><label>URL do Apps Script (termina em /exec)<input type="text" id="site_url" value="${esc(c.url)}" placeholder="https://script.google.com/macros/s/…/exec"></label><label>Chave<input type="text" id="site_chave" value="${esc(c.chave)}"></label><label>&nbsp;<button class="btn" id="siteSalva" type="button">Salvar</button></label></div></details></section>`;
 }
+function perfilSiteX(x){const vm=numMil(x.valorMax);
+  if(x.tipo==='alerta'||x.negocio==='aluguel')return 'Quer alugar (inquilino)';
+  if(x.tipo==='isca'){if(x.faixa&&/Minha Casa/.test(x.faixa))return 'Minha Casa Minha Vida';if(vm>900000)return 'Alto padrão';return 'Médio padrão'}
+  return perfilSite(x.tipo)}
 function perfilSite(t){return {vender:'Quer vender',avaliar:'Quer vender',consorcio:'Consórcio – imóvel ou veículo',simular:'Primeiro imóvel',encomenda:'Médio padrão',lancamento:'Médio padrão'}[t]||'Médio padrão'}
 document.addEventListener('click',async e=>{
   const t=e.target;
@@ -1861,11 +1865,11 @@ document.addEventListener('click',async e=>{
       if(d.erro){toast('A planilha recusou: '+d.erro+'. Confira a chave.');return}
       const ja=new Set((S.leads||[]).filter(l=>l.siteId).map(l=>l.siteId));const novos=[];let ult=c.ultimo||'';
       (d.leads||[]).forEach(x=>{if(!x.id||ja.has(x.id))return;if(String(x.data)>ult)ult=String(x.data);
-        const pf=perfilSite(x.tipo),cons=x.tipo==='consorcio';
+        const pf=perfilSiteX(x),cons=x.tipo==='consorcio',isca=x.tipo==='isca'||x.tipo==='alerta';
         novos.push({id:uid(),siteId:x.id,criado:String(x.data).slice(0,10)||hojeKey(),externo:true,nome:x.nome||'Lead do site',empresa:'',cargo:'',fone:x.fone||'',fone2:'',email:x.email||'',insta:'',rede:'Site',origem:x.link||x.pagina||SITE_URL,
-          intencao:[x.intencao,x.imovelTitulo,x.mensagem?'“'+x.mensagem+'”':''].filter(Boolean).join(' · '),acaoImovel:cons?'':(/vender|avaliar/.test(x.tipo)?'Vender':'Comprar – médio padrão'),acaoCons:cons?'Consórcio de imóvel':'',
-          cidade:x.cidade||S.cidade,bairro:'',perfil:pf,intents:modOf(pf)==='imob'?intentsFromPerfil(pf):null,etapa:'novo',temp:/visita|proposta|simular/.test(x.tipo)?'quente':'morno',valor:0,tags:'Site',prox:hojeKey(),hora:'',acao:'Responder o pedido do site',
-          notas:[x.renda?'Renda informada: R$ '+x.renda:'',x.origem?'Veio de: '+x.origem:''].filter(Boolean).join(' · '),hist:[{d:new Date().toISOString(),tipo:'Nota',txt:'Lead do site imoveiseinvestimentosrs.com.br ('+(x.intencao||'contato')+')'}]})});
+          intencao:[x.intencao,x.imovelTitulo,x.mensagem?'“'+x.mensagem+'”':''].filter(Boolean).join(' · '),acaoImovel:cons?'':(/vender|avaliar/.test(x.tipo)?'Vender':pf==='Quer alugar (inquilino)'?'Alugar':pf==='Minha Casa Minha Vida'?'Comprar – Minha Casa Minha Vida':pf==='Alto padrão'?'Comprar – alto padrão':'Comprar – médio padrão'),acaoCons:cons?'Consórcio de imóvel':'',
+          cidade:x.cidade||S.cidade,bairro:x.bairro||'',perfil:pf,valor:numMil(x.valorMax)||0,intents:modOf(pf)==='imob'?intentsFromPerfil(pf):null,etapa:'novo',temp:/visita|proposta|simular/.test(x.tipo)||(isca&&/Já|3 meses/.test(x.prazo||''))?'quente':'morno',tags:isca?(x.tipo==='alerta'?'Site · alerta de aluguel':'Site · simulação CAIXA'):'Site',prox:hojeKey(),hora:'',acao:'Responder o pedido do site',
+          notas:[x.renda?'Renda informada: R$ '+x.renda:'',x.entrada?'Entrada: R$ '+x.entrada:'',x.fgts?'FGTS 3 anos: '+x.fgts:'',x.aluguel?'Aluguel até R$ '+x.aluguel:'',x.tipoImovel?'Tipo: '+x.tipoImovel:'',x.prazo?'Mudança: '+x.prazo:'',x.faixa||'',x.alerta==='sim'?'Quer aviso de imóvel novo':'',x.termo?'Pesquisou no Google: “'+x.termo+'”':'',x.origem?'Veio de: '+x.origem:''].filter(Boolean).join(' · '),hist:[{d:new Date().toISOString(),tipo:'Nota',txt:'Lead do site imoveiseinvestimentosrs.com.br ('+(x.intencao||'contato')+')'}]})});
       if(novos.length)saveLeadsBulk(novos);LS.set('siteLeads',Object.assign(c,{ultimo:ult||new Date().toISOString()}));
       toast(novos.length?novos.length+' lead(s) novo(s) do site no funil':'Nenhum lead novo no site');
     }catch(err){toast('Não consegui ler a planilha daqui. Use a versão independente do app ou confira a URL.')}
