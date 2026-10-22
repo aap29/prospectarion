@@ -270,6 +270,15 @@ body.menu-open{overflow:hidden}
 .gate h3{font-size:24px;text-transform:uppercase}
 .minirail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:700px){.minirail{grid-template-columns:1fr}}
+
+/* ===== APP: instalar no celular ===== */
+.instbar{display:none;align-items:center;gap:10px;background:var(--orange);color:#fff;padding:8px max(16px,env(safe-area-inset-left,0px));font-weight:600;font-size:14px}
+.instbar.on{display:flex}
+.instbar span{flex:1;min-width:0}
+.instbar button{border:0;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;min-height:38px}
+.instbar .ib-go{background:#00102A;color:#fff}.instbar .ib-x{background:transparent;color:#fff;font-size:20px;padding:4px 8px;min-height:38px}
+.drawer nav .inst{border:1px solid rgba(255,255,255,.3);justify-content:center;margin-top:8px}
+@media (display-mode:standalone){.instbar,.drawer nav .inst,[data-instalar]{display:none!important}}
 /* telas grandes */
 @media (min-width:1600px){.wrap{max-width:1320px}body{font-size:16px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -278,11 +287,16 @@ body.menu-open{overflow:hidden}
 <meta property="og:description" content="Casas, apartamentos, terrenos e lançamentos na região metropolitana de Porto Alegre, com simulação e atendimento direto do corretor.">
 <meta property="og:image" content="retrato.jpg">
 <meta name="theme-color" content="#00102A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Imóveis RS">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%2300102A'/%3E%3Cpath d='M6 21 20 9l14 12' fill='none' stroke='%23fff' stroke-width='3.4'/%3E%3Cpath d='M16 29l7-7m0 0h-5m5 0v5' fill='none' stroke='%23E98018' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>body{margin:0}img{max-width:100%}</style>
 </head>
 <body>
 
+<div class="instbar" id="instBar" role="region" aria-label="Instalar app"><span>📲 Tenha o app Imóveis RS no seu celular</span><button type="button" class="ib-go" data-instalar="1">Instalar</button><button type="button" class="ib-x" id="instX" aria-label="Fechar">×</button></div>
 <header class="top"><div class="wrap">
   <a class="brand" href="#inicio" data-go="inicio" aria-label="Imóveis e Investimentos RS, início">
     <svg class="mk" viewBox="0 0 40 40" aria-hidden="true"><path d="M4 22 20 7l16 15" fill="none" stroke="#fff" stroke-width="3.4" stroke-linejoin="round"/><path d="M10 20v14h20V20" fill="none" stroke="#fff" stroke-width="3.4"/><path d="M16 30l7-7m0 0h-5m5 0v5" fill="none" stroke="#E98018" stroke-width="3" stroke-linecap="round"/></svg>
@@ -303,13 +317,13 @@ body.menu-open{overflow:hidden}
   <nav aria-label="Menu"><div class="dh"><b>Menu</b><button class="menu-btn" type="button" data-menu="0" aria-label="Fechar menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <a data-go="inicio">Início</a><a data-go="busca" data-tr="venda">Comprar</a><a data-go="busca" data-tr="aluguel">Alugar</a><a data-go="lancamentos">Lançamentos</a><a data-go="busca" data-tr="venda" data-max="275000">Até R$ 275 mil (MCMV)</a><a href="./guias/">Guias das cidades</a>
     <hr><a data-go="descubra" data-neg="compra">Quanto a CAIXA financia para mim</a><a data-go="descubra" data-neg="aluguel">Quero alugar: me avise</a><a data-go="simular">Simular financiamento</a><a data-go="consorcio">Consórcio</a><a data-go="favoritos">Meus favoritos</a><a data-lead="vender">Quero vender meu imóvel</a>
-    <a class="wa" href="#" data-wa="geral">Conversar no WhatsApp</a></nav></div>
+    <a class="wa" href="#" data-wa="geral">Conversar no WhatsApp</a><a class="inst" href="#" data-instalar="1">📲 Instalar o app no celular</a></nav></div>
 
 <main id="app"><div class="wrap" style="padding-block:40px"><p class="muted">Carregando imóveis da região…</p></div></main>
 
 <footer><div class="wrap">
   <div><h3>Imóveis &amp; Investimentos RS</h3><p class="small" style="margin:0">Casas, apartamentos, terrenos e lançamentos na região metropolitana de Porto Alegre, com atendimento direto do corretor.</p></div>
-  <div><h3>Encontre</h3><a data-go="busca" data-tr="venda">Comprar</a><a data-go="busca" data-tr="aluguel">Alugar</a><a data-go="lancamentos">Lançamentos</a><a data-go="busca" data-tr="venda" data-max="275000">Até R$ 275 mil (MCMV)</a><a data-go="favoritos">Meus favoritos</a><a href="./guias/" style="cursor:pointer">Guias das cidades</a></div>
+  <div><h3>Encontre</h3><a data-go="busca" data-tr="venda">Comprar</a><a data-go="busca" data-tr="aluguel">Alugar</a><a data-go="lancamentos">Lançamentos</a><a data-go="busca" data-tr="venda" data-max="275000">Até R$ 275 mil (MCMV)</a><a data-go="favoritos">Meus favoritos</a><a href="./guias/" style="cursor:pointer">Guias das cidades</a><a href="#" data-instalar="1">📲 Instalar o app</a></div>
   <div><h3>Ferramentas</h3><a data-go="simular">Simular financiamento</a><a data-go="consorcio">Consórcio sem juros</a><a data-lead="vender">Quero vender meu imóvel</a><a data-lead="avaliar">Anunciar com a Innovar</a></div>
   <div><h3>Contato</h3><p class="small" style="margin:0">Anderson Alves<br>Corretor de Imóveis · <span class="creci">CRECI-RS 057.384</span><br>WhatsApp <span style="user-select:all">(51) 98416-8848</span><br>Innovar Imobiliária · CRECI 25.520-J<br>Av. Feitoria, 178 · São Leopoldo/RS</p></div>
   <p class="legal">Imóveis da carteira da Innovar Imobiliária, divulgados pelo corretor responsável. Valores e disponibilidade sujeitos a confirmação. <a data-go="privacidade" style="display:inline;text-decoration:underline">Política de privacidade</a></p>
@@ -564,6 +578,22 @@ function lerHash(){const h=(location.hash||'').slice(1);
 }
 
 
+
+/* ======== APP INSTALÁVEL ======== */
+let PROMPT_INST=null;
+const ehIOS=/iphone|ipad|ipod/i.test(navigator.userAgent),instalado=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PROMPT_INST=e;mostrarBarra()});
+window.addEventListener('appinstalled',()=>{PROMPT_INST=null;$('#instBar').classList.remove('on');toast('App instalado. O ícone Imóveis RS já está no seu celular.')});
+function mostrarBarra(){if(instalado()||LS.get('instX',0)>Date.now())return;if(innerWidth<900||PROMPT_INST)$('#instBar').classList.add('on')}
+async function instalar(){
+  if(PROMPT_INST){PROMPT_INST.prompt();try{await PROMPT_INST.userChoice}catch(e){}PROMPT_INST=null;return}
+  const msg=ehIOS?'No iPhone: toque no botão Compartilhar (quadrado com seta) e depois em “Adicionar à Tela de Início”.':'No Android: toque no menu ⋮ do Chrome e depois em “Instalar app” ou “Adicionar à tela inicial”.';
+  const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,9000);
+}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-instalar]');if(b){e.preventDefault();instalar();return}
+  if(e.target.id==='instX'){$('#instBar').classList.remove('on');LS.set('instX',Date.now()+7*864e5)}},true);
+setTimeout(mostrarBarra,2500);
 /* ======== ISCA DIGITAL: QUANTO A CAIXA FINANCIA + ALERTA DE IMÓVEL ======== */
 let IQ=Object.assign({neg:'compra',cid:'',bairro:'',tipo:'',renda:'',fgts:'sim',entrada:'',aluguel:'',prazo:'3 meses'},LS.get('iq',{}));
 let IR=null;
