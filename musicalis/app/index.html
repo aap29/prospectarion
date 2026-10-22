@@ -574,7 +574,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
   catch(e){toast('Este arquivo não é um backup do MUSICALIS')}inp.value=''};r.readAsText(f)}
 async function copiarBackup(){const t=JSON.stringify(backupObj());try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast('Backup copiado. Cole no outro aparelho em "Colar backup".')}
 function colarBackup(){const t=($('#bk-txt')||{}).value||'';try{const res=mesclarProgresso(JSON.parse(t));toast(`Progresso recuperado: +${res.praticas} práticas, +${res.selos} selos`);setTimeout(()=>render(),400)}catch(e){toast('Texto de backup inválido')}}
-const APP_VERSAO='3.28';
+const APP_VERSAO='3.29';
 function backupCard(){return `<p style="text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0">MUSICALIS • Versão ${APP_VERSAO}</p><div class="card" style="margin-top:12px"><h3>💾 Backup do meu progresso</h3>
  <p class="sub">Guarde suas práticas, notas e selos. Ao restaurar, o app <b>junta</b> com o que já existe aqui: nada é apagado.</p>
  <button class="btn" onclick="exportData()">Salvar backup</button>
@@ -2204,7 +2204,7 @@ const PUB_JWK={"kty": "EC", "crv": "P-256", "x": "8kepk6nnWFdTgpM7e_-_o0Z2ZcZDxe
 const B32='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function b32(u8){let bits=0,v=0,o='';for(const b of u8){v=((v<<8)|b)&0xffff;bits+=8;while(bits>=5){o+=B32[(v>>>(bits-5))&31];bits-=5}}if(bits>0)o+=B32[(v<<(5-bits))&31];return o}
 function unb32(s){let bits=0,v=0;const o=[];for(const c of s){const i=B32.indexOf(c);if(i<0)return null;v=((v<<5)|i)&0xffff;bits+=5;if(bits>=8){o.push((v>>>(bits-8))&255);bits-=8}}return new Uint8Array(o)}
-let PUBK=null,PRIVK=null,KEY_OK=false,KEY_EMAIL='';
+let PUBK=null,PRIVK=null,KEY_OK=false,KEY_EMAILS=[];
 const ECA={name:'ECDSA',hash:'SHA-256'};
 async function pubKey(){return PUBK||(PUBK=await crypto.subtle.importKey('jwk',PUB_JWK,{name:'ECDSA',namedCurve:'P-256'},false,['verify']))}
 async function sigOk(email,body,sig){const s=unb32(sig||'');if(!s||s.length!==64)return false;try{return await crypto.subtle.verify(ECA,await pubKey(),s,enc.encode(normEmail(email)+'|'+body))}catch(e){return false}}
@@ -2225,16 +2225,54 @@ const KDB=()=>new Promise((ok,er)=>{const r=indexedDB.open('musicalis_criador',1
 async function kGet(){const db=await KDB();return new Promise(ok=>{const q=db.transaction('k').objectStore('k').get('priv');q.onsuccess=()=>ok(q.result||null);q.onerror=()=>ok(null)})}
 async function kPut(v){const db=await KDB();return new Promise((ok,er)=>{const tx=db.transaction('k','readwrite'),st=tx.objectStore('k');v?st.put(v,'priv'):st.delete('priv');tx.oncomplete=()=>ok();tx.onerror=()=>er(tx.error)})}
 async function chaveConfere(k){try{const m=enc.encode('musicalis-teste-'+Date.now());const s=await crypto.subtle.sign(ECA,k,m);return await crypto.subtle.verify(ECA,await pubKey(),s,m)}catch(e){return false}}
-isOwner=function(){return KEY_OK&&!!curUser()&&ACC.session===KEY_EMAIL};
-{const a=enterSession;enterSession=function(e){const u=ACC.users[e];if(u){if(KEY_OK&&e===KEY_EMAIL){u.role='owner';u.plan='vitalicio';u.exp=null}else if(u.role==='owner'){u.role='aluno';u.plan='gratuito';u.exp=null}}return a(e)}}
-async function carregarChave(){try{const v=await kGet(),k=v&&v.k;if(k&&await chaveConfere(k)){PRIVK=k;KEY_OK=true;KEY_EMAIL=v.email||'';if(ACC.session&&ACC.users[ACC.session]&&ACC.users[ACC.session].role!=='owner')enterSession(ACC.session)}}catch(e){}window.__chaveLida=true}
+isOwner=function(){return KEY_OK&&!!curUser()&&KEY_EMAILS.includes(ACC.session)};
+{const a=enterSession;enterSession=function(e){const u=ACC.users[e];if(u){if(KEY_OK&&KEY_EMAILS.includes(e)){u.role='owner';u.plan='vitalicio';u.exp=null}else if(u.role==='owner'){u.role='aluno';u.plan='gratuito';u.exp=null}}return a(e)}}
+async function carregarChave(){try{const v=await kGet(),k=v&&v.k;if(k&&await chaveConfere(k)){PRIVK=k;KEY_OK=true;KEY_EMAILS=v.emails||(v.email?[v.email]:[]);if(ACC.session&&ACC.users[ACC.session]&&ACC.users[ACC.session].role!=='owner')enterSession(ACC.session)}}catch(e){}window.__chaveLida=true}
 function chave(){shell(`<div class="sub">CRIADOR</div><h1>Chave do Criador</h1>
- ${isOwner()?`<div class="card"><p>✅ Este aparelho tem a chave do Criador (conta ${KEY_EMAIL}). Você pode gerar códigos e links de ativação no Painel.</p><button class="btn gold" onclick="go('painel')">Abrir o Painel do Criador</button><button class="btn alt" onclick="tirarChave()">Remover a chave deste aparelho</button></div>`
+ ${isOwner()?`<div class="card"><p>✅ Este aparelho tem a chave do Criador (conta ${KEY_EMAILS.join(', ')}). Você pode gerar códigos e links de ativação no Painel.</p><button class="btn gold" onclick="go('painel')">Abrir o Painel do Criador</button><button class="btn alt" onclick="tirarChave()">Remover a chave deste aparelho</button></div>`
  :`<div class="card"><p class="sub">Selecione o arquivo <b>MUSICALIS_CHAVE_CRIADOR.json</b> que você guardou. A chave fica só neste aparelho e o app não consegue copiá-la de volta.</p><label class="btn" style="display:block;text-align:center">Escolher o arquivo da chave<input type="file" accept=".json,application/json" hidden onchange="importarChave(this)"></label><p class="sub" id="lg-msg"></p></div>`}`)}
 async function importarChave(inp){const f=inp.files&&inp.files[0];if(!f)return;try{const j=JSON.parse(await f.text()),jwk=Object.assign({},j.jwk||j);delete jwk.key_ops;delete jwk.ext;
  const k=await crypto.subtle.importKey('jwk',jwk,{name:'ECDSA',namedCurve:'P-256'},false,['sign']);if(!await chaveConfere(k)){lgMsg('Esta chave não é a do MUSICALIS.');return}
- await kPut({k,email:ACC.session});PRIVK=k;KEY_OK=true;KEY_EMAIL=ACC.session;toast('Chave instalada • acesso de Criador ativado');if(ACC.session)enterSession(ACC.session);page='chave';render()}catch(e){lgMsg('Arquivo de chave inválido.')}inp.value=''}
-async function tirarChave(){try{await kPut(null)}catch(e){}PRIVK=null;KEY_OK=false;KEY_EMAIL='';toast('Chave removida deste aparelho');if(ACC.session)enterSession(ACC.session);go('profile')}
+ await ativarCriador(k,ACC.session);toast('Chave instalada • acesso de Criador ativado');if(ACC.session)enterSession(ACC.session);page='chave';render()}catch(e){lgMsg('Arquivo de chave inválido.')}inp.value=''}
+async function tirarChave(){try{await kPut(null)}catch(e){}PRIVK=null;KEY_OK=false;KEY_EMAILS=[];toast('Chave removida deste aparelho');if(ACC.session)enterSession(ACC.session);go('profile')}
+
+/* ---------- acesso do Criador pelo e-mail + senha do Criador (em qualquer aparelho) ----------
+   Os e-mails do Criador ficam só como "impressão digital" (hash). A chave fica num cofre criptografado
+   (PBKDF2 600 mil rodadas + AES-256): só abre com a senha do Criador ou com o código de recuperação. */
+const COFRE={"emails_h": ["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e", "65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc", "577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a", "a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c", "136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c", "004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"], "senha": {"s": "HczF/a9D5VauFrBcEa1xLg==", "i": "F57GqITSaRq9eX/M", "c": "+cUXvw5KKjEyePqBxGqQa9dPSsfw72VUEyhk7DcQ4SGrMUA/7GzRcq7jwE8rFcxt9gOpyjXaBYkr/HNywDnT37Abb/DzGFIl+Llfeso34U8Gohp5ZuqcbURrUQOaxhLaBE1Ekq7xgpKjs3fS8WLGkOYrzvkTLHUpYTxK0ugvMrdS7wqalYgilFXaXAF1PD1A8Ubgdu89wJsQhck6iFDu/MQTn7wvEr7AFIoUvg2jx8eIgRt2FeiR0PC9/YDOiPmK4xwtLevWMKJk", "n": 600000}, "rec": {"s": "tyBeYcWNWvyYs2+7uqBZfA==", "i": "CQUAgMgMB1HP9pVv", "c": "05KCIuLoDWksBPGCbBzC67h8s6y26fdjJj+0nXhfm3CALXCnq8oKOrp0FsvG2xQpTUft3E1AGDm4e8qjSdlkYu5dfIZizfxk2kk4WPvgwMF7ECqS1FhxHHTJ+nHOL1IgBggPC/ptXsqBDF9W3r2lhu/RiBckTgwwP6XsrdK+wU4kBoYVDiJHw1uYSPr2yEAALU5/QwPX7M3qqPWkU8wHhJ+omzQFeVRFDGPyDs52+iHOoQkObokHROwPE3i2uFgma/+jWrVNs7d1", "n": 600000}};
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function hashEmail(e){const h=await crypto.subtle.digest('SHA-256',enc.encode(normEmail(e)));return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function ehCriadorEmail(e){try{return COFRE.emails_h.includes(await hashEmail(e))}catch(x){return false}}
+async function abrirCofre(cf,senha){try{const base=await crypto.subtle.importKey('raw',enc.encode(senha),'PBKDF2',false,['deriveKey']);
+ const ak=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64d(cf.s),iterations:cf.n,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+ const pl=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(cf.i)},ak,b64d(cf.c));const jwk=JSON.parse(new TextDecoder().decode(pl));
+ const k=await crypto.subtle.importKey('jwk',jwk,{name:'ECDSA',namedCurve:'P-256'},false,['sign']);return await chaveConfere(k)?k:null}catch(x){return null}}
+async function ativarCriador(k,email){let v=null;try{v=await kGet()}catch(x){}const em=new Set((v&&(v.emails||(v.email?[v.email]:[])))||[]);em.add(email);
+ KEY_EMAILS=[...em];await kPut({k,emails:KEY_EMAILS});PRIVK=k;KEY_OK=true}
+async function contaCriador(e,p){let u=ACC.users[e];const salt=hex(crypto.getRandomValues(new Uint8Array(16))),hash=await pbkdf2(p,salt);
+ if(!u)u=ACC.users[e]={created:hojeISO()};u.salt=salt;u.hash=hash;u.role='owner';u.plan='vitalicio';u.exp=null;if(!u.nome){u.nome='Kenny Anderson';u.name=u.nome;u.tel=u.tel||'(51) 98416-8848'}return u}
+async function entrarCriador(e,p,via){const b=$('#lg-go');if(b){b.disabled=true;b.textContent='Verificando…'}lgMsg('Verificando o acesso de Criador…');
+ let k=await abrirCofre(COFRE.senha,p.trim());
+ if(!k){const u=ACC.users[e];let v=null;try{v=await kGet()}catch(x){}const temChave=v&&v.k&&(v.emails||[v.email]).includes(e);
+  if(u&&temChave&&await pbkdf2(p,u.salt)===u.hash)k=v.k}
+ if(!k){lgMsg('Este e-mail é do Criador. Digite a senha do Criador ou toque em "Esqueci a senha do Criador".');return}
+ await ativarCriador(k,e);await contaCriador(e,p);rememberPick(e);saveAcc();toast('Bem-vindo, Criador! Acesso total liberado');enterSession(e)}
+{const a=doLogin;doLogin=async function(){const e=normEmail(($('#lg-email')||{}).value||''),p=($('#lg-pass')||{}).value||'';if(await ehCriadorEmail(e))return entrarCriador(e,p);return a()}}
+{const a=doSignup;doSignup=async function(){const e=normEmail(($('#lg-email')||{}).value||''),p=($('#lg-pass')||{}).value||'',p2=($('#lg-pass2')||{}).value||'';
+ if(await ehCriadorEmail(e)){if(p2&&p!==p2){lgMsg('As senhas não conferem.');return}return entrarCriador(e,p)}return a()}}
+{const a=login;login=function(){a();const m=$('#lg-msg');if(m&&!$('#lk-rec'))m.insertAdjacentHTML('afterend','<p class="tiny" style="text-align:center;margin:6px 0 0"><a id="lk-rec" href="#" onclick="page=\'recuperar\';render();return false" style="color:inherit">Esqueci a senha do Criador</a></p>')}}
+function recuperar(){shell(`<div class="sub">CRIADOR</div><h1>Recuperar acesso de Criador</h1>
+ <div class="card"><p class="sub">Use o <b>código de recuperação</b> que você guardou (5 grupos de letras e números). Depois escolha uma senha para entrar neste aparelho.</p>
+ <label>E-mail do Criador</label><input class="field" id="rc-email" type="email" autocomplete="username" value="${ACC.lastEmail||''}">
+ <label>Código de recuperação</label><input class="field" id="rc-cod" autocomplete="off" style="text-transform:uppercase" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
+ <label>Nova senha neste aparelho</label><input class="field" id="rc-pass" type="password" autocomplete="new-password" placeholder="mínimo 6 caracteres">
+ <button class="btn gold" id="lg-go" onclick="fazerRecuperacao()">Recuperar acesso</button><p class="sub" id="lg-msg"></p>
+ <p class="tiny">Também funciona: Perfil → toque 5 vezes em “Versão” → escolher o arquivo MUSICALIS_CHAVE_CRIADOR.json.</p></div>
+ <button class="btn alt" onclick="page='login';authMode='entrar';render()">Voltar</button>`)}
+async function fazerRecuperacao(){const e=normEmail($('#rc-email').value),c=($('#rc-cod').value||'').toUpperCase().replace(/[^A-Z0-9]/g,''),p=$('#rc-pass').value;
+ if(!await ehCriadorEmail(e)){lgMsg('Este e-mail não é de Criador.');return}if(p.length<6){lgMsg('A nova senha precisa ter pelo menos 6 caracteres.');return}
+ lgMsg('Verificando…');const k=await abrirCofre(COFRE.rec,c);if(!k){lgMsg('Código de recuperação incorreto.');return}
+ await ativarCriador(k,e);await contaCriador(e,p);ACC.lastEmail=e;saveAcc();toast('Acesso de Criador recuperado neste aparelho');enterSession(e)}
 
 /* ---------- códigos e links gerados no Painel ---------- */
 const linkAtiv=c=>APP_URL+'#ativar='+c;
@@ -2326,7 +2364,7 @@ let _avisoSemProg=false;function confirmaSemProgresso(){if(_avisoSemProg)return 
 {const a=render;render=function(){
  if(NATIVO){if(page==='login'||!ACC.session){a();inserirTopo(`<div class="card" style="border:2px solid #d39b1f"><b>O MUSICALIS mudou para a versão web.</b><p class="sub">Entre na sua conta para levar seu progresso, ou remova este app.</p><button class="btn" onclick="removerAntigo()">Remover app antigo</button></div>`);return}transicao();nav();return}
  if(window.__irChave&&ACC.session&&!precisaCompletar()){window.__irChave=false;page='chave'}
- const P={chave,migrar,migrado,instalar};if(P[page]){if(!ACC.session&&page!=='instalar'){page='login';a();return}P[page]();nav();return}
+ const P={chave,migrar,migrado,instalar,recuperar};if(P[page]){if(!ACC.session&&!['instalar','recuperar'].includes(page)){page='login';a();return}P[page]();nav();return}
  a();if(['home','profile','welcome'].includes(page)&&ACC.session&&document.querySelector('#app .top'))inserirTopo((page==='welcome'?'':cardAppAntigo())+cardInstalar(page!=='home'));
  if(page==='login'&&!ACC.session&&!NATIVO&&!STANDALONE()){const f=document.querySelector('#app');if(f&&!f.querySelector('.inst-mini'))f.insertAdjacentHTML('beforeend',`<div class="card inst-mini" style="border:2px solid #2e8b57;margin-top:10px"><b>📲 Depois de entrar, instale o MUSICALIS na tela inicial</b><p class="tiny">Fica com ícone no celular, abre como app e funciona sem internet.</p><button class="btn alt" onclick="instalarPWA()">Como instalar</button></div>`)}
  if(page==='profile'&&ACC.session){const v=[...document.querySelectorAll('#app p')].find(p=>/Versão \d/.test(p.textContent));if(v){let n=0;v.onclick=()=>{if(++n>=5){n=0;go('chave')}}}}
