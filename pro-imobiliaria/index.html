@@ -1366,6 +1366,102 @@ function acessosHTML(){
     <p class="small muted" style="margin:0">Os dados ficam guardados em cada aparelho, sem servidor. Para levar de um aparelho a outro, use <b>Configurações → Exportar backup</b> e depois <b>Importar backup</b> no outro. Último backup: <b>${ub?new Date(ub).toLocaleDateString('pt-BR'):'nunca'}</b>.</p>
   </section>`;
 }
+
+/* ENTRADAS NO WHATSAPP (22/10/2026): link por canal com código + identificador da conversa antes de responder */
+const MEU_WA='5551984168848';
+const CANAIS=[
+ ['IG','Instagram (bio e perfil)','Instagram','Instagram'],['ST','Stories do Instagram','Instagram','Instagram'],['FB','Facebook / grupos','Facebook / grupos','Facebook'],
+ ['MK','Marketplace do Facebook','Facebook / grupos','Marketplace'],['OLX','Anúncio na OLX','OLX / portais','OLX / portais'],['GMN','Google (perfil da empresa)','Google','Google / site'],
+ ['SITE','Site da Innovar','Site Innovar','Site'],['STW','Status do WhatsApp','WhatsApp','WhatsApp'],['IND','Indicação / cartão de visita','Indicação','Indicação'],
+ ['QR','Placa, panfleto ou QR code','Outro','Outro'],['TT','TikTok','Outro','TikTok'],['YT','YouTube','Outro','YouTube'],['CONS','Consórcios (perfil de investimentos)','Instagram','Instagram']];
+const CANAL=Object.fromEntries(CANAIS.map(c=>[c[0],c]));
+const codNorm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,18);
+function waEntrada(cod,nome){const c=CANAL[cod.split('-')[0]];const onde=c?c[1].split(' (')[0]:'seu anúncio';const sobre=S.mod==='cons'?'consórcio':'imóveis';
+  return `https://wa.me/${MEU_WA}?text=${enc(`Olá, Anderson! Vi seu contato ${c?'no '+onde:'no '+(nome||'seu anúncio')} e quero saber mais sobre ${sobre}. (cód. ${cod})`)}`}
+function acharCodigo(t){const m=String(t||'').match(/c[óo]d(?:igo)?\.?\s*[:#]?\s*([A-Za-z0-9][A-Za-z0-9-]{1,17})/i);return m?m[1].toUpperCase():''}
+const ult8=f=>String(f||'').replace(/\D/g,'').slice(-8);
+function identificar(msg,fone){
+  const cod=acharCodigo(msg),c=cod?CANAL[cod.split('-')[0]]:null,u=ult8(fone);
+  const ach=u.length===8?[...(S.leads||[]),...(S.lixo||[])].filter(l=>ult8(l.fone)===u||ult8(l.fone2)===u):[];
+  return {cod,c,ach,u,msg,fone};
+}
+const PERG_ORIGEM='Oi! Que bom falar com você. Para eu te atender melhor, me conta: como chegou até o meu contato? Foi pelo Instagram, OLX, Google, indicação ou outro lugar?';
+function waResHTML(r){
+  if(!r)return '<p class="small muted" style="margin:0">Cole a primeira mensagem e o número de quem te chamou. O app mostra de onde veio antes de você responder.</p>';
+  const parts=[];
+  if(r.ach.length){r.ach.forEach(l=>parts.push(`<div class="wares ok"><p><b>Já é seu lead${l.lixeira?' (está na LIXEIRA)':''}:</b> ${esc(l.nome)}</p><p class="small">Etapa: ${esc(ETAPA[l.etapa]||l.etapa||'—')} · Origem: ${esc(redeLead(l)||l.origem||'—')}${linkFonte(l)?` · <a href="${esc(linkFonte(l))}" target="_blank" rel="noopener">De onde veio ↗</a>`:''}</p>${l.intencao?`<p class="small"><b>Intenção:</b> ${esc(l.intencao)}</p>`:''}<div class="row" style="gap:6px">${l.lixeira?'':`<button type="button" class="btn sm pri" data-edit="${l.id}">Abrir ficha</button>`}</div></div>`))}
+  if(r.c)parts.push(`<div class="wares ok"><p><b>Veio por: ${esc(r.c[1])}</b> (código ${esc(r.cod)})</p><p class="small muted">A pessoa usou o seu link de entrada desse canal.</p></div>`);
+  else if(r.cod)parts.push(`<div class="wares ok"><p><b>Veio pela campanha: ${esc(r.cod)}</b></p></div>`);
+  if(!r.ach.length&&!r.cod)parts.push(`<div class="wares warn"><p><b>Origem desconhecida.</b> Não é lead cadastrado e a mensagem não tem código de canal.</p><p class="small">Antes de oferecer qualquer coisa, pergunte de onde veio:</p><pre class="abpre">${esc(PERG_ORIGEM)}</pre><div class="row" style="gap:6px"><button type="button" class="btn sm" data-wacopyq="1">Copiar pergunta</button></div></div>`);
+  if(!r.ach.length)parts.push(`<div class="row" style="gap:6px"><button type="button" class="btn sm pri" data-wanovo="1">Cadastrar como lead novo</button></div>`);
+  return parts.join('');
+}
+let WAR=null;
+function entradasHTML(){
+  const camp=S.waCamp||'';const lst=[...CANAIS.filter(c=>S.mod==='cons'||c[0]!=='CONS').map(c=>[c[0],c[1]]),...(camp?[[codNorm(camp),'Campanha: '+camp]]:[])];
+  return `<section class="sec"><div class="wabox">
+    <div style="display:grid;gap:10px;min-width:0"><h3>Chegou conversa no WhatsApp?</h3>
+      <p class="small muted" style="margin:0">Antes de responder, identifique de onde ela veio.</p>
+      <label>Primeira mensagem recebida<textarea id="waMsg" placeholder="Cole aqui a mensagem que chegou">${esc(WAR?WAR.msg:'')}</textarea></label>
+      <div class="row" style="gap:8px;align-items:flex-end"><label style="flex:1;min-width:160px">Número de quem chamou<input type="tel" id="waFone" value="${esc(WAR?WAR.fone:'')}" placeholder="(51) 9xxxx-xxxx"></label><button type="button" class="btn pri" data-waid="1">Identificar origem</button></div>
+      <div id="waRes" style="display:grid;gap:8px">${waResHTML(WAR)}</div>
+    </div>
+    <div style="display:grid;gap:10px;min-width:0;align-content:start"><h3>Seus links de entrada</h3>
+      <p class="small muted" style="margin:0">Use um link diferente em cada lugar onde divulga o seu WhatsApp. A mensagem já chega com o código do canal.</p>
+      <label>Campanha ou anúncio específico (opcional)<input type="text" id="waCamp" value="${esc(camp)}" placeholder="ex.: OLX casa Rincão"></label>
+      <div class="walinks">${lst.map(([c,n])=>`<div class="walink"><b>${esc(c)}</b><span>${esc(n)}</span><button type="button" class="btn sm" data-walink="${esc(c)}">Copiar link</button></div>`).join('')}</div>
+    </div></div></section>`;
+}
+document.addEventListener('input',e=>{if(e.target.id==='waCamp'){S.waCamp=e.target.value;clearTimeout(S._wct);S._wct=setTimeout(()=>{const p=e.target.selectionStart;render();const el=$('#waCamp');if(el){el.focus();try{el.setSelectionRange(p,p)}catch(x){}}},700)}});
+document.addEventListener('click',e=>{
+  const t=e.target;if(!t.closest)return;
+  if(t.closest('[data-waid]')){WAR=identificar($('#waMsg').value,$('#waFone').value);$('#waRes').innerHTML=waResHTML(WAR);return}
+  const wl=t.closest('[data-walink]');if(wl){copy(waEntrada(wl.dataset.walink,S.waCamp));toast('Link copiado. Cole no '+((CANAL[wl.dataset.walink]||[])[1]||'anúncio'));return}
+  if(t.closest('[data-wacopyq]')){copy(PERG_ORIGEM);toast('Pergunta copiada');return}
+  if(t.closest('[data-wanovo]')&&WAR){const c=WAR.c;const pre={fone:WAR.fone,origem:c?c[2]:(WAR.cod?'Outro':'WhatsApp'),rede:c?c[3]:'WhatsApp',intencao:WAR.msg?'Primeira mensagem no WhatsApp: '+WAR.msg:'',etapa:WAR.cod||WAR.ach.length?'novo':'naoclass',tags:'Entrada WhatsApp'+(WAR.cod?' '+WAR.cod:''),acao:'Responder a conversa',externo:false};
+    openLead(null,pre);return}
+});
+/* SEGURANÇA E BACKUP */
+const BACKUP_DRIVE='https://drive.google.com/drive/folders/1rlbL4NoPI2JayWAcSFtwsRdroZ71-vfk';
+function segurancaHTML(){
+  if(S.role==='owner')return `<section class="sec"><div class="sec-head"><h2>Segurança e backup</h2></div><div class="panel segbox">
+    <ul><li><b>Acesso:</b> o app é privado no claude.ai. Só abre com a sua conta e as contas que você convidar pelo botão Compartilhar.</li>
+    <li><b>Banco de leads:</b> leitura e gravação só para administradores do app. Visitantes não leem nem gravam nada.</li>
+    <li><b>Exclusões:</b> tudo vai para a Lixeira com confirmação. Só você pode excluir definitivamente.</li>
+    <li><b>Estações:</b> cada co-criador vê só a própria modalidade e não exclui nada de vez.</li>
+    <li><b>Backups:</b> cópia diária no seu Google Drive, compartilhada para leitura com os dois e-mails das estações.</li></ul>
+    <div class="row" style="gap:8px"><a class="btn sm pri" href="${BACKUP_DRIVE}" target="_blank" rel="noopener">Abrir pasta de backups no Drive</a><button type="button" class="btn sm" data-act="instalar">Exportar backup completo (.json)</button></div>
+  </div></section>`;
+  return `<section class="sec"><div class="sec-head"><h2>Regras de uso desta estação</h2></div><div class="panel segbox"><ul>
+    <li>Use os dados só para atender os clientes da Innovar. Não copie, não exporte e não repasse listas de clientes.</li>
+    <li>Não apague leads: use Inativar ou mande para a Lixeira. Só o administrador exclui de vez.</li>
+    <li>Toda ação fica registrada no histórico do lead.</li>
+    <li>Mudanças no app, novas funções e acessos são feitos só pelo administrador (Anderson Alves).</li></ul></div></section>`;
+}
+/* PAINEL DE ABERTURA (22/10/2026) */
+const txtL=l=>[l.nome,l.empresa,l.intencao,l.notas,l.tags,l.anuncio,(l.intents&&l.intents.comprar||[]).join(' ')].join(' ').toLowerCase();
+const tipoIm=(l,t)=>{const x=txtL(l);return t==='casa'?/\b(casa|casas|sobrado|geminad)/.test(x):t==='apto'?/(apartamento|\bapto|\bap\b|kitnet|cobertura)/.test(x):/(terreno|\blote|ch[aá]cara|s[ií]tio)/.test(x)};
+const negIm=(l,n)=>{const i=leadIntents(l);return n==='compra'?!!i.comprar:n==='venda'?!!(i.vender||i.agenciar):!!i.alugar};
+const ativoL=l=>!['fechado','perdido','inativo'].includes(l.etapa);
+const GRUPOS={
+  incorp:{n:'Incorporadoras',f:l=>!!leadIntents(l).parceria||l.perfil==='Parceria imobiliária'||/incorpora|constru/i.test(l.profissao||'')&&leadMod(l)==='imob'},
+  cnpj:{n:'Empresas / CNPJ',f:l=>!!l.cnpj&&!(leadIntents(l).parceria||l.perfil==='Parceria imobiliária')},
+  mcmv:{n:'MCMV',f:l=>l.perfil==='Minha Casa Minha Vida'||((leadIntents(l).comprar||[]).includes('Minha Casa Minha Vida'))||/mcmv|minha casa minha vida/i.test(txtL(l))},
+  naoid:{n:'Visitantes não identificados',f:l=>l.etapa==='naoclass'}
+};
+['casa','apto','terreno'].forEach(t=>['compra','venda','aluguel'].forEach(n=>{GRUPOS[t+':'+n]={n:({casa:'Casas',apto:'Apartamentos',terreno:'Terrenos'})[t]+' · '+({compra:'Compra',venda:'Venda',aluguel:'Aluguel'})[n],f:l=>leadMod(l)==='imob'&&tipoIm(l,t)&&negIm(l,n)}}));
+const baseGrupo=()=>(S.role==='owner'?(S.leads||[]):leadsMod()).filter(ativoL);
+function painelHTML(){
+  const B=baseGrupo(),c=k=>B.filter(GRUPOS[k].f).length;
+  const card=(k,lbl)=>`<button type="button" class="pcard" data-grupo="${k}"><span class="pl">${lbl}</span><span class="pn">${c(k)}<small> leads</small></span></button>`;
+  const multi=(t,lbl)=>`<div class="pcard sub"><span class="pl">${lbl}</span><div class="prows">${[['compra','Compra'],['venda','Venda'],['aluguel','Aluguel']].map(([n,nl])=>`<button type="button" data-grupo="${t}:${n}"><span>${nl}</span><b>${c(t+':'+n)}</b></button>`).join('')}</div></div>`;
+  return `<section class="sec">
+    <div class="sec-head"><div><p class="eyebrow">Página de abertura</p><h2>Agenda de hoje</h2></div><span class="small muted">Toque em um quadro para ver a lista.</span></div>
+    <div class="painel">${card('incorp','Incorporadoras')}${card('cnpj','Empresas / CNPJ')}${card('mcmv','MCMV')}${multi('casa','Interesse em casas')}${multi('apto','Interesse em apartamentos')}${multi('terreno','Interesse em terrenos')}<button type="button" class="pcard wide" data-grupo="naoid"><span class="pl">Visitantes não identificados</span><span class="pn">${c('naoid')}<small> a identificar</small></span></button></div>
+  </section>`;
+}
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('[data-grupo]');if(!g)return;S.grupoF=g.dataset.grupo;S.tab='leads';S.leadView='cartoes';S.busca='';S.redeF='';render();window.scrollTo(0,0)});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-gfx]')){S.grupoF='';renderLeadArea()}});
 function vHoje(){
   const sem=semanaAtual(),ver=S.semanaVer||sem,SEM=SEMANAS[S.mod],W=SEM[ver-1],ROT=ROTINAS[S.mod];
   const exemplo=leadsMod().some(l=>l.exemplo);
