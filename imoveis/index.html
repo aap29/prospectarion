@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Imóveis e Investimentos RS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Casas, apartamentos, terrenos e lançamentos em São Leopoldo, Sapucaia do Sul, Canoas, Novo Hamburgo e região metropolitana de Porto Alegre. Atendimento de Anderson Alves, corretor da Innovar Imobiliária.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: portal de busca — barra fixa, busca no topo, vitrines horizontais, grade de resultados e ficha do imóvel em rota própria */
+:root{
+  --navy:#00102A; --royal:#1C3087; --orange:#E98018; --orange-ink:#ffffff;
+  --bg:#F4F6FB; --surface:#FFFFFF; --surface-2:#EBEFF8; --line:#D5DCEB; --fg:#0D1B33; --muted:#5A6782;
+  --ok:#1F8A4C; --hot:#C2410C;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px; --shadow:0 6px 24px rgba(0,16,42,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#070E1C; --surface:#0E1A30; --surface-2:#15233F; --line:#24365A; --fg:#E8EEFA; --muted:#9AA8C4; --royal:#6F8BFF; --shadow:0 6px 24px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#070E1C; --surface:#0E1A30; --surface-2:#15233F; --line:#24365A; --fg:#E8EEFA; --muted:#9AA8C4; --royal:#6F8BFF; --shadow:0 6px 24px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--navy)}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.2px}
+h2{font-size:clamp(26px,3.4vw,34px);font-weight:800;text-transform:uppercase}
+.eyebrow{font-family:var(--f-display);font-weight:700;letter-spacing:1.6px;text-transform:uppercase;font-size:13px;color:var(--orange);margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:10px 18px;font-weight:600;cursor:pointer;text-decoration:none;min-height:44px}
+.btn:hover{border-color:var(--royal)}
+.btn.pri{background:var(--royal);border-color:var(--royal);color:#fff}
+.btn.or{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.btn.sm{padding:6px 14px;min-height:36px;font-size:13.5px}
+.btn.ghost{background:transparent}
+
+/* HEADER */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--navy);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;min-width:0}
+.brand .mk{width:38px;height:38px;flex:none}
+.brand b{font-family:var(--f-display);font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;display:block;line-height:1}
+.brand span{font-size:11.5px;opacity:.75;letter-spacing:.3px}
+.nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:500;font-size:14px}
+.nav a:hover,.nav a[aria-current="page"]{background:rgba(255,255,255,.12)}
+.nav .wa{background:var(--orange);color:#fff}
+@media (max-width:860px){.nav a:not(.wa){display:none}.nav{margin-left:auto}.top .wrap{flex-wrap:nowrap}.brand b{font-size:17px}.brand span{font-size:10.5px}.brand .mk{width:32px;height:32px}.nav .wa{padding:8px 12px}}
+
+/* HERO */
+.hero{background:linear-gradient(180deg,var(--navy) 0 62%,var(--bg) 62%)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:28px;padding-block:28px 8px;align-items:end}
+.hero h1{color:#fff;font-size:clamp(38px,6vw,64px);font-weight:800;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p.lead{color:#C9D3EA;max-width:52ch;margin:10px 0 18px}
+.search{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:18px;display:grid;gap:12px;border:1px solid var(--line)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;padding:10px 14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;color:var(--muted)}
+.tabs button[aria-pressed="true"]{color:var(--royal);border-color:var(--royal)}
+.sgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:10px;align-items:end}
+label{display:grid;gap:4px;font-size:12.5px;font-weight:600;color:var(--muted)}
+input,select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 12px;min-height:44px;width:100%}
+textarea{min-height:90px;resize:vertical}
+.agent{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+.agent img{width:84px;height:84px;border-radius:50%;object-fit:cover;flex:none;border:3px solid var(--orange)}
+.agent b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;display:block;line-height:1.05}
+.agent .row{margin-top:8px}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}.sgrid{grid-template-columns:1fr 1fr}.sgrid .go{grid-column:1/-1}.hero{background:linear-gradient(180deg,var(--navy) 0 48%,var(--bg) 48%)}}
+@media (max-width:420px){.sgrid{grid-template-columns:1fr}}
+
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+section.blk{padding-block:34px}
+.blk-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+
+/* CARROSSEL + CARDS */
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,290px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+.rail>*{scroll-snap-align:start}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .ph{position:relative;aspect-ratio:4/3;background:var(--surface-2);max-width:100%}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.card .tag{position:absolute;left:10px;top:10px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px}
+.card .fav{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);cursor:pointer;display:grid;place-items:center;color:#9A2B2B}
+.card .fav[aria-pressed="true"] svg{fill:#C62828}
+.card .bd{padding:14px;display:grid;gap:6px;flex:1}
+.price{font-family:var(--f-display);font-size:28px;font-weight:800;line-height:1}
+.price small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted)}
+.feats{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.feats span{display:inline-flex;gap:4px;align-items:center}
+.loc{font-weight:600;font-size:14px}
+.card .act{display:grid;grid-template-columns:1fr auto;gap:8px;padding:0 14px 14px}
+.card a.cover{text-decoration:none;color:inherit;display:contents}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+
+/* CIDADES / ESTILO */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500;text-decoration:none}
+.chip b{color:var(--royal);margin-left:4px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--royal);color:#fff;border-color:var(--royal)}.chip[aria-pressed="true"] b{color:#fff}
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.style{border-radius:var(--r);padding:18px;background:var(--surface);border:1px solid var(--line);cursor:pointer;text-align:left;display:grid;gap:6px}
+.style h3{font-size:24px;text-transform:uppercase}
+.style:hover{border-color:var(--orange)}
+
+/* BUSCA */
+.results{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
+.fwrap>summary::-webkit-details-marker{display:none}
+@media (min-width:861px){.fwrap>summary{display:none}}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+@media (max-width:860px){.results{grid-template-columns:1fr}.filters{position:static}}
+
+/* FICHA */
+.gal{display:grid;grid-template-columns:2fr 1fr;gap:8px;border-radius:18px;overflow:hidden}
+.gal img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
+.gal .main{aspect-ratio:4/3}
+.gal .side{display:grid;gap:8px}
+.gal .side img{aspect-ratio:4/3}
+@media (max-width:700px){.gal{grid-template-columns:1fr}.gal .side{grid-template-columns:1fr 1fr}}
+.thumbs{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+.thumbs button{border:2px solid transparent;border-radius:10px;padding:0;overflow:hidden;width:86px;height:64px;flex:none;cursor:pointer;background:none}
+.thumbs button[aria-pressed="true"]{border-color:var(--orange)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.detail{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;margin-top:20px;align-items:start}
+@media (max-width:900px){.detail{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.side-cta{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);display:grid;gap:10px}
+.specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:14px}
+.spec{background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.spec b{display:block;font-family:var(--f-display);font-size:24px;font-variant-numeric:tabular-nums}
+.spec span{font-size:12.5px;color:var(--muted)}
+.crumb{font-size:13px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;margin-block:16px}
+.crumb a{text-decoration:none;color:var(--royal);cursor:pointer}
+
+/* SIMULADOR / CONSÓRCIO */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.sim{display:grid;gap:12px}
+.simgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.out{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px;display:grid;gap:4px}
+.out b{font-family:var(--f-display);font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.out .small{color:#C9D3EA}
+.cons{background:linear-gradient(120deg,var(--navy),#0B2357);color:#fff;border-radius:22px;padding:26px;display:grid;gap:14px;position:relative;overflow:hidden}
+.cons h2{color:#fff}
+.cons p{color:#C9D3EA;max-width:56ch;margin:0}
+.cons .arrow{position:absolute;right:-30px;bottom:-30px;width:220px;opacity:.9}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,10,30,.55);z-index:80;display:grid;place-items:center;padding:16px}
+.dlg{background:var(--surface);color:var(--fg);border-radius:20px;max-width:520px;width:100%;max-height:calc(100% - 20px);overflow:auto;padding:22px;display:grid;gap:12px}
+.ck{display:flex;gap:10px;align-items:flex-start;font-weight:400;color:var(--fg);font-size:13px}
+.ck input{width:20px;height:20px;min-height:0;flex:none;margin-top:2px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:12px 18px;border-radius:999px;z-index:90;max-width:calc(100% - 32px)}
+.fwa{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;width:58px;height:58px;border-radius:50%;background:#1FA855;display:grid;place-items:center;box-shadow:var(--shadow)}
+
+footer{background:var(--navy);color:#C9D3EA;margin-top:30px}
+footer .wrap{padding-block:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+footer h3{color:#fff;font-size:18px;text-transform:uppercase;margin-bottom:8px}
+footer a{color:#C9D3EA;text-decoration:none;display:block;padding:3px 0;cursor:pointer}
+footer .legal{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;font-size:12.5px}
+.creci{font-size:13px}
+
+/* ===== RESPONSIVO v2: celular, tablet, notebook e monitor ===== */
+.brand>div{min-width:0}
+.brand b,.brand span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand span{font-size:12px}
+.menu-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:transparent;color:#fff;place-items:center;cursor:pointer;flex:none;padding:0}
+.drawer{position:fixed;inset:0;z-index:85;display:grid;grid-template-columns:1fr min(86vw,340px)}
+.drawer .scrim{background:rgba(0,10,30,.55);border:0;cursor:pointer}
+.drawer nav{background:var(--navy);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:2px;overflow:auto}
+.drawer .dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.drawer .dh b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.5px}
+.drawer .dh .menu-btn{display:grid}
+.drawer nav a{color:#fff;text-decoration:none;font-weight:500;font-size:16px;padding:10px 14px;border-radius:12px;min-height:48px;display:flex;align-items:center;cursor:pointer}
+.drawer nav a:hover{background:rgba(255,255,255,.1)}
+.drawer nav hr{border:0;border-top:1px solid rgba(255,255,255,.14);margin:8px 0;width:100%}
+.drawer nav .wa{background:var(--orange);justify-content:center;margin-top:12px;font-weight:600}
+body.menu-open{overflow:hidden}
+@media (max-width:1080px){.nav a:not(.wa){display:none}.menu-btn{display:grid}.top .wrap{flex-wrap:nowrap;gap:10px}}
+@media (max-width:400px){.brand b{font-size:15.5px}.brand span{font-size:11.5px}.brand .mk{width:28px;height:28px}.brand{gap:8px}}
+@media (max-width:374px){.nav .wa{display:none}}
+/* hero: números à direita no notebook */
+.hero .wrap{align-items:stretch}
+.hside{display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-width:0}
+.hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.hstats div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 12px;color:#fff;min-width:0}
+.hstats b{font-family:var(--f-display);font-size:clamp(28px,3vw,38px);font-weight:800;line-height:1;display:block;font-variant-numeric:tabular-nums}
+.hstats span{font-size:12.5px;color:#C9D3EA;display:block;margin-top:4px;line-height:1.3}
+.agent>div{min-width:0}.agent .small{display:block}
+@media (max-width:860px){.hside{gap:14px}.hstats{margin-top:0}.hstats div{background:var(--surface);border-color:var(--line);color:var(--fg)}.hstats span{color:var(--muted)}}
+@media (max-width:480px){.agent{align-items:flex-start}.agent img{width:66px;height:66px}.agent b{font-size:20px}.agent .row .btn{flex:1 1 auto}.hstats{gap:8px}.hstats div{padding:12px 10px}}
+/* abas da busca sem quebra */
+.tabs button{white-space:nowrap}
+@media (max-width:480px){.tabs{display:grid;grid-template-columns:repeat(3,1fr)}.tabs button{padding:10px 4px;font-size:14px}.search{padding:14px}}
+/* cards sem foto */
+.noimg{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;background:linear-gradient(135deg,var(--navy),var(--royal));color:#fff;font-size:12.5px;font-weight:500;text-align:center;padding:12px}
+.noimg svg{width:44px;height:44px}
+/* vitrines com setas no notebook */
+.railw{position:relative}
+.rb{display:none}
+@media (min-width:1024px) and (hover:hover){.rb{display:grid;place-items:center;position:absolute;top:calc(50% - 40px);z-index:3;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);box-shadow:var(--shadow);cursor:pointer;padding:0}.rb:hover{border-color:var(--royal);color:var(--royal)}.rb.prev{left:8px}.rb.next{right:8px}.rb[disabled]{opacity:0;pointer-events:none}}
+.rail{scroll-padding-inline:0;overscroll-behavior-x:contain}
+@media (max-width:480px){.rail{grid-auto-columns:minmax(78%,1fr);gap:12px}}
+/* chips e textos longos */
+.chip{text-align:left;line-height:1.35}
+.blk-head h2{min-width:0}
+.blk-head .btn{flex:none}
+.loc,.card .bd .small{overflow-wrap:anywhere}
+/* consórcio: seta decorativa atrás do texto */
+.cons>*:not(.arrow){position:relative;z-index:1}
+@media (max-width:860px){.cons{padding:20px}.cons .arrow{width:140px;opacity:.25}}
+/* ficha do imóvel no celular */
+.mprice,.mbar{display:none}
+@media (max-width:900px){
+ .mprice{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;margin-top:12px}
+ .mbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--surface);border-top:1px solid var(--line);padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));box-shadow:0 -6px 20px rgba(0,16,42,.10)}
+ .mbar .btn{min-height:48px;padding-inline:10px}
+ body.has-mbar .fwa{display:none}
+ body.has-mbar footer{padding-bottom:76px}
+ body.has-mbar .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+ .side-cta{position:static}
+}
+@media (max-width:700px){.gal{border-radius:14px}.gal .main{aspect-ratio:4/3}}
+@media (max-width:480px){.gal .side{display:none}.specs{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:16px}}
+/* simulador */
+@media (max-width:360px){.simgrid{grid-template-columns:1fr}}
+/* botão flutuante e rodapé */
+@media (max-width:600px){.fwa{width:52px;height:52px;right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px))}.fwa svg{width:26px;height:26px}footer .wrap{padding-bottom:84px}}
+@media (max-width:860px){footer a{padding:9px 0}footer .wrap{gap:14px}}
+@media (max-width:380px){.hstats{gap:6px}.hstats div{padding:10px 7px}.hstats b{font-size:26px}.hstats span{font-size:11.5px}}
+@media (max-width:480px){.nav .wa{display:none}}
+@media (max-width:360px){.brand b{font-size:15px}.brand span{font-size:11px}}
+@media (min-width:861px) and (max-width:1180px){.sgrid{grid-template-columns:1fr 1fr}.sgrid .go{grid-column:auto}}
+.card .tag{font-size:12px}
+.crumb a{display:inline-block;padding:8px 0;margin:-8px 0}
+@media (max-width:400px){.brand span{font-size:12px}}
+
+/* ===== ISCA DIGITAL: quanto a CAIXA financia / alerta de imóvel ===== */
+.iscab{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;background:linear-gradient(120deg,var(--royal),#0B2357);color:#fff;border-radius:20px;padding:22px 24px}
+.iscab h2{color:#fff;font-size:clamp(24px,3vw,32px)}.iscab p{margin:6px 0 0;color:#C9D3EA;max-width:60ch}
+.iscab .row{justify-content:flex-end}
+@media (max-width:700px){.iscab{grid-template-columns:1fr}.iscab .row{justify-content:flex-start}.iscab .btn{flex:1 1 100%}}
+.isca{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px;align-items:start}
+@media (max-width:900px){.isca{grid-template-columns:1fr}}
+.isca form{display:grid;gap:14px}
+.qgrp{display:grid;gap:6px}.qgrp>span{font-size:12.5px;font-weight:600;color:var(--muted)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px;min-height:44px;font-weight:600;cursor:pointer;color:var(--fg)}
+.opts button[aria-pressed="true"]{background:var(--royal);border-color:var(--royal);color:#fff}
+.q2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.q2{grid-template-columns:1fr}}
+.res{display:grid;gap:12px}
+.resbox{background:var(--navy);color:#fff;border-radius:18px;padding:20px;display:grid;gap:10px}
+.resbox .big{font-family:var(--f-display);font-size:clamp(34px,5vw,46px);font-weight:800;line-height:1}
+.resbox .small{color:#C9D3EA}
+.reslist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.reslist div{background:rgba(255,255,255,.08);border-radius:12px;padding:10px}
+.reslist b{display:block;font-family:var(--f-display);font-size:22px}
+.reslist span{font-size:12px;color:#C9D3EA}
+@media (max-width:420px){.reslist{grid-template-columns:1fr 1fr}}
+.gate{border:2px solid var(--orange);border-radius:18px;padding:18px;display:grid;gap:10px;background:var(--surface)}
+.gate h3{font-size:24px;text-transform:uppercase}
+.minirail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.minirail{grid-template-columns:1fr}}
+/* telas grandes */
+@media (min-width:1600px){.wrap{max-width:1320px}body{font-size:16px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<meta property="og:title" content="Imóveis e Investimentos RS · Anderson Alves">
+<meta property="og:description" content="Casas, apartamentos, terrenos e lançamentos na região metropolitana de Porto Alegre, com simulação e atendimento direto do corretor.">
+<meta property="og:image" content="retrato.jpg">
+<meta name="theme-color" content="#00102A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%2300102A'/%3E%3Cpath d='M6 21 20 9l14 12' fill='none' stroke='%23fff' stroke-width='3.4'/%3E%3Cpath d='M16 29l7-7m0 0h-5m5 0v5' fill='none' stroke='%23E98018' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#inicio" data-go="inicio" aria-label="Imóveis e Investimentos RS, início">
+    <svg class="mk" viewBox="0 0 40 40" aria-hidden="true"><path d="M4 22 20 7l16 15" fill="none" stroke="#fff" stroke-width="3.4" stroke-linejoin="round"/><path d="M10 20v14h20V20" fill="none" stroke="#fff" stroke-width="3.4"/><path d="M16 30l7-7m0 0h-5m5 0v5" fill="none" stroke="#E98018" stroke-width="3" stroke-linecap="round"/></svg>
+    <div><b>Imóveis &amp; Investimentos RS</b><span>Anderson Alves · Corretor Innovar</span></div>
+  </a>
+  <nav class="nav" aria-label="Principal">
+    <a href="#comprar" data-go="busca" data-tr="venda">Comprar</a>
+    <a href="#alugar" data-go="busca" data-tr="aluguel">Alugar</a>
+    <a href="#lancamentos" data-go="lancamentos">Lançamentos</a>
+    <a href="./guias/">Guias</a>
+    <a href="#descubra" data-go="descubra">Quanto posso financiar</a>
+    <a href="#consorcio" data-go="consorcio">Consórcio</a>
+    <a class="wa" href="#" data-wa="geral">WhatsApp</a>
+  </nav>
+  <button class="menu-btn" type="button" data-menu="1" aria-label="Abrir menu" aria-expanded="false" aria-controls="drawer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div></header>
+<div class="drawer" id="drawer" hidden><button class="scrim" type="button" data-menu="0" aria-label="Fechar menu"></button>
+  <nav aria-label="Menu"><div class="dh"><b>Menu</b><button class="menu-btn" type="button" data-menu="0" aria-label="Fechar menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <a data-go="inicio">Início</a><a data-go="busca" data-tr="venda">Comprar</a><a data-go="busca" data-tr="aluguel">Alugar</a><a data-go="lancamentos">Lançamentos</a><a data-go="busca" data-tr="venda" data-max="275000">Até R$ 275 mil (MCMV)</a><a href="./guias/">Guias das cidades</a>
+    <hr><a data-go="descubra" data-neg="compra">Quanto a CAIXA financia para mim</a><a data-go="descubra" data-neg="aluguel">Quero alugar: me avise</a><a data-go="simular">Simular financiamento</a><a data-go="consorcio">Consórcio</a><a data-go="favoritos">Meus favoritos</a><a data-lead="vender">Quero vender meu imóvel</a>
+    <a class="wa" href="#" data-wa="geral">Conversar no WhatsApp</a></nav></div>
+
+<main id="app"><div class="wrap" style="padding-block:40px"><p class="muted">Carregando imóveis da região…</p></div></main>
+
+<footer><div class="wrap">
+  <div><h3>Imóveis &amp; Investimentos RS</h3><p class="small" style="margin:0">Casas, apartamentos, terrenos e lançamentos na região metropolitana de Porto Alegre, com atendimento direto do corretor.</p></div>
+  <div><h3>Encontre</h3><a data-go="busca" data-tr="venda">Comprar</a><a data-go="busca" data-tr="aluguel">Alugar</a><a data-go="lancamentos">Lançamentos</a><a data-go="busca" data-tr="venda" data-max="275000">Até R$ 275 mil (MCMV)</a><a data-go="favoritos">Meus favoritos</a><a href="./guias/" style="cursor:pointer">Guias das cidades</a></div>
+  <div><h3>Ferramentas</h3><a data-go="simular">Simular financiamento</a><a data-go="consorcio">Consórcio sem juros</a><a data-lead="vender">Quero vender meu imóvel</a><a data-lead="avaliar">Anunciar com a Innovar</a></div>
+  <div><h3>Contato</h3><p class="small" style="margin:0">Anderson Alves<br>Corretor de Imóveis · <span class="creci">CRECI-RS 057.384</span><br>WhatsApp <span style="user-select:all">(51) 98416-8848</span><br>Innovar Imobiliária · CRECI 25.520-J<br>Av. Feitoria, 178 · São Leopoldo/RS</p></div>
+  <p class="legal">Imóveis da carteira da Innovar Imobiliária, divulgados pelo corretor responsável. Valores e disponibilidade sujeitos a confirmação. <a data-go="privacidade" style="display:inline;text-decoration:underline">Política de privacidade</a></p>
+</div></footer>
+
+<a class="fwa" href="#" data-wa="geral" aria-label="Conversar no WhatsApp"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.6a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
+
+<div class="ov" id="leadOv" hidden><form class="dlg" id="leadForm" autocomplete="on">
+  <div class="row" style="justify-content:space-between"><div><p class="eyebrow" id="lfEye">Fale com o corretor</p><h2 id="lfTitle" style="font-size:28px">Quero visitar</h2></div><button type="button" class="btn sm ghost" id="lfClose">Fechar</button></div>
+  <p class="small muted" id="lfRef" style="margin:0"></p>
+  <label>Seu nome *<input id="lf_nome" name="nome" required autocomplete="name"></label>
+  <label>WhatsApp *<input id="lf_fone" name="fone" required inputmode="tel" autocomplete="tel" placeholder="(51) 9xxxx-xxxx"></label>
+  <label>E-mail<input id="lf_email" name="email" type="email" autocomplete="email"></label>
+  <label id="lfRendaW" hidden>Renda familiar mensal (para a simulação)<input id="lf_renda" inputmode="numeric" placeholder="ex.: 4.500"></label>
+  <label>Mensagem<textarea id="lf_msg" name="msg"></textarea></label>
+  <label class="ck"><input type="checkbox" id="lf_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária, a entrar em contato comigo sobre imóveis e consórcios. Posso pedir a exclusão dos meus dados a qualquer momento. <a data-go="privacidade" style="text-decoration:underline;cursor:pointer">Política de privacidade</a></span></label>
+  <button class="btn or" type="submit" id="lfSend">Enviar e falar no WhatsApp</button>
+  <p class="small muted" style="margin:0">Ao enviar, abrimos o WhatsApp com a sua mensagem pronta para o Anderson.</p>
+</form></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+/* ======== CONFIGURAÇÃO ======== */
+const CFG={
+  whats:'5551984168848',
+  corretor:'Anderson Alves',
+  creci:'CRECI-RS 057.384',
+  leadsUrl:(window.SITE_CFG&&window.SITE_CFG.leadsUrl)||'', /* a URL do Apps Script fica em config.js */
+  cidades:['São Leopoldo','Novo Hamburgo','Sapucaia do Sul','Portão','Estância Velha','Esteio','Canoas','Cachoeirinha','Gravataí','Viamão','Guaíba']
+};
+/* ======== UTIL ======== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl=v=>v?'R$ '+Number(v).toLocaleString('pt-BR',{maximumFractionDigits:0}):'';
+const mil=v=>{const d=String(v||'').replace(/\D/g,'');return d?Number(d).toLocaleString('pt-BR'):''};
+const num=v=>Number(String(v||'').replace(/\D/g,''))||0;
+const LS={get(k,d){try{const v=localStorage.getItem('iirs.'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('iirs.'+k,JSON.stringify(v))}catch(e){}}};
+
+/* ======== ORIGEM DO VISITANTE ======== */
+const ORIG=(()=>{let o=null;try{o=JSON.parse(sessionStorage.getItem('iirs.orig')||'null')}catch(e){}
+  const q=new URLSearchParams(location.search);
+  if(!o||q.get('utm_source')||q.get('gclid')){
+    let ref='';try{ref=document.referrer&&new URL(document.referrer).hostname!==location.hostname?document.referrer:''}catch(e){}
+    o={utm_source:q.get('utm_source')||(q.get('gclid')?'google':'')||(ref?new URL(ref).hostname.replace(/^www\./,''):'')||'direto',
+       utm_medium:q.get('utm_medium')||(q.get('gclid')?'cpc':ref?'referencia':''),utm_campaign:q.get('utm_campaign')||'',
+       termo:q.get('utm_term')||q.get('q')||q.get('termo')||'',anuncio:q.get('gclid')?'Google Ads':'',referrer:ref,entrada:location.href,quando:new Date().toISOString()};
+    try{sessionStorage.setItem('iirs.orig',JSON.stringify(o))}catch(e){}}
+  return o})();
+const origemTxt=()=>[ORIG.utm_source,ORIG.utm_medium,ORIG.utm_campaign].filter(Boolean).join(' / ')+(ORIG.termo?` · pesquisou "${ORIG.termo}"`:'');
+function enviarLead(lead){
+  Object.assign(lead,{origem:origemTxt(),utm_source:ORIG.utm_source,utm_medium:ORIG.utm_medium,utm_campaign:ORIG.utm_campaign,termo:ORIG.termo,referrer:ORIG.referrer,paginaEntrada:ORIG.entrada});
+  if(CFG.leadsUrl){try{fetch(CFG.leadsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(lead)}).catch(()=>{})}catch(err){}}
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,3200)}
+const ICO={q:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M5 10V6h14v4"/></svg>',b:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM6 12V5a2 2 0 0 1 4 0"/></svg>',g:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 16l1.5-5h11L19 16M5 16h14v3H5zM7 19v1M17 19v1"/></svg>',m:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM4 9h5M15 4v5"/></svg>',h:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>'};
+
+/* ======== DADOS ======== */
+let IM=[],LA=[],BY={};
+const S={rota:'inicio',tr:'venda',cid:'',tipo:'',max:0,min:0,q:0,ord:'rel',mostrar:24,cod:null,img:0};
+const precoDe=i=>S.tr==='aluguel'?i.a:i.v;
+const temTr=(i,tr)=>tr==='aluguel'?!!i.a:!!i.v;
+const tipoGrupo=t=>/apart|cobertura|kitnet|studio|flat|duplex|triplex/i.test(t)?'Apartamento':/casa|sobrado|geminado/i.test(t)?'Casa':/terreno|lote/i.test(t)?'Terreno':/sala|loja|pavilh|pr[ée]dio|comercial/i.test(t)?'Comercial':/s[ií]tio|ch[áa]cara/i.test(t)?'Rural':'Outros';
+function vistos(){return LS.get('vistos',[])}
+function favs(){return LS.get('favs',[])}
+
+/* ======== CARD ======== */
+const NOIMG=t=>`<div class="noimg"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 22 20 7l16 15" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M10 20v14h20V20" fill="none" stroke="#fff" stroke-width="3"/><path d="M16 30l7-7m0 0h-5m5 0v5" fill="none" stroke="#E98018" stroke-width="3" stroke-linecap="round"/></svg><span>${t}</span></div>`;
+function card(i,tr){
+  tr=tr||(i.v?'venda':'aluguel');const p=tr==='aluguel'?i.a:i.v,fav=favs().includes(i.c),img=(i.img[0]||[])[0]||'';
+  const feats=[i.m2?`<span>${ICO.m}${i.m2} m²</span>`:'',i.q?`<span>${ICO.q}${i.q}</span>`:'',i.bh?`<span>${ICO.b}${i.bh}</span>`:'',i.g?`<span>${ICO.g}${i.g}</span>`:''].join('');
+  return `<article class="card"><a class="cover" href="#imovel-${esc(i.c)}" data-imv="${esc(i.c)}"><div class="ph">${img?`<img loading="lazy" src="${esc(img)}" alt="${esc(i.t+' em '+i.b+', '+i.cid)}">`:NOIMG('Fotos com o corretor')}<span class="tag">${esc(i.t)}${i.mob===1?' · mobiliado':''}</span></div>
+  <div class="bd"><div class="price">${p?brl(p):'Consulte'}${tr==='aluguel'?'<small> /mês</small>':''}</div>${tr==='aluguel'&&i.at&&i.at!==i.a?`<span class="small muted">Total com encargos ${brl(i.at)}</span>`:''}
+  <div class="feats">${feats}</div><div class="loc">${esc(i.b)}${i.b?', ':''}${esc(i.cid)}</div><span class="small muted">Cód. ${esc(i.c)}</span></div></a>
+  <div class="act"><button class="btn pri sm" type="button" data-lead="contato" data-cod="${esc(i.c)}">Contatar</button><button class="btn sm ghost" type="button" data-fav="${esc(i.c)}" aria-pressed="${fav}" aria-label="Favoritar">${fav?'♥':'♡'}</button></div></article>`;
+}
+const RB='<button class="rb prev" type="button" data-rb="-1" aria-label="Anteriores"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>',RN='<button class="rb next" type="button" data-rb="1" aria-label="Próximos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+const railW=h=>`<div class="railw">${RB}<div class="rail">${h}</div>${RN}</div>`;
+const rail=(lista,tr)=>lista.length?railW(lista.map(i=>card(i,tr)).join('')):'';
+
+/* ======== INÍCIO ======== */
+function vInicio(){
+  const vs=vistos().map(c=>BY[c]).filter(Boolean).slice(0,12);
+  const base=vs[0];
+  const parecidos=base?IM.filter(i=>i.c!==base.c&&i.cid===base.cid&&tipoGrupo(i.t)===tipoGrupo(base.t)&&i.v&&base.v&&Math.abs(i.v-base.v)/base.v<.35).slice(0,12):[];
+  const novos=IM.filter(i=>i.v).sort((a,b)=>Number(b.c)-Number(a.c)).slice(0,12);
+  const cnt=c=>IM.filter(i=>i.cid===c).length;
+  const est=[['Primeiro imóvel','Até R$ 275 mil, com Minha Casa Minha Vida e FGTS.',{max:275000}],['Casas com pátio','Casas e sobrados para a família crescer.',{tipo:'Casa'}],['Apartamentos','Perto do centro, do trem e do trabalho.',{tipo:'Apartamento'}],['Alto padrão','Acima de R$ 900 mil, com acabamento superior.',{min:900000}],['Terrenos','Para construir do seu jeito ou investir.',{tipo:'Terreno'}],['Para investir','Imóveis comerciais e salas para renda.',{tipo:'Comercial'}]];
+  window._EST=est;
+  return `<section class="hero"><div class="wrap">
+    <div style="display:grid;gap:6px"><p class="eyebrow">Região metropolitana de Porto Alegre</p><h1>Seu imóvel no Vale dos Sinos e na <em>Grande Porto Alegre</em></h1>
+      <p class="lead">${IM.length} imóveis da Innovar em São Leopoldo, Sapucaia do Sul, Canoas, Novo Hamburgo e região, com simulação na hora e atendimento direto do corretor.</p>
+      ${buscaBox()}</div>
+    <div class="hside"><div class="hstats"><div><b>${IM.length}</b><span>imóveis na carteira</span></div><div><b>${CFG.cidades.filter(c=>cnt(c)).length}</b><span>cidades atendidas</span></div><div><b>${LA.length}</b><span>lançamentos</span></div></div>
+    <div class="agent"><img src="retrato.jpg" alt="Anderson Alves, corretor"><div><b>Anderson Alves</b><span class="small muted">Estrategista Patrimonial</span><span class="small muted">Corretor Innovar · ${esc(CFG.creci)}</span><div class="row"><a class="btn sm or" href="#" data-wa="geral">WhatsApp</a><button class="btn sm" type="button" data-lead="avaliar">Anunciar meu imóvel</button></div></div></div></div>
+  </div></section>
+  ${iscaBanner()}
+  ${vs.length?`<section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Para você</p><h2>Vistos recentemente</h2></div></div>${rail(vs)}</div></section>`:''}
+  ${parecidos.length?`<section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Baseado no que você viu</p><h2>Parecidos em ${esc(base.cid)}</h2></div></div>${rail(parecidos)}</div></section>`:''}
+  <section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Recém-chegados</p><h2>Novidades na carteira</h2></div><button class="btn sm" data-go="busca" data-tr="venda">Ver todos</button></div>${rail(novos,'venda')}</div></section>
+  <section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Explore por cidade</p><h2>Onde você quer morar?</h2></div></div>
+    <div class="chips">${CFG.cidades.map(c=>`<button class="chip" data-go="busca" data-tr="venda" data-cid="${esc(c)}">${esc(c)}<b>${cnt(c)}</b></button>`).join('')}</div></div></section>
+  <section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Encontre pelo seu momento</p><h2>O imóvel ideal para o seu estilo de vida</h2></div></div>
+    <div class="styles">${est.map((e,k)=>`<button class="style" data-est="${k}"><h3>${esc(e[0])}</h3><span class="small muted">${esc(e[1])}</span></button>`).join('')}</div></div></section>
+  <section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Imóvel novo</p><h2>Lançamentos e empreendimentos</h2></div><button class="btn sm" data-go="lancamentos">Ver lançamentos</button></div>${railLanc(LA.slice(0,10))}</div></section>
+  <section class="blk"><div class="wrap two">${vSimBox()}${vConsBox()}</div></section>
+  <section class="blk"><div class="wrap"><div class="blk-head"><div><p class="eyebrow">Mais procurados</p><h2>Buscas populares</h2></div></div>
+    <div class="chips">${[['Apartamentos à venda em São Leopoldo',{tipo:'Apartamento',cid:'São Leopoldo'}],['Casas à venda em São Leopoldo',{tipo:'Casa',cid:'São Leopoldo'}],['Imóveis em Sapucaia do Sul',{cid:'Sapucaia do Sul'}],['Apartamentos em Canoas',{tipo:'Apartamento',cid:'Canoas'}],['Casas em Novo Hamburgo',{tipo:'Casa',cid:'Novo Hamburgo'}],['Até R$ 250 mil',{max:250000}],['Terrenos em São Leopoldo',{tipo:'Terreno',cid:'São Leopoldo'}],['Imóveis para alugar',{tr:'aluguel'}]].map(([t,f],k)=>`<button class="chip" data-pop="${k}">${esc(t)}</button>`).join('')}</div></div></section>`;
+}
+function buscaBox(){
+  return `<form class="search" id="sForm" role="search">
+    <div class="tabs" role="group" aria-label="Tipo de negócio">${[['venda','Comprar'],['aluguel','Alugar'],['lanc','Imóvel novo']].map(([k,l])=>`<button type="button" data-str="${k}" aria-pressed="${S.tr===k}">${l}</button>`).join('')}</div>
+    <div class="sgrid"><label>Cidade<select id="s_cid"><option value="">Todas da região</option>${CFG.cidades.map(c=>`<option ${S.cid===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+    <label>Tipo de imóvel<select id="s_tipo"><option value="">Todos os imóveis</option>${['Apartamento','Casa','Terreno','Comercial','Rural'].map(t=>`<option ${S.tipo===t?'selected':''}>${t}</option>`).join('')}</select></label>
+    <label>Até quanto?<select id="s_max"><option value="0">Qualquer valor</option>${(S.tr==='aluguel'?[1500,2500,4000,7000]:[200000,275000,400000,600000,900000,1500000]).map(v=>`<option value="${v}" ${S.max===v?'selected':''}>${brl(v)}</option>`).join('')}</select></label>
+    <button class="btn or go" type="submit">Buscar</button></div></form>`;
+}
+function railLanc(l){return l.length?railW(l.map(cardLanc).join('')):'<div class="empty">Sem lançamentos no momento.</div>'}
+function cardLanc(e){
+  const p=e.pmin?(e.pmax&&e.pmax!==e.pmin?`${brl(e.pmin)} a ${brl(e.pmax)}`:`A partir de ${brl(e.pmin)}`):'Consulte valores';
+  const dq=e.q?(e.q[0]===e.q[1]?`${e.q[0]} dorm.`:`${e.q[0]} a ${e.q[1]} dorm.`):'';
+  return `<article class="card"><div class="ph">${e.img[0]?`<img loading="lazy" src="${esc(e.img[0])}" alt="${esc(e.n)}">`:NOIMG('Fotos na ficha do empreendimento')}<span class="tag">${esc(e.st||'Lançamento')}</span></div>
+  <div class="bd"><h3 style="font-size:24px;text-transform:uppercase">${esc(e.n)}</h3><div class="loc">${esc(e.end)}</div><div class="feats">${dq?`<span>${ICO.q}${esc(dq)}</span>`:''}</div><span style="font-weight:600">${p}</span></div>
+  <div class="act"><button class="btn pri sm" data-lead="lancamento" data-lanc="${e.id}">Quero saber mais</button><a class="btn sm ghost" href="${esc(e.u)}" target="_blank" rel="noopener">Ficha</a></div></article>`;
+}
+
+/* ======== BUSCA ======== */
+function filtrar(){
+  let L=IM.filter(i=>temTr(i,S.tr));
+  if(S.cid)L=L.filter(i=>i.cid===S.cid);
+  if(S.tipo)L=L.filter(i=>tipoGrupo(i.t)===S.tipo);
+  if(S.max)L=L.filter(i=>precoDe(i)&&precoDe(i)<=S.max);
+  if(S.min)L=L.filter(i=>precoDe(i)>=S.min);
+  if(S.q)L=L.filter(i=>(i.q||0)>=S.q);
+  if(S.ord==='menor')L.sort((a,b)=>precoDe(a)-precoDe(b));else if(S.ord==='maior')L.sort((a,b)=>precoDe(b)-precoDe(a));else if(S.ord==='novo')L.sort((a,b)=>Number(b.c)-Number(a.c));
+  return L;
+}
+function vBusca(){
+  const L=filtrar(),tit=(S.tipo?S.tipo+'s':'Imóveis')+(S.tr==='aluguel'?' para alugar':' à venda')+(S.cid?' em '+S.cid:' na região');
+  return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>${esc(tit)}</span></nav>
+  <div class="blk-head"><div><p class="eyebrow">${L.length} imóveis encontrados</p><h2>${esc(tit)}</h2></div>
+  <label style="min-width:180px">Ordenar<select id="f_ord"><option value="rel" ${S.ord==='rel'?'selected':''}>Relevância</option><option value="menor" ${S.ord==='menor'?'selected':''}>Menor preço</option><option value="maior" ${S.ord==='maior'?'selected':''}>Maior preço</option><option value="novo" ${S.ord==='novo'?'selected':''}>Mais recentes</option></select></label></div>
+  <div class="results"><details class="fwrap" ${innerWidth>860||S.fAberto?'open':''}><summary class="btn sm" style="width:max-content;list-style:none;margin-bottom:10px">Filtros${[S.cid,S.tipo,S.q,S.min,S.max].filter(Boolean).length?' ('+[S.cid,S.tipo,S.q,S.min,S.max].filter(Boolean).length+')':''}</summary><form class="filters" id="fForm">
+    <div class="tabs" role="group" aria-label="Negócio">${[['venda','Comprar'],['aluguel','Alugar']].map(([k,l])=>`<button type="button" data-ftr="${k}" aria-pressed="${S.tr===k}">${l}</button>`).join('')}</div>
+    <label>Cidade<select id="f_cid"><option value="">Todas</option>${[...new Set(IM.map(i=>i.cid))].sort((a,b)=>CFG.cidades.indexOf(b)-CFG.cidades.indexOf(a)||a.localeCompare(b)).filter(Boolean).sort((a,b)=>(CFG.cidades.includes(b)-CFG.cidades.includes(a))||a.localeCompare(b)).map(c=>`<option ${S.cid===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+    <label>Tipo<select id="f_tipo"><option value="">Todos</option>${['Apartamento','Casa','Terreno','Comercial','Rural'].map(t=>`<option ${S.tipo===t?'selected':''}>${t}</option>`).join('')}</select></label>
+    <label>Quartos<select id="f_q">${[0,1,2,3,4].map(n=>`<option value="${n}" ${S.q===n?'selected':''}>${n?n+'+':'Qualquer'}</option>`).join('')}</select></label>
+    <label>Preço mínimo<input id="f_min" inputmode="numeric" value="${S.min?mil(S.min):''}" placeholder="R$"></label>
+    <label>Preço máximo<input id="f_max" inputmode="numeric" value="${S.max?mil(S.max):''}" placeholder="R$"></label>
+    <button class="btn pri" type="submit">Aplicar filtros</button>
+    <button class="btn ghost sm" type="button" id="fLimpa">Limpar</button>
+    <div class="panel" style="padding:12px;display:grid;gap:8px"><b style="font-size:14px">Não achou o que procura?</b><span class="small muted">Conte o que você quer e o Anderson busca, inclusive nas imobiliárias parceiras.</span><button class="btn or sm" type="button" data-lead="encomenda">Encomendar meu imóvel</button></div>
+  </form></details>
+  <div style="display:grid;gap:18px;min-width:0">${L.length?`<div class="grid">${L.slice(0,S.mostrar).map(i=>card(i,S.tr)).join('')}</div>${L.length>S.mostrar?`<button class="btn" id="mais" style="justify-self:center">Mostrar mais ${Math.min(24,L.length-S.mostrar)}</button>`:''}`:`<div class="empty">Nenhum imóvel com esses filtros. Tente outra cidade ou faixa de preço, ou <a data-lead="encomenda" style="text-decoration:underline;cursor:pointer">encomende o seu imóvel</a>.</div>`}</div></div></div>`;
+}
+
+/* ======== FICHA ======== */
+function vImovel(){
+  const i=BY[S.cod];if(!i)return `<div class="wrap" style="padding-block:40px"><div class="empty">Imóvel não encontrado. <a data-go="busca" style="text-decoration:underline;cursor:pointer">Ver todos os imóveis</a></div></div>`;
+  const tr=i.v?'venda':'aluguel',p=i.v||i.a,im=i.img.map(x=>x[1]||x[0]);const cur=im[S.img]||im[0];
+  const parecidos=IM.filter(x=>x.c!==i.c&&x.cid===i.cid&&tipoGrupo(x.t)===tipoGrupo(i.t)&&((x.v&&i.v&&Math.abs(x.v-i.v)/i.v<.4)||(x.a&&i.a))).slice(0,10);
+  const sp=[['Área',i.m2?i.m2+' m²':''],['Quartos',i.q],['Suítes',i.s],['Banheiros',i.bh],['Vagas',i.g],['Mobília',i.mob===1?'Mobiliado':i.mob===2?'Semimobiliado':'']].filter(x=>x[1]);
+  return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<a data-go="busca" data-tr="${tr}" data-cid="${esc(i.cid)}">${esc(i.cid)}</a>›<span>Cód. ${esc(i.c)}</span></nav>
+  <div class="gal"><img class="main" src="${esc(cur)}" alt="${esc(i.ti)}"><div class="side">${im.filter(x=>x!==cur).slice(0,2).map(x=>`<img src="${esc(x)}" alt="" loading="lazy">`).join('')}</div></div>
+  <div class="thumbs" role="group" aria-label="Fotos">${im.map((x,k)=>`<button type="button" data-foto="${k}" aria-pressed="${x===cur}" aria-label="Foto ${k+1}"><img src="${esc((i.img[k]||[])[0]||x)}" alt="" loading="lazy"></button>`).join('')}</div>
+  <div class="detail"><div style="display:grid;gap:14px;min-width:0">
+    <div><p class="eyebrow">${esc(i.t)} · ${tr==='venda'?'à venda':'para alugar'}</p><h1 style="font-size:clamp(30px,4vw,44px);text-transform:uppercase">${esc(i.ti)}</h1><p class="loc" style="margin:6px 0 0">${esc(i.b)}, ${esc(i.cid)} · RS</p><div class="mprice"><span class="price">${brl(p)}${tr==='aluguel'?'<small> /mês</small>':''}</span>${tr==='aluguel'&&i.at&&i.at!==i.a?`<span class="small muted">Total com encargos ${brl(i.at)}</span>`:''}</div></div>
+    <div class="specs">${sp.map(([k,v])=>`<div class="spec"><b>${esc(v)}</b><span>${k}</span></div>`).join('')}</div>
+    <div class="panel"><h3 style="font-size:22px;text-transform:uppercase;margin-bottom:6px">Sobre o imóvel</h3><p style="margin:0">${esc(i.d)}.</p>${i.vid||i.tour?`<p class="small" style="margin:8px 0 0">${i.vid?'Tem vídeo do imóvel. ':''}${i.tour?'Tem tour virtual. ':''}Peça pelo WhatsApp.</p>`:''}<p class="small muted" style="margin:10px 0 0">Ficha completa, todas as fotos e localização na página do imóvel na Innovar.</p><a class="btn sm" style="margin-top:10px" href="${esc(i.u)}" target="_blank" rel="noopener">Ver ficha completa na Innovar</a></div>
+    ${i.v?vSimBox(i.v):''}
+  </div>
+  <aside class="side-cta"><div class="panel" style="display:grid;gap:10px"><div class="price">${brl(p)}${tr==='aluguel'?'<small> /mês</small>':''}</div>${tr==='aluguel'&&i.at?`<span class="small muted">Total com encargos ${brl(i.at)}</span>`:''}
+    <button class="btn or" data-lead="visita" data-cod="${esc(i.c)}">Quero visitar</button>
+    <a class="btn pri" href="#" data-wa="imovel" data-cod="${esc(i.c)}">Conversar no WhatsApp</a>
+    ${i.v?`<button class="btn" data-lead="simular" data-cod="${esc(i.c)}">Simular financiamento</button><button class="btn" data-lead="proposta" data-cod="${esc(i.c)}">Fazer uma proposta</button>`:''}
+    <button class="btn ghost" data-lead="duvida" data-cod="${esc(i.c)}">Tirar uma dúvida</button>
+    <button class="btn ghost sm" data-fav="${esc(i.c)}" aria-pressed="${favs().includes(i.c)}">${favs().includes(i.c)?'♥ Nos favoritos':'♡ Salvar nos favoritos'}</button>
+    <span class="small muted">Cód. ${esc(i.c)} · ${esc(CFG.corretor)} · ${esc(CFG.creci)}</span></div></aside></div>
+  <div class="mbar"><button class="btn or" type="button" data-lead="visita" data-cod="${esc(i.c)}">Quero visitar</button><a class="btn pri" href="#" data-wa="imovel" data-cod="${esc(i.c)}">WhatsApp</a></div>
+  ${parecidos.length?`<section class="blk"><div class="blk-head"><div><p class="eyebrow">Porque você viu este imóvel</p><h2>Parecidos em ${esc(i.cid)}</h2></div></div>${rail(parecidos)}</section>`:''}</div>`;
+}
+
+/* ======== SIMULADOR ======== */
+const MCMV=[[3200,275000,5.25],[5000,275000,7.0],[9600,400000,8.16],[13000,600000,10.5]];
+function vSimBox(valor){
+  const v=valor||LS.get('simV',280000);
+  return `<form class="panel sim" id="simForm"><div><p class="eyebrow">Simulação rápida</p><h2 style="font-size:30px">Quanto fica a parcela?</h2></div>
+  <div class="simgrid"><label>Valor do imóvel<input id="sm_v" inputmode="numeric" value="${mil(v)}"></label><label>Renda familiar<input id="sm_r" inputmode="numeric" value="${mil(LS.get('simR',5000))}"></label><label>Entrada + FGTS<input id="sm_e" inputmode="numeric" value="${mil(LS.get('simE',Math.round(v*.2)))}"></label><label>Prazo<select id="sm_p">${[420,360,300,240].map(n=>`<option value="${n}">${n/12} anos</option>`).join('')}</select></label></div>
+  <div class="out" id="simOut"></div>
+  <p class="small muted" style="margin:0">Estimativa pela tabela SAC, com juros de referência do Minha Casa Minha Vida (até R$ 13 mil de renda e R$ 600 mil de imóvel) ou do financiamento comum. A aprovação e os valores finais são da CAIXA ou do banco.</p>
+  <button class="btn or" type="button" data-lead="simular" ${valor?`data-cod="${esc(S.cod)}"`:''}>Quero a simulação oficial</button></form>`;
+}
+function calcSim(){
+  const o=$('#simOut');if(!o)return;const v=num($('#sm_v').value),r=num($('#sm_r').value),e=num($('#sm_e').value),n=Number($('#sm_p').value);
+  LS.set('simV',v);LS.set('simR',r);LS.set('simE',e);
+  const fin=Math.max(0,Math.min(v-e,v*.8));const fx=MCMV.find(f=>r<=f[0]&&v<=f[1]);const tx=fx?fx[2]:11.49;const i=Math.pow(1+tx/100,1/12)-1;
+  const p1=fin/n+fin*i,pf=fin/n+(fin/n)*i,comp=r?Math.round(p1/r*100):0;
+  o.innerHTML=fin?`<span class="small">1ª parcela estimada</span><b>${brl(Math.round(p1))}</b><span class="small">Última: ${brl(Math.round(pf))} · Financiado: ${brl(fin)} · ${fx?'Minha Casa Minha Vida, '+tx.toLocaleString('pt-BR')+'% a.a.':'Financiamento SBPE, '+tx.toLocaleString('pt-BR')+'% a.a.'}</span><span class="small">${comp?(comp<=30?`Compromete ${comp}% da renda: dentro do limite de 30%.`:`Compromete ${comp}% da renda: acima de 30%. Aumente a entrada ou o prazo.`):''}</span>${v-e>v*.8?'<span class="small">A entrada mínima costuma ser 20% do valor.</span>':''}`:'<span class="small">Informe valor e entrada.</span>';
+}
+
+/* ======== CONSÓRCIO ======== */
+function vConsBox(){
+  return `<div class="cons"><svg class="arrow" viewBox="0 0 100 100" aria-hidden="true"><path d="M10 90 L80 20 M80 20 H45 M80 20 V55" fill="none" stroke="#E98018" stroke-width="12" stroke-linecap="round"/></svg>
+  <p class="eyebrow">Sem juros de banco</p><h2>Consórcio para imóvel, carro ou empresa</h2>
+  <p>Planeje a compra com parcelas menores que um financiamento, use o lance para antecipar e aproveite cartas já contempladas quando precisar do crédito agora.</p>
+  <div class="simgrid" style="max-width:420px"><label style="color:#C9D3EA">Crédito desejado<input id="cs_v" inputmode="numeric" value="${mil(LS.get('csV',300000))}"></label><label style="color:#C9D3EA">Prazo<select id="cs_p">${[200,180,150,120].map(n=>`<option value="${n}">${n} meses</option>`).join('')}</select></label></div>
+  <div id="csOut" style="font-family:var(--f-display);font-size:30px;font-weight:800"></div>
+  <div class="row"><button class="btn or" data-lead="consorcio">Quero uma proposta de consórcio</button></div>
+  <span class="small" style="color:#C9D3EA">Estimativa com taxa de administração de referência de 18% no prazo total. Valores reais conforme a administradora e o grupo.</span></div>`;
+}
+function calcCons(){const o=$('#csOut');if(!o)return;const v=num($('#cs_v').value),n=Number($('#cs_p').value);LS.set('csV',v);o.textContent=v?`≈ ${brl(Math.round(v*1.18/n))} por mês`:''}
+
+/* ======== OUTRAS ROTAS ======== */
+function vLanc(){return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Lançamentos</span></nav><div class="blk-head"><div><p class="eyebrow">${LA.length} empreendimentos</p><h2>Lançamentos e imóveis na planta</h2></div></div><div class="grid">${LA.map(cardLanc).join('')}</div>
+  <p class="small muted" style="margin-top:14px">Material e condições conforme a construtora. Peça a tabela atualizada e o registro de incorporação ao corretor.</p></div>`}
+function vSimular(){return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Simular</span></nav><div class="two">${vSimBox()}${vConsBox()}</div></div>`}
+function vFav(){const L=favs().map(c=>BY[c]).filter(Boolean);return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Favoritos</span></nav><div class="blk-head"><div><p class="eyebrow">${L.length} salvos neste aparelho</p><h2>Meus favoritos</h2></div>${L.length?`<button class="btn or sm" data-lead="favoritos">Enviar favoritos ao corretor</button>`:''}</div>${L.length?`<div class="grid">${L.map(i=>card(i)).join('')}</div>`:'<div class="empty">Toque no coração de um imóvel para guardá-lo aqui.</div>'}</div>`}
+function vPriv(){return `<div class="wrap" style="max-width:760px"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Privacidade</span></nav><h2>Política de privacidade</h2>
+  <div style="display:grid;gap:10px;margin-top:12px">
+  <p><b>Quem cuida dos seus dados:</b> Anderson Alves, corretor de imóveis (${esc(CFG.creci)}), que atua pela Innovar Imobiliária (CRECI 25.520-J), São Leopoldo/RS. Contato: WhatsApp (51) 98416-8848.</p>
+  <p><b>O que coletamos:</b> só o que você digita nos formulários (nome, WhatsApp, e-mail, mensagem, renda informada para simulação) e o imóvel de interesse. Não identificamos quem apenas navega no site.</p>
+  <p><b>Para quê:</b> responder seu pedido, enviar opções de imóveis, simulações e propostas de consórcio que você pediu.</p>
+  <p><b>Base legal:</b> seu consentimento, dado na caixa de autorização do formulário (Lei 13.709/2018, LGPD).</p>
+  <p><b>Por quanto tempo:</b> enquanto houver atendimento ativo ou até você pedir a exclusão.</p>
+  <p><b>Seus direitos:</b> pedir acesso, correção ou exclusão dos seus dados a qualquer momento, pelo WhatsApp acima.</p>
+  <p><b>Neste aparelho:</b> o site guarda, só no seu navegador, os imóveis que você viu e favoritou, para mostrar sugestões. Você pode apagar limpando os dados do navegador.</p></div></div>`}
+function vConsorcio(){return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Consórcio</span></nav>${vConsBox()}</div>`}
+
+/* ======== RENDER / ROTAS ======== */
+function render(){
+  const app=$('#app');
+  app.innerHTML=({descubra:vDescubra,inicio:vInicio,busca:vBusca,imovel:vImovel,lancamentos:vLanc,simular:vSimular,favoritos:vFav,privacidade:vPriv,consorcio:vConsorcio})[S.rota]();
+  document.querySelectorAll('.nav a[data-go]').forEach(a=>a.toggleAttribute('aria-current',a.dataset.go===S.rota&&(!a.dataset.tr||a.dataset.tr===S.tr)));
+  calcSim();calcCons();
+  document.body.classList.toggle('has-mbar',S.rota==='imovel'&&!!BY[S.cod]);updRails();
+  if(S.rota==='imovel'&&BY[S.cod])document.title=BY[S.cod].ti+' em '+BY[S.cod].cid+' | Imóveis e Investimentos RS';else document.title='Imóveis e Investimentos RS';
+}
+function ir(rota,opt){Object.assign(S,opt||{});S.rota=rota;if(rota!=='busca')S.mostrar=24;
+  const h=rota==='imovel'?'imovel-'+S.cod:rota==='busca'?(S.tr==='aluguel'?'alugar':'comprar'):rota;
+  try{history.replaceState(null,'','#'+h)}catch(e){}
+  render();window.scrollTo(0,0);
+  if(rota==='imovel'){const v=vistos().filter(c=>c!==S.cod);v.unshift(S.cod);LS.set('vistos',v.slice(0,20));track('visualizou',S.cod)}
+}
+function lerHash(){const h=(location.hash||'').slice(1);
+  if(h.startsWith('imovel-'))return ir('imovel',{cod:h.slice(7),img:0});
+  if(h.startsWith('busca-')){const c=CFG.cidades.find(x=>x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-')===h.slice(6));return ir('busca',{tr:'venda',cid:c||'',tipo:'',max:0,min:0,q:0})}
+  if(h==='comprar')return ir('busca',{tr:'venda'});if(h==='alugar')return ir('busca',{tr:'aluguel'});
+  if(h.startsWith('descubra')){const sl=h.slice(9);if(sl){const c=CFG.cidades.find(x=>x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-')===sl);if(c)IQ.cid=c}if(/aluguel|alugar/.test(sl))IQ.neg='aluguel';return ir('descubra')}
+  if(['lancamentos','simular','favoritos','privacidade','consorcio'].includes(h))return ir(h);
+  ir('inicio');
+}
+
+
+/* ======== ISCA DIGITAL: QUANTO A CAIXA FINANCIA + ALERTA DE IMÓVEL ======== */
+let IQ=Object.assign({neg:'compra',cid:'',bairro:'',tipo:'',renda:'',fgts:'sim',entrada:'',aluguel:'',prazo:'3 meses'},LS.get('iq',{}));
+let IR=null;
+function iscaBanner(){return `<section class="blk"><div class="wrap"><div class="iscab"><div><p class="eyebrow">Em 1 minuto</p><h2>Quanto a CAIXA financia para você?</h2><p>Responda 5 perguntas e veja a faixa do Minha Casa Minha Vida, o valor de imóvel que cabe na sua renda e os imóveis disponíveis na sua cidade. Procura para alugar? Receba um aviso quando entrar um imóvel do seu jeito.</p></div><div class="row"><a class="btn or" href="#descubra" data-go="descubra" data-neg="compra">Descobrir quanto posso financiar</a><a class="btn" href="#descubra" data-go="descubra" data-neg="aluguel" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)">Quero alugar</a></div></div></div></section>`}
+function opts(k,arr){return `<div class="opts" role="group">${arr.map(([v,l])=>`<button type="button" data-iq="${k}" data-v="${esc(v)}" aria-pressed="${String(IQ[k])===String(v)}">${esc(l)}</button>`).join('')}</div>`}
+function calcIsca(){
+  const r=num(IQ.renda),e=num(IQ.entrada),cid=IQ.cid,tg=IQ.tipo;
+  if(IQ.neg==='aluguel'){const max=num(IQ.aluguel);
+    const L=IM.filter(i=>i.a&&(!cid||i.cid===cid)&&(!tg||tipoGrupo(i.t)===tg)&&(!max||i.a<=max)).sort((a,b)=>a.a-b.a);
+    const alt=L.length?[]:IM.filter(i=>i.a&&(!tg||tipoGrupo(i.t)===tg)&&(!max||i.a<=max*1.3)).sort((a,b)=>(a.cid===cid?0:1)-(b.cid===cid?0:1)||a.a-b.a).slice(0,3);
+    return {neg:'aluguel',max,L,alt,faixa:''}}
+  const fx=MCMV.find(f=>r&&r<=f[0]);const tx=fx?fx[2]:11.49,i=Math.pow(1+tx/100,1/12)-1,n=420;
+  const parc=r*.3;let fin=parc?parc/(1/n+i):0;
+  let teto=fx?fx[1]:0,max=fin+e;if(fx&&IQ.fgts==='sim'&&!e)max=fin*1.05;if(teto&&max>teto)max=teto;max=Math.round(max/1000)*1000;
+  const L=IM.filter(x=>x.v&&(!cid||x.cid===cid)&&(!tg||tipoGrupo(x.t)===tg)&&x.v<=max).sort((a,b)=>b.v-a.v);
+  const faixa=fx?('Faixa '+(MCMV.indexOf(fx)+1)+' do Minha Casa Minha Vida'):(r?'Financiamento comum (SBPE)':'');
+  const alt=L.length?[]:IM.filter(x=>x.v&&(!tg||tipoGrupo(x.t)===tg)&&x.v<=max*1.25).sort((a,b)=>(a.cid===cid?0:1)-(b.cid===cid?0:1)||a.v-b.v).slice(0,3);
+  return {neg:'compra',max,parc:Math.round(parc),fin:Math.round(fin),tx,faixa,L,alt}
+}
+function vDescubra(){
+  const c=CFG.cidades,res=IR;
+  const form=`<form class="panel" id="iqForm"><div><p class="eyebrow">Descubra em 1 minuto</p><h2 style="font-size:30px">${IQ.neg==='aluguel'?'Encontre o seu aluguel':'Quanto a CAIXA financia para você?'}</h2></div>
+    <div class="qgrp"><span>1. Você quer</span>${opts('neg',[['compra','Comprar'],['aluguel','Alugar']])}</div>
+    <div class="q2"><label>2. Cidade<select id="iq_cid"><option value="">Qualquer cidade da região</option>${c.map(x=>`<option ${IQ.cid===x?'selected':''}>${esc(x)}</option>`).join('')}</select></label><label>Bairro (se tiver preferência)<input id="iq_bairro" value="${esc(IQ.bairro)}" placeholder="ex.: Centro, Feitoria"></label></div>
+    <div class="qgrp"><span>3. Tipo de imóvel</span>${opts('tipo',[['','Tanto faz'],['Casa','Casa'],['Apartamento','Apartamento'],['Terreno','Terreno']])}</div>
+    ${IQ.neg==='aluguel'?`<label>4. Até quanto de aluguel por mês?<input id="iq_aluguel" inputmode="numeric" value="${mil(IQ.aluguel)}" placeholder="ex.: 1.500"></label>`
+    :`<div class="q2"><label>4. Renda familiar por mês<input id="iq_renda" inputmode="numeric" value="${mil(IQ.renda)}" placeholder="ex.: 4.500"></label><label>Valor que tem para a entrada<input id="iq_entrada" inputmode="numeric" value="${mil(IQ.entrada)}" placeholder="ex.: 20.000 (pode ser 0)"></label></div>
+    <div class="qgrp"><span>Tem 3 anos ou mais de carteira assinada (FGTS)?</span>${opts('fgts',[['sim','Sim'],['nao','Não'],['nsei','Não sei']])}</div>`}
+    <div class="qgrp"><span>5. Quando quer se mudar?</span>${opts('prazo',[['Já','O quanto antes'],['3 meses','Em até 3 meses'],['6 meses','Em até 6 meses'],['Pesquisando','Só pesquisando']])}</div>
+    <button class="btn or" type="submit">Ver meu resultado</button></form>`;
+  let out='';
+  if(res){
+    const top=res.L.length?res.L.slice(0,3):(res.alt||[]);
+    out=`<div class="res">${res.neg==='compra'?`<div class="resbox"><span class="small">${esc(res.faixa)}${res.faixa?' · juros de referência '+res.tx.toLocaleString('pt-BR')+'% a.a.':''}</span><span class="big">Imóvel de até ${brl(res.max)}</span><div class="reslist"><div><b>${brl(res.parc)}</b><span>parcela máxima (30% da renda)</span></div><div><b>${brl(res.fin)}</b><span>financiamento estimado em 35 anos</span></div><div><b>${res.L.length||'Nenhum'}</b><span>${res.L.length?'imóveis da carteira que cabem':'no teto agora; veja os mais próximos'}</span></div></div><span class="small">Estimativa de referência com a tabela do Minha Casa Minha Vida 2026. O subsídio e o FGTS podem aumentar esse valor. A aprovação e os valores finais são definidos pela CAIXA.</span></div>`
+      :`<div class="resbox"><span class="small">${esc(IQ.cid||'Região')}${IQ.bairro?' · '+esc(IQ.bairro):''}</span><span class="big">${res.L.length} imóve${res.L.length===1?'l':'is'} para alugar${res.max?' até '+brl(res.max):''}</span><span class="small">Os imóveis novos entram toda semana. Deixe seu WhatsApp e o Anderson avisa quando aparecer um do seu jeito.</span></div>`}
+      <div class="gate"><h3>${res.neg==='compra'?'Receba a simulação completa no WhatsApp':'Receba o aviso de imóvel novo'}</h3><p class="small muted" style="margin:0">${res.neg==='compra'?'O Anderson confere a sua faixa, a documentação e manda as opções que cabem na sua renda, já com a parcela de cada uma.':'Assim que entrar um imóvel para alugar com o seu perfil, você recebe primeiro.'}</p>
+        <form id="iqLead" style="display:grid;gap:10px"><div class="q2"><label>Seu nome *<input id="iq_nome" required autocomplete="name"></label><label>WhatsApp *<input id="iq_fone" required inputmode="tel" autocomplete="tel" placeholder="(51) 9xxxx-xxxx"></label></div>
+        <label class="ck"><input type="checkbox" id="iq_alerta" checked><span>Quero receber aviso quando entrar imóvel novo com esse perfil.</span></label>
+        <label class="ck"><input type="checkbox" id="iq_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária (São Leopoldo/RS), a entrar em contato comigo sobre imóveis. Posso pedir a exclusão dos meus dados a qualquer momento. <a data-go="privacidade" href="#privacidade" style="text-decoration:underline">Privacidade</a></span></label>
+        <button class="btn or" type="submit">${res.neg==='compra'?'Quero minha simulação completa':'Quero receber o aviso'}</button></form></div>
+      ${top.length?`<div><p class="eyebrow">${res.L.length?'Alguns que cabem no seu perfil':'Os mais próximos do seu perfil agora'}</p><div class="minirail">${top.map(i=>card(i,res.neg==='aluguel'?'aluguel':'venda')).join('')}</div>${res.L.length>3?`<button class="btn" style="margin-top:12px" data-iqver="1">Ver os ${res.L.length} imóveis</button>`:''}</div>`:''}
+    </div>`;
+  }
+  return `<div class="wrap"><nav class="crumb"><a data-go="inicio">Início</a>›<span>Quanto posso financiar</span></nav><div class="isca">${form}<div id="iqRes">${out||`<div class="panel" style="display:grid;gap:8px"><h3 style="font-size:24px;text-transform:uppercase">Como funciona</h3><p class="small muted" style="margin:0">Responda as perguntas ao lado. O resultado mostra na hora a faixa do Minha Casa Minha Vida, o valor de imóvel que cabe na sua renda e os imóveis da carteira da Innovar na cidade que você escolheu.</p><p class="small muted" style="margin:0">Você não precisa se identificar para ver o resultado.</p></div>`}</div></div></div>`;
+}
+function lerIQ(){const g=id=>{const el=$(id);return el?el.value:''};IQ.cid=g('#iq_cid');IQ.bairro=g('#iq_bairro').trim();if($('#iq_renda'))IQ.renda=g('#iq_renda');if($('#iq_entrada'))IQ.entrada=g('#iq_entrada');if($('#iq_aluguel'))IQ.aluguel=g('#iq_aluguel');LS.set('iq',IQ)}
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+  const b=t.closest('[data-iq]');if(b){lerIQ();IQ[b.dataset.iq]=b.dataset.v;LS.set('iq',IQ);if(b.dataset.iq==='neg')IR=null;render();return}
+  const n=t.closest('[data-neg]');if(n){IQ.neg=n.dataset.neg;IR=null;LS.set('iq',IQ)}
+  if(t.closest('[data-iqver]')){ir('busca',{tr:IQ.neg==='aluguel'?'aluguel':'venda',cid:IQ.cid,tipo:IQ.tipo,max:IR?IR.max:0,min:0,q:0});return}
+},true);
+document.addEventListener('submit',e=>{
+  if(e.target.id==='iqForm'){e.preventDefault();lerIQ();
+    if(IQ.neg==='compra'&&!num(IQ.renda)){toast('Informe a renda familiar para calcular.');return}
+    IR=calcIsca();render();track('isca_resultado','',IQ.neg);setTimeout(()=>{const r=$('#iqRes');if(r&&innerWidth<900)r.scrollIntoView({behavior:'smooth'})},60);return}
+  if(e.target.id==='iqLead'){e.preventDefault();
+    const nome=$('#iq_nome').value.trim(),fone=$('#iq_fone').value.trim();
+    if(!nome||fone.replace(/\D/g,'').length<10){toast('Informe seu nome e um WhatsApp com DDD.');return}
+    if(!$('#iq_ok').checked){toast('Marque a autorização de contato para enviar.');return}
+    LS.set('eu',Object.assign(LS.get('eu',{}),{nome,fone}));
+    const r=IR||calcIsca(),alerta=$('#iq_alerta').checked;
+    const resumo=r.neg==='compra'?`Quer COMPRAR ${IQ.tipo||'imóvel'} em ${IQ.cid||'qualquer cidade'}${IQ.bairro?' ('+IQ.bairro+')':''}. Renda R$ ${mil(IQ.renda)||'—'}, entrada R$ ${mil(IQ.entrada)||'0'}, FGTS 3 anos: ${IQ.fgts}. ${r.faixa}; imóvel de até ${brl(r.max)}. Mudança: ${IQ.prazo}.`
+      :`Quer ALUGAR ${IQ.tipo||'imóvel'} em ${IQ.cid||'qualquer cidade'}${IQ.bairro?' ('+IQ.bairro+')':''} até R$ ${mil(IQ.aluguel)||'—'}/mês. Mudança: ${IQ.prazo}.`;
+    const lead={data:new Date().toISOString(),nome,fone,email:'',intencao:r.neg==='compra'?'Quanto a CAIXA financia (simulação)':'Procura imóvel para alugar',tipo:r.neg==='compra'?'isca':'alerta',
+      negocio:r.neg,cidade:IQ.cid,bairro:IQ.bairro,tipoImovel:IQ.tipo,renda:mil(IQ.renda),entrada:mil(IQ.entrada),fgts:IQ.fgts,aluguel:mil(IQ.aluguel),prazo:IQ.prazo,valorMax:r.max||'',faixa:r.faixa||'',alerta:alerta?'sim':'nao',
+      imovel:'',imovelTitulo:'',link:'',mensagem:resumo,pagina:location.href,consentimento:'sim'};
+    enviarLead(lead);track('enviou_lead','',lead.tipo);
+    const txt=`Olá, Anderson! Sou ${nome}.\n${resumo}${alerta?'\nQuero receber aviso de imóvel novo com esse perfil.':''}${ORIG.termo?'\n(Cheguei pesquisando: '+ORIG.termo+')':''}`;
+    toast('Recebido! Abrindo o WhatsApp para você confirmar com o Anderson.');
+    const a=document.createElement('a');a.href=waLink(txt);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();return}
+});
+/* ======== WHATSAPP E LEADS ======== */
+const waLink=t=>'https://wa.me/'+CFG.whats+'?text='+encodeURIComponent(t);
+function textoImovel(i){return i?`${i.ti} em ${i.b}, ${i.cid} (cód. ${i.c}, ${brl(i.v||i.a)}${i.v?'':'/mês'})`:''}
+const INT={contato:['Fale com o corretor','Quero mais informações'],visita:['Agendar visita','Quero visitar'],simular:['Simulação de financiamento','Quero simular'],proposta:['Proposta','Quero fazer uma proposta'],duvida:['Tirar dúvida','Tenho uma dúvida'],encomenda:['Encomende seu imóvel','Me ajude a encontrar'],avaliar:['Agenciamento em parceria','Quero anunciar meu imóvel com a Innovar'],vender:['Venda seu imóvel','Quero vender meu imóvel'],consorcio:['Consórcio','Quero uma proposta de consórcio'],lancamento:['Lançamento','Quero saber mais'],favoritos:['Meus favoritos','Enviar meus favoritos']};
+let LEAD={};
+function abrirLead(tipo,cod,lanc){
+  const i=cod&&BY[cod],e=lanc&&LA.find(x=>String(x.id)===String(lanc));LEAD={tipo,cod:i?i.c:'',lanc:e?e.n:''};
+  const [eye,tit]=INT[tipo]||INT.contato;$('#lfEye').textContent=eye;$('#lfTitle').textContent=tit;
+  $('#lfRef').textContent=i?textoImovel(i):e?e.n+' · '+e.end:'';
+  $('#lfRendaW').hidden=tipo!=='simular';
+  const base={visita:'Gostaria de agendar uma visita. Melhor dia e horário: ',simular:'Quero simular o financiamento deste imóvel.',proposta:'Gostaria de fazer uma proposta de R$ ',duvida:'',encomenda:'Procuro (tipo, cidade, bairro, quartos, valor): ',avaliar:'Quero anunciar meu imóvel com a Innovar. Fica em (cidade/bairro): ',vender:'Quero vender meu imóvel em (cidade/bairro): ',consorcio:'Tenho interesse em consórcio de (imóvel, veículo ou empresa), crédito de R$ ',lancamento:'Quero receber tabela e plantas deste lançamento.',favoritos:'Gostei destes imóveis: '+favs().map(c=>BY[c]?BY[c].c:'').filter(Boolean).join(', '),contato:'Quero mais informações sobre este imóvel.'}[tipo]||'';
+  $('#lf_msg').value=base;const d=LS.get('eu',{});$('#lf_nome').value=d.nome||'';$('#lf_fone').value=d.fone||'';$('#lf_email').value=d.email||'';
+  $('#leadOv').hidden=false;setTimeout(()=>$('#lf_nome').focus(),30);track('abriu_formulario',LEAD.cod,tipo);
+}
+function track(ev,cod,extra){try{if(window.gtag)window.gtag('event',ev,{imovel:cod||'',tipo:extra||''})}catch(e){}}
+$('#lfClose').onclick=()=>$('#leadOv').hidden=true;
+$('#leadOv').addEventListener('click',e=>{if(e.target.id==='leadOv')$('#leadOv').hidden=true});
+$('#leadForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const nome=$('#lf_nome').value.trim(),fone=$('#lf_fone').value.trim(),email=$('#lf_email').value.trim(),msg=$('#lf_msg').value.trim(),renda=$('#lf_renda').value.trim();
+  if(!nome||fone.replace(/\D/g,'').length<10){toast('Informe seu nome e um WhatsApp com DDD.');return}
+  if(!$('#lf_ok').checked){toast('Marque a autorização de contato para enviar.');return}
+  LS.set('eu',{nome,fone,email});
+  const i=BY[LEAD.cod];const [eye,tit]=INT[LEAD.tipo]||INT.contato;
+  const lead={data:new Date().toISOString(),nome,fone,email,intencao:tit,tipo:LEAD.tipo,imovel:i?i.c:'',imovelTitulo:i?textoImovel(i):LEAD.lanc,link:i?i.u:'',cidade:i?i.cid:'',mensagem:msg,renda,pagina:location.href,consentimento:'sim'};
+  enviarLead(lead);
+  track('enviou_lead',lead.imovel,LEAD.tipo);
+  const txt=`Olá, Anderson! Sou ${nome}.\n${tit}${i?': '+textoImovel(i):LEAD.lanc?': '+LEAD.lanc:''}.\n${msg}${renda?'\nRenda familiar: R$ '+renda:''}\n${i?i.u:''}`.trim();
+  $('#leadOv').hidden=true;toast('Recebido! Abrindo o WhatsApp para você confirmar com o Anderson.');
+  const a=document.createElement('a');a.href=waLink(txt);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+});
+
+/* ======== EVENTOS ======== */
+document.addEventListener('click',e=>{
+  const t=e.target;if(!t.closest)return;
+  const iv=t.closest('[data-imv]');if(iv){e.preventDefault();ir('imovel',{cod:iv.dataset.imv,img:0});return}
+  const fv=t.closest('[data-fav]');if(fv){e.preventDefault();const c=fv.dataset.fav;let f=favs();f=f.includes(c)?f.filter(x=>x!==c):[c,...f];LS.set('favs',f);toast(f.includes(c)?'Salvo nos favoritos':'Removido dos favoritos');if(f.includes(c))track('favoritou',c);render();return}
+  const ld=t.closest('[data-lead]');if(ld){e.preventDefault();abrirLead(ld.dataset.lead,ld.dataset.cod,ld.dataset.lanc);return}
+  const wa=t.closest('[data-wa]');if(wa){const i=BY[wa.dataset.cod];wa.href=waLink(i?`Olá, Anderson! Vi no seu site o imóvel ${textoImovel(i)} e quero mais informações.\n${i.u}`:'Olá, Anderson! Vim pelo seu site Imóveis e Investimentos RS e quero ajuda para encontrar um imóvel.');wa.target='_blank';wa.rel='noopener';track('clicou_whatsapp',i?i.c:'');return}
+  const go=t.closest('[data-go]');if(go){e.preventDefault();const o={};if(go.dataset.tr)o.tr=go.dataset.tr;if('cid' in go.dataset)o.cid=go.dataset.cid;if(go.dataset.go==='busca'){o.tipo=go.dataset.tipo||'';o.cid=go.dataset.cid||'';o.max=Number(go.dataset.max||0);o.min=0;o.q=0}ir(go.dataset.go,o);return}
+  const st=t.closest('[data-str]');if(st){const k=st.dataset.str;if(k==='lanc'){ir('lancamentos');return}S.tr=k;S.max=0;const f=$('#sForm');f.outerHTML=buscaBox();return}
+  const ft=t.closest('[data-ftr]');if(ft){S.tr=ft.dataset.ftr;S.max=0;S.min=0;ir('busca');return}
+  const es=t.closest('[data-est]');if(es){const f=window._EST[Number(es.dataset.est)][2];ir('busca',Object.assign({tr:'venda',cid:'',tipo:'',max:0,min:0,q:0},f));return}
+  const pp=t.closest('[data-pop]');if(pp){const P=[{tipo:'Apartamento',cid:'São Leopoldo'},{tipo:'Casa',cid:'São Leopoldo'},{cid:'Sapucaia do Sul'},{tipo:'Apartamento',cid:'Canoas'},{tipo:'Casa',cid:'Novo Hamburgo'},{max:250000},{tipo:'Terreno',cid:'São Leopoldo'},{tr:'aluguel'}][Number(pp.dataset.pop)];ir('busca',Object.assign({tr:'venda',cid:'',tipo:'',max:0,min:0,q:0},P));return}
+  const fo=t.closest('[data-foto]');if(fo){S.img=Number(fo.dataset.foto);render();return}
+  if(t.id==='mais'){S.mostrar+=24;render();return}
+  if(t.id==='fLimpa'){ir('busca',{cid:'',tipo:'',max:0,min:0,q:0,ord:'rel'});return}
+});
+document.addEventListener('submit',e=>{
+  if(e.target.id==='sForm'){e.preventDefault();ir('busca',{cid:$('#s_cid').value,tipo:$('#s_tipo').value,max:Number($('#s_max').value),min:0,q:0});}
+  if(e.target.id==='fForm'){e.preventDefault();ir('busca',{cid:$('#f_cid').value,tipo:$('#f_tipo').value,q:Number($('#f_q').value),min:num($('#f_min').value),max:num($('#f_max').value)});}
+  if(e.target.id==='simForm')e.preventDefault();
+});
+document.addEventListener('change',e=>{if(e.target.id==='f_ord'){S.ord=e.target.value;render()}if(['sm_p','cs_p'].includes(e.target.id)){calcSim();calcCons()}});
+document.addEventListener('input',e=>{const t=e.target;if(['sm_v','sm_r','sm_e','cs_v','f_min','f_max','lf_renda'].includes(t.id)){const f=mil(t.value);if(t.value!==f)t.value=f;calcSim();calcCons()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#leadOv').hidden=true});
+window.addEventListener('hashchange',lerHash);
+/* ======== MENU E VITRINES ======== */
+function menu(on){const d=$('#drawer');if(!d)return;d.hidden=!on;document.body.classList.toggle('menu-open',on);document.querySelectorAll('.top .menu-btn').forEach(b=>b.setAttribute('aria-expanded',on));if(on){const a=d.querySelector('nav a');a&&a.focus()}}
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+  const m=t.closest('[data-menu]');if(m){e.preventDefault();menu(m.dataset.menu==='1');return}
+  if(t.closest('#drawer nav a'))menu(false);
+  const rb=t.closest('[data-rb]');if(rb){const r=rb.parentElement.querySelector('.rail');r.scrollBy({left:Number(rb.dataset.rb)*r.clientWidth*.9,behavior:'smooth'})}
+},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#drawer').hidden)menu(false)});
+function updRails(){document.querySelectorAll('.railw').forEach(w=>{const r=w.querySelector('.rail');if(!r)return;w.querySelector('.prev').disabled=r.scrollLeft<4;w.querySelector('.next').disabled=r.scrollLeft+r.clientWidth>=r.scrollWidth-4})}
+document.addEventListener('scroll',e=>{if(e.target.classList&&e.target.classList.contains('rail'))updRails()},true);
+document.querySelectorAll('a[data-go]:not([href]),a[data-lead]:not([href])').forEach(a=>a.setAttribute('href','#'));
+window.addEventListener('resize',()=>{updRails();if(innerWidth>1080&&!$('#drawer').hidden)menu(false)});
+
+
+/* ======== INÍCIO ======== */
+fetch('catalogo.json').then(r=>r.json()).then(d=>{
+  IM=d.imoveis.filter(i=>i.v||i.a);LA=d.lancamentos||[];
+  const peso=c=>CFG.cidades.includes(c)?0:1;IM.sort((a,b)=>peso(a.cid)-peso(b.cid)||(b.dest||0)-(a.dest||0));
+  IM.forEach(i=>BY[i.c]=i);lerHash();
+}).catch(()=>{$('#app').innerHTML='<div class="wrap" style="padding-block:40px"><div class="empty">Não foi possível carregar os imóveis agora. Atualize a página ou fale pelo WhatsApp (51) 98416-8848.</div></div>'});
+})();
+</script>
+
+</body>
+</html>
