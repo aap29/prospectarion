@@ -1,5 +1,5 @@
 /* Imóveis e Investimentos RS: abre rápido e funciona sem internet depois da primeira visita. Ao publicar, aumente a versão. */
-const CACHE='iirs-v1';
+const CACHE='iirs-v2';
 const BASE=['./','./index.html','./catalogo.json','./retrato.jpg','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(BASE).catch(()=>{})).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

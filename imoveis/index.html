@@ -337,12 +337,22 @@ body.menu-open{overflow:hidden}
   <label>Seu nome *<input id="lf_nome" name="nome" required autocomplete="name"></label>
   <label>WhatsApp *<input id="lf_fone" name="fone" required inputmode="tel" autocomplete="tel" placeholder="(51) 9xxxx-xxxx"></label>
   <label>E-mail<input id="lf_email" name="email" type="email" autocomplete="email"></label>
-  <label id="lfRendaW" hidden>Renda familiar mensal (para a simulação)<input id="lf_renda" inputmode="numeric" placeholder="ex.: 4.500"></label>
-  <label>Mensagem<textarea id="lf_msg" name="msg"></textarea></label>
-  <label class="ck"><input type="checkbox" id="lf_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária, a entrar em contato comigo sobre imóveis e consórcios. Posso pedir a exclusão dos meus dados a qualquer momento. <a data-go="privacidade" style="text-decoration:underline;cursor:pointer">Política de privacidade</a></span></label>
-  <button class="btn or" type="submit" id="lfSend">Enviar e falar no WhatsApp</button>
-  <p class="small muted" style="margin:0">Ao enviar, abrimos o WhatsApp com a sua mensagem pronta para o Anderson.</p>
+  <div id="lfQual" class="q2">
+    <label>Quando pretende comprar?<select id="lf_prazo"><option value="">Escolha</option><option>Em até 30 dias</option><option>Em até 90 dias</option><option>Em até 6 meses</option><option>Ainda estou pesquisando</option></select></label>
+    <label>Faixa de valor que faz sentido<select id="lf_faixa"><option value="">Escolha</option><option>Até R$ 275 mil</option><option>R$ 275 a 400 mil</option><option>R$ 400 a 600 mil</option><option>R$ 600 mil a 1 milhão</option><option>Acima de R$ 1 milhão</option></select></label>
+    <label>Como pretende pagar?<select id="lf_pag"><option value="">Escolha</option><option>Financiamento</option><option>FGTS + financiamento</option><option>Recursos próprios</option><option>Ainda não sei</option></select></label>
+    <label>Prefere imóvel<select id="lf_estado"><option value="">Tanto faz</option><option>Pronto para morar</option><option>Novo ou na planta</option></select></label>
+  </div>
+  <label id="lfRegW">Região ou bairro que procura<input id="lf_regiao" placeholder="ex.: Centro de São Leopoldo, Canoas"></label>
+  <label id="lfRendaW" hidden>Renda familiar aproximada (opcional, só para a simulação)<input id="lf_renda" inputmode="numeric" placeholder="ex.: 4.500"></label>
+  <div class="q2"><label>Prefere ser atendido por<select id="lf_canal"><option>WhatsApp</option><option>Ligação</option><option>E-mail</option></select></label><label>Melhor horário<select id="lf_hora"><option>Qualquer horário</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></label></div>
+  <label>Mensagem (opcional)<textarea id="lf_msg" name="msg" style="min-height:70px"></textarea></label>
+  <label class="ck"><input type="checkbox" id="lf_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária (São Leopoldo/RS), a me responder sobre <b>este pedido</b> pelo canal que escolhi. <a data-go="privacidade" style="text-decoration:underline;cursor:pointer">Política de privacidade</a></span></label>
+  <label class="ck"><input type="checkbox" id="lf_of"><span>Opcional: quero receber novas opções de imóveis pelo WhatsApp. Posso cancelar quando quiser respondendo "SAIR".</span></label>
+  <button class="btn or" type="submit" id="lfSend">Enviar pedido</button>
+  <p class="small muted" style="margin:0">Você recebe a confirmação na hora, e o Anderson responde pelo canal que você escolheu.</p>
 </form></div>
+<div class="ov" id="okOv" hidden><div class="dlg" role="dialog" aria-labelledby="okT"><p class="eyebrow">Pedido recebido</p><h2 id="okT" style="font-size:28px">Obrigado!</h2><div id="okBody" class="small" style="display:grid;gap:8px"></div><div class="row"><a class="btn or" id="okWa" target="_blank" rel="noopener">Adiantar pelo WhatsApp agora</a><button type="button" class="btn ghost" id="okX">Fechar</button></div></div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="config.js"></script>
@@ -500,6 +510,7 @@ function vImovel(){
     <button class="btn or" data-lead="visita" data-cod="${esc(i.c)}">Quero visitar</button>
     <a class="btn pri" href="#" data-wa="imovel" data-cod="${esc(i.c)}">Conversar no WhatsApp</a>
     ${i.v?`<button class="btn" data-lead="simular" data-cod="${esc(i.c)}">Simular financiamento</button><button class="btn" data-lead="proposta" data-cod="${esc(i.c)}">Fazer uma proposta</button>`:''}
+    <button class="btn" data-lead="detalhes" data-cod="${esc(i.c)}">Receber detalhes deste imóvel</button>
     <button class="btn ghost" data-lead="duvida" data-cod="${esc(i.c)}">Tirar uma dúvida</button>
     <button class="btn ghost sm" data-fav="${esc(i.c)}" aria-pressed="${favs().includes(i.c)}">${favs().includes(i.c)?'♥ Nos favoritos':'♡ Salvar nos favoritos'}</button>
     <span class="small muted">Cód. ${esc(i.c)} · ${esc(CFG.corretor)} · ${esc(CFG.creci)}</span></div></aside></div>
@@ -631,8 +642,8 @@ function vDescubra(){
       :`<div class="resbox"><span class="small">${esc(IQ.cid||'Região')}${IQ.bairro?' · '+esc(IQ.bairro):''}</span><span class="big">${res.L.length} imóve${res.L.length===1?'l':'is'} para alugar${res.max?' até '+brl(res.max):''}</span><span class="small">Os imóveis novos entram toda semana. Deixe seu WhatsApp e o Anderson avisa quando aparecer um do seu jeito.</span></div>`}
       <div class="gate"><h3>${res.neg==='compra'?'Receba a simulação completa no WhatsApp':'Receba o aviso de imóvel novo'}</h3><p class="small muted" style="margin:0">${res.neg==='compra'?'O Anderson confere a sua faixa, a documentação e manda as opções que cabem na sua renda, já com a parcela de cada uma.':'Assim que entrar um imóvel para alugar com o seu perfil, você recebe primeiro.'}</p>
         <form id="iqLead" style="display:grid;gap:10px"><div class="q2"><label>Seu nome *<input id="iq_nome" required autocomplete="name"></label><label>WhatsApp *<input id="iq_fone" required inputmode="tel" autocomplete="tel" placeholder="(51) 9xxxx-xxxx"></label></div>
-        <label class="ck"><input type="checkbox" id="iq_alerta" checked><span>Quero receber aviso quando entrar imóvel novo com esse perfil.</span></label>
-        <label class="ck"><input type="checkbox" id="iq_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária (São Leopoldo/RS), a entrar em contato comigo sobre imóveis. Posso pedir a exclusão dos meus dados a qualquer momento. <a data-go="privacidade" href="#privacidade" style="text-decoration:underline">Privacidade</a></span></label>
+        <label class="ck"><input type="checkbox" id="iq_ok" required><span>Autorizo Anderson Alves, corretor da Innovar Imobiliária (São Leopoldo/RS), a me responder sobre <b>esta ${res.neg==='compra'?'simulação':'busca'}</b> pelo WhatsApp. <a data-go="privacidade" href="#privacidade" style="text-decoration:underline">Privacidade</a></span></label>
+        <label class="ck"><input type="checkbox" id="iq_alerta"><span>Opcional: quero receber aviso pelo WhatsApp quando entrar imóvel novo com esse perfil. Posso cancelar quando quiser respondendo "SAIR".</span></label>
         <button class="btn or" type="submit">${res.neg==='compra'?'Quero minha simulação completa':'Quero receber o aviso'}</button></form></div>
       ${top.length?`<div><p class="eyebrow">${res.L.length?'Alguns que cabem no seu perfil':'Os mais próximos do seu perfil agora'}</p><div class="minirail">${top.map(i=>card(i,res.neg==='aluguel'?'aluguel':'venda')).join('')}</div>${res.L.length>3?`<button class="btn" style="margin-top:12px" data-iqver="1">Ver os ${res.L.length} imóveis</button>`:''}</div>`:''}
     </div>`;
@@ -659,22 +670,46 @@ document.addEventListener('submit',e=>{
       :`Quer ALUGAR ${IQ.tipo||'imóvel'} em ${IQ.cid||'qualquer cidade'}${IQ.bairro?' ('+IQ.bairro+')':''} até R$ ${mil(IQ.aluguel)||'—'}/mês. Mudança: ${IQ.prazo}.`;
     const lead={data:new Date().toISOString(),nome,fone,email:'',intencao:r.neg==='compra'?'Quanto a CAIXA financia (simulação)':'Procura imóvel para alugar',tipo:r.neg==='compra'?'isca':'alerta',
       negocio:r.neg,cidade:IQ.cid,bairro:IQ.bairro,tipoImovel:IQ.tipo,renda:mil(IQ.renda),entrada:mil(IQ.entrada),fgts:IQ.fgts,aluguel:mil(IQ.aluguel),prazo:IQ.prazo,valorMax:r.max||'',faixa:r.faixa||'',alerta:alerta?'sim':'nao',
-      imovel:'',imovelTitulo:'',link:'',mensagem:resumo,pagina:location.href,consentimento:'sim'};
+      imovel:'',imovelTitulo:'',link:'',mensagem:resumo,pagina:location.href,consentimento:'sim',consentResposta:'sim',consentOfertas:alerta?'sim':'nao',consentData:new Date().toISOString(),canal:'WhatsApp',
+      prazoCompra:IQ.prazo,faixaValor:r.max?faixaDe(r.max):'',formaPagamento:r.neg==='compra'?(IQ.fgts==='sim'?'FGTS + financiamento':'Financiamento'):'',regiao:[IQ.bairro,IQ.cid].filter(Boolean).join(', ')};
+    const pr=prioridade({tipo:lead.tipo,cidade:IQ.cid,estoqueOk:r.L.length>0,faixaOk:r.L.length>0,prazo:IQ.prazo,renda:IQ.renda,formaPagamento:lead.formaPagamento});lead.score=pr.score;lead.scoreMotivos=pr.motivos;
     enviarLead(lead);track('enviou_lead','',lead.tipo);
     const txt=`Olá, Anderson! Sou ${nome}.\n${resumo}${alerta?'\nQuero receber aviso de imóvel novo com esse perfil.':''}${ORIG.termo?'\n(Cheguei pesquisando: '+ORIG.termo+')':''}`;
-    toast('Recebido! Abrindo o WhatsApp para você confirmar com o Anderson.');
-    const a=document.createElement('a');a.href=waLink(txt);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();return}
+    confirmar(nome,r.neg==='compra'?'a sua simulação da CAIXA'+(IQ.cid?' em '+IQ.cid:''):'o seu aluguel'+(IQ.cid?' em '+IQ.cid:''),'WhatsApp','',txt);return}
 });
+
+/* ======== QUALIFICAÇÃO E PRIORIDADE (0–100) ========
+   Regras transparentes, revisadas com dados reais de visitas e vendas. Nunca usa características pessoais sensíveis. */
+const COMPRA_INT=['detalhes','contato','visita','simular','proposta','duvida','encomenda','lancamento','favoritos'];
+const FAIXAS=[['Até R$ 275 mil',0,275000],['R$ 275 a 400 mil',275000,400000],['R$ 400 a 600 mil',400000,600000],['R$ 600 mil a 1 milhão',600000,1000000],['Acima de R$ 1 milhão',1000000,1e12]];
+const faixaDe=v=>{const f=FAIXAS.find(f=>v>f[1]&&v<=f[2]);return f?f[0]:''};
+function prioridade(q){let p=0;const motivos=[];
+  if(/visita|proposta/.test(q.tipo||'')||q.canal==='Ligação'||/30 dias/.test(q.prazoCompra||'')){p+=25;motivos.push('pediu visita, ligação ou atendimento rápido')}
+  if(q.imovel||(q.cidade&&CFG.cidades.includes(q.cidade))||q.estoqueOk){p+=20;motivos.push('procura algo que temos na carteira')}
+  if(q.faixaOk){p+=20;motivos.push('faixa de valor compatível')}
+  if(/30 dias|90 dias|O quanto antes|3 meses|^Já$/.test(q.prazoCompra||q.prazo||'')){p+=15;motivos.push('quer comprar em até 90 dias')}
+  if(q.formaPagamento&&q.formaPagamento!=='Ainda não sei'||q.renda){p+=10;motivos.push('já indicou como vai pagar')}
+  return {score:Math.min(100,p),motivos:motivos.join('; ')}
+}
+function confirmar(nome,oque,canal,hora,txtWa){
+  $('#okT').textContent='Obrigado, '+nome.split(' ')[0]+'!';
+  $('#okBody').innerHTML=`<p style="margin:0">Recebi o seu pedido sobre <b>${esc(oque)}</b>.</p><p style="margin:0"><b>Próximo passo:</b> o Anderson Alves te responde por <b>${esc(canal==='WhatsApp'?canal:canal.toLowerCase())}</b>${hora&&hora!=='Qualquer horário'?' no período da <b>'+esc(hora.toLowerCase())+'</b>':''}. Fora do horário de atendimento, a resposta vem no próximo período útil.</p><p class="muted" style="margin:0">Anderson Alves · Corretor da Innovar Imobiliária (São Leopoldo/RS) · ${esc(CFG.creci)}</p>`;
+  $('#okWa').href=waLink(txtWa);$('#okWa').hidden=false;$('#okOv').hidden=false;
+}
+document.addEventListener('click',e=>{if(e.target.id==='okX'||e.target.id==='okOv')$('#okOv').hidden=true});
 /* ======== WHATSAPP E LEADS ======== */
 const waLink=t=>'https://wa.me/'+CFG.whats+'?text='+encodeURIComponent(t);
 function textoImovel(i){return i?`${i.ti} em ${i.b}, ${i.cid} (cód. ${i.c}, ${brl(i.v||i.a)}${i.v?'':'/mês'})`:''}
-const INT={contato:['Fale com o corretor','Quero mais informações'],visita:['Agendar visita','Quero visitar'],simular:['Simulação de financiamento','Quero simular'],proposta:['Proposta','Quero fazer uma proposta'],duvida:['Tirar dúvida','Tenho uma dúvida'],encomenda:['Encomende seu imóvel','Me ajude a encontrar'],avaliar:['Agenciamento em parceria','Quero anunciar meu imóvel com a Innovar'],vender:['Venda seu imóvel','Quero vender meu imóvel'],consorcio:['Consórcio','Quero uma proposta de consórcio'],lancamento:['Lançamento','Quero saber mais'],favoritos:['Meus favoritos','Enviar meus favoritos']};
+const INT={contato:['Fale com o corretor','Quero mais informações'],visita:['Agendar visita','Quero visitar'],simular:['Simulação de financiamento','Quero simular'],proposta:['Proposta','Quero fazer uma proposta'],duvida:['Tirar dúvida','Tenho uma dúvida'],detalhes:['Detalhes do imóvel','Receber detalhes deste imóvel'],encomenda:['Encomende seu imóvel','Me ajude a encontrar'],avaliar:['Agenciamento em parceria','Quero anunciar meu imóvel com a Innovar'],vender:['Venda seu imóvel','Quero vender meu imóvel'],consorcio:['Consórcio','Quero uma proposta de consórcio'],lancamento:['Lançamento','Quero saber mais'],favoritos:['Meus favoritos','Enviar meus favoritos']};
 let LEAD={};
 function abrirLead(tipo,cod,lanc){
   const i=cod&&BY[cod],e=lanc&&LA.find(x=>String(x.id)===String(lanc));LEAD={tipo,cod:i?i.c:'',lanc:e?e.n:''};
   const [eye,tit]=INT[tipo]||INT.contato;$('#lfEye').textContent=eye;$('#lfTitle').textContent=tit;
   $('#lfRef').textContent=i?textoImovel(i):e?e.n+' · '+e.end:'';
   $('#lfRendaW').hidden=tipo!=='simular';
+  const compra=COMPRA_INT.includes(tipo)&&!(i&&!i.v&&i.a);$('#lfQual').hidden=!compra;$('#lfRegW').hidden=!!(i||e);
+  ['lf_prazo','lf_pag','lf_estado','lf_regiao'].forEach(id=>{const el=$('#'+id);if(el)el.value=''});$('#lf_faixa').value=i&&i.v?faixaDe(i.v):'';$('#lf_of').checked=false;
+  $('#lf_prazo').closest('label').firstChild.textContent=i&&!i.v&&i.a?'Quando pretende se mudar?':'Quando pretende comprar?';
   const base={visita:'Gostaria de agendar uma visita. Melhor dia e horário: ',simular:'Quero simular o financiamento deste imóvel.',proposta:'Gostaria de fazer uma proposta de R$ ',duvida:'',encomenda:'Procuro (tipo, cidade, bairro, quartos, valor): ',avaliar:'Quero anunciar meu imóvel com a Innovar. Fica em (cidade/bairro): ',vender:'Quero vender meu imóvel em (cidade/bairro): ',consorcio:'Tenho interesse em consórcio de (imóvel, veículo ou empresa), crédito de R$ ',lancamento:'Quero receber tabela e plantas deste lançamento.',favoritos:'Gostei destes imóveis: '+favs().map(c=>BY[c]?BY[c].c:'').filter(Boolean).join(', '),contato:'Quero mais informações sobre este imóvel.'}[tipo]||'';
   $('#lf_msg').value=base;const d=LS.get('eu',{});$('#lf_nome').value=d.nome||'';$('#lf_fone').value=d.fone||'';$('#lf_email').value=d.email||'';
   $('#leadOv').hidden=false;setTimeout(()=>$('#lf_nome').focus(),30);track('abriu_formulario',LEAD.cod,tipo);
@@ -689,12 +724,15 @@ $('#leadForm').addEventListener('submit',e=>{
   if(!$('#lf_ok').checked){toast('Marque a autorização de contato para enviar.');return}
   LS.set('eu',{nome,fone,email});
   const i=BY[LEAD.cod];const [eye,tit]=INT[LEAD.tipo]||INT.contato;
-  const lead={data:new Date().toISOString(),nome,fone,email,intencao:tit,tipo:LEAD.tipo,imovel:i?i.c:'',imovelTitulo:i?textoImovel(i):LEAD.lanc,link:i?i.u:'',cidade:i?i.cid:'',mensagem:msg,renda,pagina:location.href,consentimento:'sim'};
+  const q={prazoCompra:$('#lfQual').hidden?'':$('#lf_prazo').value,faixaValor:$('#lfQual').hidden?'':$('#lf_faixa').value,formaPagamento:$('#lfQual').hidden?'':$('#lf_pag').value,estadoImovel:$('#lfQual').hidden?'':$('#lf_estado').value,regiao:$('#lf_regiao').value.trim(),canal:$('#lf_canal').value,horario:$('#lf_hora').value};
+  const fx=FAIXAS.find(f=>f[0]===q.faixaValor);
+  const pr=prioridade(Object.assign({tipo:LEAD.tipo,imovel:i?i.c:'',cidade:i?i.cid:'',renda,faixaOk:!!(fx&&((i&&i.v&&i.v>fx[1]*0.85&&i.v<=fx[2]*1.15)||(!i&&IM.some(x=>x.v&&x.v>fx[1]&&x.v<=fx[2]))))},q));
+  const lead=Object.assign({data:new Date().toISOString(),nome,fone,email,intencao:tit,tipo:LEAD.tipo,imovel:i?i.c:'',imovelTitulo:i?textoImovel(i):LEAD.lanc,link:i?i.u:'',cidade:i?i.cid:'',bairro:i?i.b:'',mensagem:msg,renda,pagina:location.href,consentimento:'sim',consentResposta:'sim',consentOfertas:$('#lf_of').checked?'sim':'nao',consentData:new Date().toISOString(),score:pr.score,scoreMotivos:pr.motivos},q);
   enviarLead(lead);
   track('enviou_lead',lead.imovel,LEAD.tipo);
-  const txt=`Olá, Anderson! Sou ${nome}.\n${tit}${i?': '+textoImovel(i):LEAD.lanc?': '+LEAD.lanc:''}.\n${msg}${renda?'\nRenda familiar: R$ '+renda:''}\n${i?i.u:''}`.trim();
-  $('#leadOv').hidden=true;toast('Recebido! Abrindo o WhatsApp para você confirmar com o Anderson.');
-  const a=document.createElement('a');a.href=waLink(txt);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+  const extra=[q.prazoCompra,q.faixaValor,q.formaPagamento,q.estadoImovel,q.regiao].filter(Boolean).join(' · ');
+  const txt=`Olá, Anderson! Sou ${nome}.\n${tit}${i?': '+textoImovel(i):LEAD.lanc?': '+LEAD.lanc:''}.${extra?'\n'+extra:''}${msg?'\n'+msg:''}${renda?'\nRenda familiar: R$ '+renda:''}\n${i?i.u:''}`.trim();
+  $('#leadOv').hidden=true;confirmar(nome,i?textoImovel(i):LEAD.lanc||tit.toLowerCase()+(q.regiao?' em '+q.regiao:''),q.canal,q.horario,txt);
 });
 
 /* ======== EVENTOS ======== */
