@@ -9,10 +9,10 @@ if not v or not re.fullmatch(r'\d+\.\d+',v):sys.exit('informe a versão, ex.: py
 L=lambda f:open(os.path.join(D,f),encoding='utf-8').read()
 t=L('base_v327.html')
 t,n1=re.subn(r"OWNER_EMAILS=\[[^\]]*\]","OWNER_EMAILS=[]",t,count=1)
-t,n2=re.subn(r"LIC_SECRET='[0-9a-f]+'","LIC_SECRET=''",t,count=1)
+t,n2=re.subn(r"LIC_SECRET='[0-9a-f]*'","LIC_SECRET=''",t,count=1)
 t=t.replace("const APP_VERSAO='3.27'",f"const APP_VERSAO='{v}'").replace("<title>MUSICALIS V0.6</title>","<title>MUSICALIS</title>")
 t=t.replace('placeholder="MUS-XXXXXXX-XXXX-XXXXXX"','placeholder="Cole aqui o código recebido"')
-assert n1==1 and n2==1 and 'f4e03fa2' not in t
+assert n1==1 and n2==1
 js=L('v328.js').replace('__PUB_JWK__',L('publica.json').strip()).replace('__COFRE__',L('cofre.json').strip())
 head=('<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icone-192.png">'
  '<link rel="apple-touch-icon" href="icone-192.png"><meta name="apple-mobile-web-app-capable" content="yes">'

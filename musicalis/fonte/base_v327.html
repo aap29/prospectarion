@@ -141,7 +141,7 @@ function nav(){let n=$('#nav'); if(['welcome','quiz','result','login','criador',
 function shell(content){$('#app').innerHTML=`<div class="top"><div class="brand">MUSI<span>CALIS</span></div><div class="badge">${S.plan}</div></div>${content}`;nav()}
 function go(p){if(typeof EXS_!=='undefined'&&EXS_&&EXS_.playing)extraStop();EXQ=null;page=p;save();render();scrollTo(0,0)}
 /* ===== V3.8 • ACESSO: CONTAS (e-mail + senha), CRIADOR VITALÍCIO, PLANOS, CÓDIGOS, REGISTRO DE EXERCÍCIOS ===== */
-const ACC_KEY='musicalis_contas_v1', OWNER_EMAILS=['andersonpinto.rs@gmail.com','kenny.alves@gmail.com','kennysax29@gmail.com','andersonalvespinto@gmail.com','kennyacustico29@gmail.com','vendedorandersonalves@gmail.com'], LIC_SECRET='f4e03fa2e5059f88598da52e47bd6b73f561be5eac4e8f95';
+const ACC_KEY='musicalis_contas_v1', OWNER_EMAILS=['x'], LIC_SECRET='00';
 const PLANOS={gratuito:'Gratuito',mensal:'Premium Mensal',anual:'Premium Anual',vitalicio:'Vitalício',escola:'Professor/Escola',criador:'CRIADOR • Vitalício total'};
 const OWNER_STATE_KEY=K; // dados que já existiam neste aparelho pertencem ao Criador
 let ACC=(()=>{try{return JSON.parse(localStorage.getItem(ACC_KEY))||null}catch(e){return null}})()||{users:{},session:null,cfg:{}};
