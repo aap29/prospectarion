@@ -1,0 +1,51 @@
+/* ===== V3.28 • partitura domina a tela no celular deitado ===== */
+html body .score-head .full-btn{background:#d39b1f!important;color:#10151f!important;border:2px solid #f6d27a!important;font-weight:800!important;box-shadow:0 0 0 2px #d39b1f44}
+@media (orientation:landscape) and (max-height:540px){
+ html body .score-head{min-height:0!important;padding:3px 8px!important;gap:6px!important}
+ html body .score-head button{height:30px!important;padding:0 10px!important;font-size:13px!important;border-radius:9px!important;line-height:1!important}
+ html body .score-head b{font-size:13px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ html body #evo-chip{display:none!important}
+ html body .paper.m2paper{margin:4px 6px 0!important;padding:4px 8px 6px!important}
+ html body .m2paper .paper-title{font-size:14px!important;margin:0 0 2px!important;line-height:1.2!important}
+ html body .m2paper .paper-sub{display:none!important}
+ html body .score-screen{padding-bottom:50px!important}
+ html body .score-controls.barra{grid-template-columns:repeat(10,minmax(0,1fr))!important;grid-auto-rows:40px!important;gap:5px!important;padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px))!important}
+ html body .score-controls.barra>button,html body .score-controls.barra .bpm-control>button,html body .score-controls.barra>.beat-dot,html body .score-controls.barra .bpm-value{border-radius:9px!important;padding:1px 2px!important;gap:1px!important;font-size:10px!important;border-width:1.5px!important}
+ html body .score-controls.barra .ico{font-size:15px!important}
+ html body .score-controls.barra .lbl{font-size:9.5px!important;letter-spacing:-.2px}
+ html body .score-controls.barra>.beat-dot,html body .score-controls.barra .bpm-value{font-size:17px!important}
+ html body .score-controls.barra .bpm-value small{font-size:9px!important}
+}
+/* modo horizontal forçado (aparelho que não gira sozinho): mesmas medidas */
+html body.forced-landscape .score-head{padding:3px 8px!important;gap:6px!important}
+html body.forced-landscape .score-head button{height:30px!important;padding:0 10px!important;font-size:13px!important}
+html body.forced-landscape #evo-chip,html body.forced-landscape .m2paper .paper-sub{display:none!important}
+html body.forced-landscape .m2paper .paper-title{font-size:14px!important;margin:0 0 2px!important}
+html body.forced-landscape .score-controls.barra{grid-auto-rows:40px!important;gap:5px!important;padding:4px 8px!important}
+html body.forced-landscape .score-controls.barra .ico{font-size:15px!important}
+html body.forced-landscape .score-controls.barra .lbl{font-size:9.5px!important}
+/* V3.30 • Ouvido */
+html body .score-head .ouv-btn{background:#0e3151;color:#fff;border:2px solid #3fbf93!important;font-weight:800}
+html body .score-head .ouv-btn.on{background:#0f6b52!important;color:#fff!important;animation:ouvpulse 1.6s infinite}
+@keyframes ouvpulse{50%{box-shadow:0 0 0 4px #3fbf9355}}
+#meter-svg .ouv-ok{fill:#1f9d55!important;stroke:#1f9d55!important}
+#meter-svg .ouv-err{fill:#d62828!important;stroke:#d62828!important}
+#meter-svg .ouv-mid{fill:#e09b16!important;stroke:#e09b16!important}
+/* V3.31 • partituras do acervo e exercícios extras: barra fina com o celular deitado */
+@media (orientation:landscape) and (max-height:540px){
+ html body .extra-screen{padding:4px 8px 56px!important}
+ html body .extra-screen>.row{margin:0 0 4px!important;min-height:0!important}
+ html body .extra-screen>.row .btn{height:30px!important;min-height:0!important;padding:0 12px!important;font-size:13px!important;margin:0!important;border-radius:9px!important;line-height:1!important}
+ html body .extra-screen>.row b{font-size:14px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html body .extra-screen .m2paper{margin:0!important;padding:4px 8px 6px!important}
+ html body .extra-screen .m2paper>div:first-child h2,html body .extra-screen .m2paper>div:first-child h1,html body .extra-screen .m2paper>div:first-child b{font-size:15px!important;margin:0!important;line-height:1.2!important}
+ html body .extra-screen .m2paper>div:first-child p,html body .extra-screen .m2paper>div:first-child small,html body .extra-screen .m2paper>div:first-child>div{display:none!important}
+ html body #app:has(.extra-screen){padding-top:0!important}
+ html body .extra-screen .m2paper>div:first-child b{font-size:14px!important}
+ html body .pbar{padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px))!important}
+ html body .pbar-in{max-width:640px!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-rows:40px!important;gap:6px!important}
+ html body .pbar .pb-play,html body .pbar .pb-stop,html body .pbar .pb-m,html body .pbar .pb-p,html body .pbar .pb-bpm{grid-column:span 1!important}
+ html body .pbar button,html body .pbar .pb-bpm{font-size:15px!important;border-radius:9px!important;border-width:1.5px!important}
+ html body .pbar .pb-bpm{font-size:17px!important}
+ html body .pbar .pb-bpm small{font-size:10px!important}
+}
