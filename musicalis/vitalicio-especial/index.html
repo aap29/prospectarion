@@ -50,13 +50,15 @@ footer{color:var(--sub);font-size:14px;text-align:center;margin-top:22px}
 <p class="aviso">⚠️ <b>Importante:</b> esta condição é especial e vale só com as duas parcelas em dia. O pagamento da 2ª parcela é o que garante a manutenção do seu plano.<br><br>Ao pagar, confira o destinatário: <b>Anderson Alves</b> • chave Pix <b>(51) 98416-8848</b>.</p>
 <p class="ajuda">E você também está ajudando o MUSICALIS a crescer: é o único app com exercícios, teoria, partituras, playback e acompanhamento pensados de um jeito diferente de tudo o que existe no mercado musical. Cada aluno que acredita no projeto faz ele ficar ainda melhor. 🙏</p>
 <a class="btn alt" target="_blank" rel="noopener" href="https://aap29.github.io/prospectarion/musicalis/app/">Abrir o app MUSICALIS</a>
-<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/5551984168848?text=Ol%C3%A1%2C%20Kenny!%20Tenho%20uma%20d%C3%BAvida%20sobre%20o%20MUSICALIS%20Vital%C3%ADcio.">Tirar uma dúvida no WhatsApp</a>
+<a class="btn wa" target="_blank" rel="noopener" id="duvida" href="#">Tirar uma dúvida no WhatsApp</a>
 <footer>Kenny Anderson • MUSICALIS<br>WhatsApp (51) 98416-8848</footer>
 </main>
 <script>
 const nome=(new URLSearchParams(location.search).get('n')||'').replace(/[<>"'&]/g,'').trim().slice(0,40);
 if(nome){document.getElementById('nm').textContent=', '+nome;document.title='MUSICALIS Vitalício • '+nome}
-document.querySelectorAll('a.wa[data-p]').forEach(a=>{const t='Olá, Kenny! '+(nome?'Aqui é '+nome+'. ':'')+'Paguei a '+a.dataset.p+'ª parcela do MUSICALIS Vitalício (R$ 500,00). Segue o comprovante:';a.href='https://wa.me/5551984168848?text='+encodeURIComponent(t)});
+const wa=t=>'https://wa.me/5551984168848?text='+encodeURIComponent(t);
+document.querySelectorAll('a.wa[data-p]').forEach(a=>{a.href=wa('Olá, Kenny! '+(nome?'Aqui é '+nome+'. ':'')+'Paguei a '+a.dataset.p+'ª parcela do MUSICALIS Vitalício (R$ 500,00). Segue o comprovante:')});
+document.getElementById('duvida').href=wa('Olá, Kenny! '+(nome?'Aqui é '+nome+'. ':'')+'Tenho uma dúvida sobre o MUSICALIS Vitalício.');
 function copiar(n,b){const t=document.getElementById('c'+n),ok=()=>{const o=b.textContent;b.textContent='Código copiado ✓';setTimeout(()=>b.textContent=o,2500)};
  if(navigator.clipboard)navigator.clipboard.writeText(t.value).then(ok).catch(()=>{t.select();document.execCommand('copy');ok()});else{t.select();document.execCommand('copy');ok()}}
 </script></body></html>
