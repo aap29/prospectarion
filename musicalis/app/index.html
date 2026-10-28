@@ -574,7 +574,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
   catch(e){toast('Este arquivo não é um backup do MUSICALIS')}inp.value=''};r.readAsText(f)}
 async function copiarBackup(){const t=JSON.stringify(backupObj());try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast('Backup copiado. Cole no outro aparelho em "Colar backup".')}
 function colarBackup(){const t=($('#bk-txt')||{}).value||'';try{const res=mesclarProgresso(JSON.parse(t));toast(`Progresso recuperado: +${res.praticas} práticas, +${res.selos} selos`);setTimeout(()=>render(),400)}catch(e){toast('Texto de backup inválido')}}
-const APP_VERSAO='3.30';
+const APP_VERSAO='3.31';
 function backupCard(){return `<p style="text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0">MUSICALIS • Versão ${APP_VERSAO}</p><div class="card" style="margin-top:12px"><h3>💾 Backup do meu progresso</h3>
  <p class="sub">Guarde suas práticas, notas e selos. Ao restaurar, o app <b>junta</b> com o que já existe aqui: nada é apagado.</p>
  <button class="btn" onclick="exportData()">Salvar backup</button>
@@ -2198,6 +2198,24 @@ html body .score-head .ouv-btn.on{background:#0f6b52!important;color:#fff!import
 #meter-svg .ouv-ok{fill:#1f9d55!important;stroke:#1f9d55!important}
 #meter-svg .ouv-err{fill:#d62828!important;stroke:#d62828!important}
 #meter-svg .ouv-mid{fill:#e09b16!important;stroke:#e09b16!important}
+/* V3.31 • partituras do acervo e exercícios extras: barra fina com o celular deitado */
+@media (orientation:landscape) and (max-height:540px){
+ html body .extra-screen{padding:4px 8px 56px!important}
+ html body .extra-screen>.row{margin:0 0 4px!important;min-height:0!important}
+ html body .extra-screen>.row .btn{height:30px!important;min-height:0!important;padding:0 12px!important;font-size:13px!important;margin:0!important;border-radius:9px!important;line-height:1!important}
+ html body .extra-screen>.row b{font-size:14px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html body .extra-screen .m2paper{margin:0!important;padding:4px 8px 6px!important}
+ html body .extra-screen .m2paper>div:first-child h2,html body .extra-screen .m2paper>div:first-child h1,html body .extra-screen .m2paper>div:first-child b{font-size:15px!important;margin:0!important;line-height:1.2!important}
+ html body .extra-screen .m2paper>div:first-child p,html body .extra-screen .m2paper>div:first-child small,html body .extra-screen .m2paper>div:first-child>div{display:none!important}
+ html body #app:has(.extra-screen){padding-top:0!important}
+ html body .extra-screen .m2paper>div:first-child b{font-size:14px!important}
+ html body .pbar{padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px))!important}
+ html body .pbar-in{max-width:640px!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-rows:40px!important;gap:6px!important}
+ html body .pbar .pb-play,html body .pbar .pb-stop,html body .pbar .pb-m,html body .pbar .pb-p,html body .pbar .pb-bpm{grid-column:span 1!important}
+ html body .pbar button,html body .pbar .pb-bpm{font-size:15px!important;border-radius:9px!important;border-width:1.5px!important}
+ html body .pbar .pb-bpm{font-size:17px!important}
+ html body .pbar .pb-bpm small{font-size:10px!important}
+}
 
 </style>
 <script>
