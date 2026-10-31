@@ -14,7 +14,7 @@ async def main():
     b=await p.chromium.launch();ctx=await b.new_context(viewport={'width':412,'height':915});pg=await ctx.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
     await pg.goto(U);await pg.wait_for_timeout(1500)
     await pg.evaluate("authMode='criar';page='login';render()")
-    await pg.fill('#lg-nome','Maria da Silva');await pg.fill('#lg-tel','51999998888');await pg.fill('#lg-email','m@x.com');await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1200)
+    await pg.fill('#lg-nome','Maria da Silva');await pg.fill('#lg-tel','51999998888');await pg.fill('#lg-cid','Porto Alegre');await pg.select_option('#lg-uf','RS');await pg.fill('#lg-email','m@x.com');await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1200)
     await pg.evaluate("S.theory=40;save();go('home')");await pg.wait_for_timeout(500)
     V0=await pg.evaluate('APP_VERSAO');ok('Versão inicial com service worker', bool(V0) and await pg.evaluate("navigator.serviceWorker.getRegistration().then(r=>!!r&&!!r.active)"))
     # aluno tocando: não pode ser interrompido

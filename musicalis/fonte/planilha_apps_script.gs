@@ -1,5 +1,5 @@
 /**
- * MUSICALIS • Banco de dados dos alunos + automações (Google Planilhas + Apps Script, gratuito)
+ * MUSICALIS • Banco de dados dos alunos + automações (Google Planilhas + Apps Script, gratuito) • versão 3
  * ---------------------------------------------------------------------------------------------
  * INSTALAR (uma vez, no computador):
  * 1) Crie uma planilha nova no Google Drive: "MUSICALIS Alunos".
@@ -22,7 +22,7 @@ const ABA_ALUNOS = 'Alunos', ABA_EVENTOS = 'Eventos', ABA_VERSOES = 'Versões', 
 const COLS = ['email','nome','telefone','instrumento','plano','vencimento','testeInicio','cadastro','ultimoAcesso',
               'ultimoEvento','praticas','evolucao','modulo','versao','acessos',
               'nivelRecomendado','teoria','pratica','exerciciosTotal','exerciciosSemana','minutosSemana','precisaoMedia',
-              'buscasPartituras','ultimoExercicio','avaliacaoTeste','observacoes','pagamentoAberto','ouvidoModo','statusContato'];
+              'buscasPartituras','ultimoExercicio','avaliacaoTeste','observacoes','pagamentoAberto','ouvidoModo','statusContato','cidade','estado'];
 const COL_EVENTOS = ['quando','email','nome','telefone','tipo','plano','detalhe','versao'];
 
 function aba_(nome, cab) {
@@ -55,7 +55,10 @@ function doGet(e) {
 function doPost(e) {
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    const d = JSON.parse(e.postData.contents || '{}');
+    const bruto = (e.postData && e.postData.contents) || '{}';
+    if (bruto.length > 20000) return json_({ erro: 'envio grande demais' });
+    const d = JSON.parse(bruto);
+    if ((d.acao === 'lead' || d.acao === 'evento') && !limite_(d.email)) return json_({ erro: 'limite de envios' });
     if (d.acao === 'lead') return json_(lead_(d));
     if (d.acao === 'evento') return json_(evento_(d));
     if (d.acao === 'config') { if (d.token !== TOKEN) return json_({ erro: 'token inválido' });
@@ -68,6 +71,13 @@ function doPost(e) {
   } catch (err) { return json_({ erro: String(err) }); }
   finally { lock.releaseLock(); }
 }
+
+/* ---------- proteção: no máximo 300 envios por hora para cada e-mail ---------- */
+function limite_(email) {
+  const c = CacheService.getScriptCache(), k = 'lim_' + String(email || '').toLowerCase().slice(0, 120), n = Number(c.get(k) || 0);
+  if (n >= 300) return false; c.put(k, String(n + 1), 3600); return true;
+}
+const TIPOS_OK = ['cadastro','acesso','diagnostico','exercicio','ouvido','partitura','avaliacao_teste','observacao','pagamento','resumo_semana','resumo_mes','teste_encerrado'];
 
 /* ---------- aluno (linha única por e-mail) ---------- */
 function linhaAluno_(email) {
@@ -86,6 +96,7 @@ function base_(d, antigo, contarAcesso) {
   set('instrumento', txt_(d.instrumento, 30)); set('plano', txt_(d.plano, 20)); o.vencimento = txt_(d.vencimento, 10) || o.vencimento;
   set('praticas', Number(d.praticas) || ''); set('evolucao', txt_(d.evolucao, 10)); set('modulo', txt_(d.modulo, 40)); set('versao', txt_(d.versao, 10));
   ['nivelRecomendado','teoria','pratica','exerciciosSemana','minutosSemana','precisaoMedia','buscasPartituras','ouvidoModo'].forEach(c => set(c, txt_(d[c], 40)));
+  set('cidade', txt_(d.cidade, 60)); set('estado', txt_(d.estado, 2).toUpperCase());
   if (!o.cadastro) o.cadastro = txt_(d.cadastro, 10) || hoje_();
   if (!o.testeInicio) o.testeInicio = txt_(d.testeInicio, 10);
   o.ultimoAcesso = new Date(); if (contarAcesso) o.acessos = (Number(o.acessos) || 0) + 1;
@@ -111,7 +122,8 @@ function lead_(d) {
 function evento_(d) {
   const email = txt_(d.email, 120).toLowerCase().trim();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { erro: 'e-mail inválido' };
-  const { sh, linha, antigo } = linhaAluno_(email), o = base_(d, antigo, false), tipo = txt_(d.tipo, 30);
+  const tipo = txt_(d.tipo, 30); if (TIPOS_OK.indexOf(tipo) < 0) return { erro: 'tipo inválido' };
+  const { sh, linha, antigo } = linhaAluno_(email), o = base_(d, antigo, false);
   let det = {}; try { det = JSON.parse(d.detalhe || '{}'); } catch (e) {}
   o.ultimoEvento = tipo;
   if (tipo === 'exercicio') { o.exerciciosTotal = (Number(o.exerciciosTotal) || 0) + 1; o.ultimoExercicio = txt_(det.id + (det.mod ? ' • ' + det.mod : ''), 80); }
@@ -171,11 +183,25 @@ function automacaoDiaria() {
   S.push(sec('😴 Sem estudar há 5 dias', sumidos.map(a => item_(a, 'Último acesso ' + fmt_(a.ultimoAcesso) + ' • módulo ' + (a.modulo || '—'),
     'Olá, ' + primeiro_(a.nome) + '! Sentimos sua falta no MUSICALIS 🎷 15 minutinhos hoje já fazem diferença. Seu próximo passo: ' + (a.modulo || 'o próximo exercício') + '.'))));
   if (obs.length) S.push('<h3 style="margin:18px 0 4px">💬 Observações novas dos alunos (' + obs.length + ')</h3><ul style="padding-left:18px">' + obs.map(r => '<li><b>' + r[1] + '</b> (' + r[2] + '): ' + r[4] + '</li>').join('') + '</ul><p style="color:#555">Marque como "lida" na aba Observações.</p>');
+  const semPlano = relatorioSemPlano_(A);
+  const usando = semPlano.filter(a => a.ultimoAcesso instanceof Date && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 <= 7);
+  if (usando.length) S.push('<h3 style="margin:18px 0 4px">👀 Usando o app sem plano pago (' + usando.length + ')</h3><p style="color:#555;margin:0">Lista completa na aba <b>Sem plano</b> da planilha.</p><ul style="padding-left:18px">' + usando.map(a => '<li><b>' + a.nome + '</b> • ' + (a.cidade || '—') + '/' + (a.estado || '—') + ' • ' + (a.telefone || 'sem WhatsApp') + ' • ' + a.email + '<br><span style="color:#555">' + a.situacao + '</span></li>').join('') + '</ul>');
   const corpo = S.join('');
   if (!corpo) return;
   enviarEmail_('MUSICALIS • quem chamar hoje (' + Utilities.formatDate(new Date(), TZ, 'dd/MM') + ')',
     '<div style="font-family:Arial,sans-serif;font-size:15px;max-width:640px"><h2 style="margin:0">🎷 MUSICALIS • seu dia</h2><p>Toque em "Enviar WhatsApp pronto": a mensagem abre pronta, é só conferir e enviar.</p>' + corpo + '</div>');
 }
+
+/* aba 'Sem plano': quem usa o app sem ter pago (teste ativo, teste encerrado ou gratuito) */
+function relatorioSemPlano_(A) {
+  const L = (A || alunos_()).filter(a => a.plano !== 'criador' && !/mensal|trimestral|semestral|anual|vitalicio|escola/.test(a.plano)).map(a => {
+    const d = dias_(a.vencimento); a.situacao = a.plano === 'teste' && d !== null && d >= 0 ? 'Teste grátis ativo até ' + fmt_(a.vencimento) : a.testeInicio ? 'Teste encerrado em ' + fmt_(a.vencimento || a.testeInicio) + ' • acesso parcial' : 'Gratuito (acesso parcial)'; return a; });
+  const cab = ['nome','email','cidade','estado','telefone','situacao','cadastro','ultimoAcesso','acessos','exerciciosTotal'];
+  const sh = aba_('Sem plano', cab); if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, cab.length).clearContent();
+  if (L.length) sh.getRange(2, 1, L.length, cab.length).setValues(L.map(a => cab.map(c => a[c] instanceof Date ? a[c] : (a[c] == null ? '' : a[c]))));
+  return L;
+}
+function relatorioSemPlano() { relatorioSemPlano_(); }
 
 function estat_(email, ev) {
   const E = ev.filter(e => e.email === email), ex = E.filter(e => e.tipo === 'exercicio'), ou = E.filter(e => e.tipo === 'ouvido');

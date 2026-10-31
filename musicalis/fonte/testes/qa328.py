@@ -33,7 +33,7 @@ async def novo(b,email,hash_='',nome='Maria da Silva',tel='(51) 99876-5432',pre=
   await pg.goto(U+hash_);await pg.wait_for_timeout(700)
   if pre:await pre(pg)
   await pg.evaluate("authMode='criar';page='login';render()")
-  await pg.fill('#lg-nome',nome);await pg.fill('#lg-tel',tel)
+  await pg.fill('#lg-nome',nome);await pg.fill('#lg-tel',tel);await pg.fill('#lg-cid','Porto Alegre');await pg.select_option('#lg-uf','RS')
   await pg.fill('#lg-email',email);await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1500)
   return ctx,pg
 async def main():

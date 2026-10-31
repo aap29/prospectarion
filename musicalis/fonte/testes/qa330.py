@@ -4,7 +4,7 @@ F='file://'+os.path.abspath(os.path.join(os.path.join(os.path.dirname(os.path.ab
 R=[];ok=lambda n,c,i='':R.append(('✓' if c else '✗',n,i))
 async def conta(pg,email='aluna@x.com'):
   await pg.evaluate("authMode='criar';page='login';render()")
-  await pg.fill('#lg-nome','Aluna Teste Silva');await pg.fill('#lg-tel','51999990000');await pg.fill('#lg-email',email);await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1300)
+  await pg.fill('#lg-nome','Aluna Teste Silva');await pg.fill('#lg-tel','51999990000');await pg.fill('#lg-cid','Porto Alegre');await pg.select_option('#lg-uf','RS');await pg.fill('#lg-email',email);await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1300)
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=['--use-fake-ui-for-media-stream','--use-fake-device-for-media-stream','--use-file-for-fake-audio-capture='+os.path.join(os.path.dirname(os.path.abspath(__file__)),'sax_teste.wav'),'--autoplay-policy=no-user-gesture-required'])

@@ -49,3 +49,6 @@ html body .score-head .ouv-btn.on{background:#0f6b52!important;color:#fff!import
  html body .pbar .pb-bpm{font-size:17px!important}
  html body .pbar .pb-bpm small{font-size:10px!important}
 }
+/* V3.33 • botão de volume */
+html body .score-head .vol-btn{background:#0e3151;color:#fff;border:2px solid #4c86c2!important;font-weight:800;white-space:nowrap}
+@media (orientation:landscape) and (max-height:540px){html body .score-head .vol-btn{height:30px!important;padding:0 10px!important;font-size:13px!important}}
