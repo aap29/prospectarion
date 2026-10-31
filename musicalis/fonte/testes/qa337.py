@@ -21,6 +21,9 @@ async def main():
     ok('Aluno não vê a área de jazz enquanto é prévia', not await pg.evaluate("!!document.getElementById('jazz-entrada')"))
     await pg.evaluate("go('jazz')");ok('Aluno não abre a área de jazz pela URL interna', await pg.evaluate("page")=='study')
     ok('Planos com acesso: só Trimestral, Semestral, Anual, Vitalício (e parcelado)', await pg.evaluate("(()=>{const u=curUser(),r={};['mensal','teste','trimestral','semestral','anual','vitalicio','parcelado'].forEach(pl=>{u.plan=pl;u.exp=pl==='vitalicio'?null:somaDias(30);r[pl]=jazzPode()});return JSON.stringify(r)})()")=='{"mensal":false,"teste":false,"trimestral":true,"semestral":true,"anual":true,"vitalicio":true,"parcelado":true}')
+    await pg.evaluate("(async()=>{COFRE.emails_h=[...COFRE.emails_h,await hashEmail('aluno@x.com')];Object.keys(_jzCri).forEach(k=>delete _jzCri[k]);curUser().plan='mensal';saveAcc();go('study')})()");await pg.wait_for_timeout(800)
+    ok('Entrando com e-mail de Criador (sem a chave no aparelho): vê a prévia do jazz', await pg.evaluate("!!document.getElementById('jazz-entrada')"))
+    ok('E-mail de Criador abre os estudos mesmo sem plano', await pg.evaluate("jazzPode()"))
     await ctx.close()
     # criador: vê prévia, lê história, toca estudo
     c2=await b.new_context(viewport={'width':412,'height':915});p2=await c2.new_page();e2=[];p2.on('pageerror',lambda e:e2.append(str(e)))

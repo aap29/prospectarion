@@ -57,8 +57,10 @@ const JAZZ=[
   fontes:[],estudos:[]}];
 const JAZZ_ALEM=[['Jamey Aebersold • Play-a-longs (Vol. 1 "How to Play Jazz")','https://www.jazzbooks.com'],['Jim Snidero • Easy e Intermediate Jazz Conception (Advance Music)','https://www.schott-music.com/en/brands/advance-music'],['Charlie Parker • Omnibook (Hal Leonard)','https://www.halleonard.com/product/4001/charlie-parker-omnibook'],['Lennie Niehaus • Basic Jazz Conception for Saxophone',''],['David Baker • The Jazz Style of John Coltrane','']];
 
-function jazzPode(){const u=curUser();if(isOwner())return true;if(!u||!JAZZ_PLANOS.includes(u.plan))return false;return planActive()}
-function jazzVisivel(){return isOwner()||JAZZ_PUBLICO}
+function jazzPode(){const u=curUser();if(isOwner()||jzCriador())return true;if(!u||!JAZZ_PLANOS.includes(u.plan))return false;return planActive()}
+/* o professor vê a prévia como Criador ou entrando com um dos seus e-mails de Criador (mesmo sem a chave neste aparelho) */
+const _jzCri={};function jzCriador(){const e=ACC.session;if(!e)return false;if(_jzCri[e]===undefined){_jzCri[e]=false;ehCriadorEmail(e).then(v=>{_jzCri[e]=v;if(v&&ACC.session===e&&['study','jazz','jazzest'].includes(page))render()})}return _jzCri[e]}
+function jazzVisivel(){return isOwner()||jzCriador()||JAZZ_PUBLICO}
 let JZ=null;
 const lkJ=(t,u)=>u?`<a href="${u}" target="_blank" rel="noopener" style="color:#61d7ff">${t}</a>`:t;
 function cardJazzEntrada(){if(!jazzVisivel())return '';return `<div class="card click" style="border:2px solid #e8ad28;background:linear-gradient(145deg,#2c2347,#13294d)" onclick="go('jazz')"><div class="tiny">${JAZZ_PUBLICO?'NOVO • PLANOS TRIMESTRAL, SEMESTRAL, ANUAL E VITALÍCIO':'PRÉVIA DO PROFESSOR • ainda não aparece para os alunos'}</div><h2 style="margin:6px 0">🎷 Jazz: estilos e mestres</h2><p class="sub" style="margin:0">Estudos originais no estilo dos grandes saxofonistas, do swing ao jazz brasileiro, com a história de cada um.</p></div>`}
