@@ -1,5 +1,5 @@
 /**
- * MUSICALIS • Banco de dados dos alunos + automações • versão 4
+ * MUSICALIS • Banco de dados dos alunos + automações • versão 4.1
  * Já vem preenchido: só colar no Apps Script da planilha "MUSICALIS Alunos", salvar e implantar.
  */
 const TOKEN = 'TROQUE';
@@ -164,6 +164,7 @@ function enviarEmail_(assunto, html) { const para = EMAIL_PROFESSOR || Session.g
 
 function automacaoDiaria() {
   const A = alunos_().filter(a => a.plano !== 'criador'), ev = eventos_(3), S = [];
+  const arm = avisoArmazenamento_(); if (arm) S.push(arm);
   const novos = A.filter(a => dias_(a.cadastro) === -1 || dias_(a.cadastro) === 0);
   const amanha = A.filter(a => a.plano === 'teste' && dias_(a.vencimento) === 1);
   const acabou = A.filter(a => (a.plano === 'teste' || a.plano === 'gratuito') && a.testeInicio && [-1, -2].includes(dias_(a.vencimento)));
@@ -279,4 +280,27 @@ function kiwify_(d) {
     aba_(ABA_EVENTOS, COL_EVENTOS).appendRow([new Date(), email, o.nome || cli.full_name || '', o.telefone || '', 'pagamento', o.plano || '', txt_(JSON.stringify({ kiwify: st, produto: nomeProd }), 1500), '']);
   }
   return { ok: true };
+}
+
+/* ---------- aviso de armazenamento do Google (Fotos + Drive + Gmail) ---------- */
+function armazenamento_() { const usado = DriveApp.getStorageUsed(), limite = DriveApp.getStorageLimit(); return { usado, limite, pct: limite ? Math.round(usado / limite * 100) : 0 }; }
+function avisoArmazenamento_() {
+  try { const a = armazenamento_(); if (a.pct < 85) return '';
+    const gb = n => (n / 1073741824).toFixed(1).replace('.', ',') + ' GB';
+    return '<div style="border:2px solid ' + (a.pct >= 95 ? '#d62828' : '#d39b1f') + ';border-radius:10px;padding:10px 12px;margin:12px 0"><b>' + (a.pct >= 95 ? '🚨' : '⚠️') + ' Armazenamento do Google em ' + a.pct + '%</b> (' + gb(a.usado) + ' de ' + gb(a.limite) + ').<br>' +
+      'Quando chega a 100%, a planilha do MUSICALIS para de gravar os dados dos alunos. Libere espaço no Google Fotos (mídias do WhatsApp e vídeos) em <a href="https://one.google.com/storage">one.google.com/storage</a>.</div>';
+  } catch (e) { return ''; }
+}
+/* aviso extra: se passar de 95%, avisa no mesmo dia mesmo sem outras novidades (no máximo 1 vez por dia) */
+function verificarArmazenamento() {
+  const a = armazenamento_(); if (a.pct < 95) return a;
+  const c = CacheService.getScriptCache(); if (c.get('arm_aviso')) return a; c.put('arm_aviso', '1', 21600);
+  enviarEmail_('🚨 MUSICALIS • armazenamento do Google quase cheio (' + a.pct + '%)', '<div style="font-family:Arial,sans-serif;font-size:15px">' + avisoArmazenamento_() + '</div>');
+  return a;
+}
+/* rode UMA vez no editor (autoriza a leitura do espaço e agenda a conferência a cada 6 horas) */
+function instalarAvisoArmazenamento() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'verificarArmazenamento').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('verificarArmazenamento').timeBased().everyHours(6).create();
+  const a = verificarArmazenamento(); Logger.log('Armazenamento do Google: ' + a.pct + '% usado'); return a;
 }
