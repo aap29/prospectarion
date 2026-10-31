@@ -22,10 +22,19 @@ function decorarTopo(){const t=document.querySelector('#app .top');if(!t||t.clas
 
 /* ---------- 2. FOTO DO PERFIL ---------- */
 function escolherFoto(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files&&i.files[0];if(f)salvarFoto(f)};i.click()}
-function salvarFoto(file){if(!/^image\//.test(file.type)){toast('Escolha uma imagem');return}if(file.size>15e6){toast('Imagem grande demais');return}
- const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{const L=256,c=document.createElement('canvas');c.width=c.height=L;const g=c.getContext('2d'),s=Math.min(img.width,img.height);
-  g.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,L,L);URL.revokeObjectURL(url);const u=curUser();if(!u)return;u.foto=c.toDataURL('image/jpeg',.82);saveAcc();toast('Foto atualizada');render()};
- img.onerror=()=>{URL.revokeObjectURL(url);toast('Não consegui abrir essa imagem')};img.src=url}
+/* abre a foto por 3 caminhos (alguns celulares entregam fotos grandes, giradas ou em formatos que um caminho só não abre) */
+async function abrirImagem(file){
+ try{if(window.createImageBitmap){const b=await createImageBitmap(file,{imageOrientation:'from-image'});if(b&&b.width)return b}}catch(e){}
+ const tenta=src=>new Promise(r=>{const im=new Image();im.onload=()=>r(im.width?im:null);im.onerror=()=>r(null);im.src=src});
+ let url=null;try{url=URL.createObjectURL(file);const im=await tenta(url);if(im)return im}catch(e){}finally{if(url)setTimeout(()=>URL.revokeObjectURL(url),3000)}
+ try{const d=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(file)});const im=await tenta(d);if(im)return im}catch(e){}
+ return null}
+async function salvarFoto(file){if(file.type&&!/^image\//.test(file.type)){toast('Escolha uma imagem');return}if(file.size>40e6){toast('Imagem grande demais');return}
+ toast('Carregando a foto…',1500);const img=await abrirImagem(file);
+ if(!img){const heic=/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||'');toast(heic?'Esta foto está no formato HEIC, que o navegador não abre. Tire um print da foto e escolha o print, ou escolha outra foto.':'Não consegui abrir essa imagem. Tente outra foto ou um print dela.',7000);return}
+ const L=256,c=document.createElement('canvas');c.width=c.height=L;const g=c.getContext('2d'),w=img.width,h=img.height,s=Math.min(w,h);
+ g.drawImage(img,(w-s)/2,(h-s)/2,s,s,0,0,L,L);try{img.close&&img.close()}catch(e){}
+ const u=curUser();if(!u)return;u.foto=c.toDataURL('image/jpeg',.82);try{saveAcc()}catch(e){toast('Sem espaço para salvar a foto');return}toast('Foto atualizada');render()}
 function removerFoto(){const u=curUser();if(!u)return;delete u.foto;saveAcc();render()}
 function cardPerfilPro(){const u=curUser()||{},p=perfilDe();
  const L=(r,v)=>v?`<p style="margin:4px 0"><b>${r}:</b> ${limpaTxt(v,120)}</p>`:'';
