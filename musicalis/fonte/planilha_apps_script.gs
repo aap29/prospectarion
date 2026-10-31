@@ -1,32 +1,26 @@
 /**
- * MUSICALIS • Banco de dados dos alunos + automações (Google Planilhas + Apps Script, gratuito) • versão 3
- * ---------------------------------------------------------------------------------------------
- * INSTALAR (uma vez, no computador):
- * 1) Crie uma planilha nova no Google Drive: "MUSICALIS Alunos".
- * 2) Menu Extensões > Apps Script. Apague o que estiver lá e cole TODO este arquivo. Salve.
- * 3) Troque o TOKEN abaixo por uma senha só sua (letras e números, sem espaços).
- * 4) Implantar > Nova implantação > Tipo: App da Web
- *    Executar como: Eu  •  Quem pode acessar: Qualquer pessoa  > Implantar > Autorizar.
- * 5) Copie o endereço que termina em /exec e envie ao Claude.
- * 6) No editor, escolha a função instalarAutomacoes e clique em Executar (uma vez só).
- *    Pronto: todo dia às 8h chega no seu e-mail a lista de quem chamar no WhatsApp,
- *    toda segunda o resumo semanal e todo dia 1º o resumo do mês.
+ * MUSICALIS • Banco de dados dos alunos + automações • versão 4
+ * Já vem preenchido: só colar no Apps Script da planilha "MUSICALIS Alunos", salvar e implantar.
  */
-const TOKEN = 'TROQUE-ESTA-SENHA';
+const TOKEN = 'TROQUE';
+const PLANILHA_ID = '1c7FSvuF83lop6M753wDQal29k5Jc88Kzf_1vdCPHxyM';
 const EMAIL_PROFESSOR = '';          // vazio = e-mail da conta Google dona da planilha
 const WHATS_PROFESSOR = '5551984168848';
 const ASSINATURA = 'Kenny Anderson • MUSICALIS';
 const TZ = 'America/Sao_Paulo';
+const KIWIFY_CHAVE = 'TROQUE_KIWIFY';   // vai no fim do endereço do webhook da Kiwify: …/exec?kiwify=ESTA_CHAVE
+const APP_URL = 'https://aap29.github.io/prospectarion/musicalis/app/';
 
 const ABA_ALUNOS = 'Alunos', ABA_EVENTOS = 'Eventos', ABA_VERSOES = 'Versões', ABA_OBS = 'Observações', ABA_RES = 'Resumos';
 const COLS = ['email','nome','telefone','instrumento','plano','vencimento','testeInicio','cadastro','ultimoAcesso',
               'ultimoEvento','praticas','evolucao','modulo','versao','acessos',
               'nivelRecomendado','teoria','pratica','exerciciosTotal','exerciciosSemana','minutosSemana','precisaoMedia',
-              'buscasPartituras','ultimoExercicio','avaliacaoTeste','observacoes','pagamentoAberto','ouvidoModo','statusContato','cidade','estado'];
+              'buscasPartituras','ultimoExercicio','avaliacaoTeste','observacoes','pagamentoAberto','ouvidoModo','statusContato','cidade','estado',
+              'nomeArtistico','saxofones','saxPrincipal','experiencia','redeSocial','idade','emailContato'];
 const COL_EVENTOS = ['quando','email','nome','telefone','tipo','plano','detalhe','versao'];
 
 function aba_(nome, cab) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = SpreadsheetApp.openById(PLANILHA_ID);
   let sh = ss.getSheetByName(nome);
   if (!sh) { sh = ss.insertSheet(nome); sh.appendRow(cab); sh.setFrozenRows(1); sh.getRange(1,1,1,cab.length).setFontWeight('bold'); return sh; }
   const atual = sh.getRange(1, 1, 1, Math.max(1, sh.getLastColumn())).getValues()[0];
@@ -58,6 +52,8 @@ function doPost(e) {
     const bruto = (e.postData && e.postData.contents) || '{}';
     if (bruto.length > 20000) return json_({ erro: 'envio grande demais' });
     const d = JSON.parse(bruto);
+    const q = (e && e.parameter) || {};
+    if (q.kiwify) { if (q.kiwify !== KIWIFY_CHAVE) return json_({ erro: 'chave inválida' }); return json_(kiwify_(d)); }
     if ((d.acao === 'lead' || d.acao === 'evento') && !limite_(d.email)) return json_({ erro: 'limite de envios' });
     if (d.acao === 'lead') return json_(lead_(d));
     if (d.acao === 'evento') return json_(evento_(d));
@@ -97,6 +93,8 @@ function base_(d, antigo, contarAcesso) {
   set('praticas', Number(d.praticas) || ''); set('evolucao', txt_(d.evolucao, 10)); set('modulo', txt_(d.modulo, 40)); set('versao', txt_(d.versao, 10));
   ['nivelRecomendado','teoria','pratica','exerciciosSemana','minutosSemana','precisaoMedia','buscasPartituras','ouvidoModo'].forEach(c => set(c, txt_(d[c], 40)));
   set('cidade', txt_(d.cidade, 60)); set('estado', txt_(d.estado, 2).toUpperCase());
+  ['nomeArtistico','saxofones','saxPrincipal','experiencia','redeSocial','emailContato'].forEach(c => set(c, txt_(d[c], 120)));
+  if (Number(d.idade) >= 5 && Number(d.idade) <= 100) o.idade = Number(d.idade);
   if (!o.cadastro) o.cadastro = txt_(d.cadastro, 10) || hoje_();
   if (!o.testeInicio) o.testeInicio = txt_(d.testeInicio, 10);
   o.ultimoAcesso = new Date(); if (contarAcesso) o.acessos = (Number(o.acessos) || 0) + 1;
@@ -117,6 +115,8 @@ function lead_(d) {
   if (/^link_|^pagar/.test(d.evento || '')) o.pagamentoAberto = new Date();
   gravar_(sh, linha, o);
   aba_(ABA_EVENTOS, COL_EVENTOS).appendRow([new Date(), email, o.nome, o.telefone, txt_(d.evento, 40), o.plano, '', o.versao]);
+  const mi = /^inscrito_([a-z]+)$/.exec(d.evento || '');
+  if (mi) alertaAssinante_(o, mi[1], 'Entrou no app pelo link de assinante (depois do pagamento)');
   return { ok: true, testeUsado };
 }
 function evento_(d) {
@@ -169,7 +169,7 @@ function automacaoDiaria() {
   const acabou = A.filter(a => (a.plano === 'teste' || a.plano === 'gratuito') && a.testeInicio && [-1, -2].includes(dias_(a.vencimento)));
   const pagou = new Set(ev.filter(e => /ativ/.test(e.tipo)).map(e => e.email));
   const pagto = A.filter(a => a.pagamentoAberto instanceof Date && Date.now() - a.pagamentoAberto.getTime() < 3 * 864e5 && /teste|gratuito/.test(a.plano) && !pagou.has(a.email));
-  const sumidos = A.filter(a => a.ultimoAcesso instanceof Date && /teste|mensal|trimestral|semestral|anual|vitalicio|escola/.test(a.plano) && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 >= 5 && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 < 6);
+  const sumidos = A.filter(a => a.ultimoAcesso instanceof Date && /teste|mensal|trimestral|semestral|anual|vitalicio|escola|parcelado/.test(a.plano) && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 >= 5 && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 < 6);
   const obs = aba_(ABA_OBS, ['quando','nome','email','telefone','observacao','status']).getDataRange().getValues().slice(1).filter(r => r[5] === 'nova');
   const sec = (t, L) => L.length ? '<h3 style="margin:18px 0 4px">' + t + ' (' + L.length + ')</h3><ul style="padding-left:18px">' + L.join('') + '</ul>' : '';
   S.push(sec('🆕 Novos cadastros', novos.map(a => item_(a, 'Cadastro ' + fmt_(a.cadastro) + (a.nivelRecomendado ? ' • nível recomendado: ' + a.nivelRecomendado : ' • ainda não fez o diagnóstico'),
@@ -182,6 +182,11 @@ function automacaoDiaria() {
     'Olá, ' + primeiro_(a.nome) + '! Seu teste do MUSICALIS terminou. Quer continuar de onde parou? Seu progresso está guardado. Te mando as opções de plano?'))));
   S.push(sec('😴 Sem estudar há 5 dias', sumidos.map(a => item_(a, 'Último acesso ' + fmt_(a.ultimoAcesso) + ' • módulo ' + (a.modulo || '—'),
     'Olá, ' + primeiro_(a.nome) + '! Sentimos sua falta no MUSICALIS 🎷 15 minutinhos hoje já fazem diferença. Seu próximo passo: ' + (a.modulo || 'o próximo exercício') + '.'))));
+  const debito = A.filter(a => /mensal|trimestral|semestral|anual|escola|parcelado/.test(a.plano) && a.vencimento && dias_(a.vencimento) !== null && dias_(a.vencimento) <= 2 && dias_(a.vencimento) >= -30);
+  S.push(sec('💸 Vencendo ou em débito', debito.map(a => { const d = dias_(a.vencimento), parc = a.plano === 'parcelado';
+    return item_(a, (parc ? 'Vitalício parcelado' : 'Plano ' + a.plano) + ' • ' + (d < 0 ? 'EM ATRASO há ' + (-d) + ' dia(s) (venceu ' + fmt_(a.vencimento) + ') • funções pagas bloqueadas no app' : d === 0 ? 'vence HOJE' : 'vence em ' + d + ' dia(s) (' + fmt_(a.vencimento) + ')'),
+      d < 0 ? 'Olá, ' + primeiro_(a.nome) + '! ' + (parc ? 'A parcela do seu MUSICALIS Vitalício' : 'O seu plano do MUSICALIS') + ' venceu em ' + fmt_(a.vencimento) + ' e algumas funções do app ficaram pausadas. Assim que o pagamento for feito, eu libero na hora. Precisa de ajuda com o pagamento?'
+            : 'Olá, ' + primeiro_(a.nome) + '! Passando para lembrar que ' + (parc ? 'a parcela do seu MUSICALIS Vitalício' : 'o seu plano do MUSICALIS') + ' vence ' + (d === 0 ? 'hoje' : 'em ' + fmt_(a.vencimento)) + '. Pagando até a data, tudo continua funcionando sem interrupção. 🎷'); })));
   if (obs.length) S.push('<h3 style="margin:18px 0 4px">💬 Observações novas dos alunos (' + obs.length + ')</h3><ul style="padding-left:18px">' + obs.map(r => '<li><b>' + r[1] + '</b> (' + r[2] + '): ' + r[4] + '</li>').join('') + '</ul><p style="color:#555">Marque como "lida" na aba Observações.</p>');
   const semPlano = relatorioSemPlano_(A);
   const usando = semPlano.filter(a => a.ultimoAcesso instanceof Date && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 <= 7);
@@ -194,7 +199,7 @@ function automacaoDiaria() {
 
 /* aba 'Sem plano': quem usa o app sem ter pago (teste ativo, teste encerrado ou gratuito) */
 function relatorioSemPlano_(A) {
-  const L = (A || alunos_()).filter(a => a.plano !== 'criador' && !/mensal|trimestral|semestral|anual|vitalicio|escola/.test(a.plano)).map(a => {
+  const L = (A || alunos_()).filter(a => a.plano !== 'criador' && !/mensal|trimestral|semestral|anual|vitalicio|escola|parcelado/.test(a.plano)).map(a => {
     const d = dias_(a.vencimento); a.situacao = a.plano === 'teste' && d !== null && d >= 0 ? 'Teste grátis ativo até ' + fmt_(a.vencimento) : a.testeInicio ? 'Teste encerrado em ' + fmt_(a.vencimento || a.testeInicio) + ' • acesso parcial' : 'Gratuito (acesso parcial)'; return a; });
   const cab = ['nome','email','cidade','estado','telefone','situacao','cadastro','ultimoAcesso','acessos','exerciciosTotal'];
   const sh = aba_('Sem plano', cab); if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, cab.length).clearContent();
@@ -238,4 +243,40 @@ function instalarAutomacoes() {
   ScriptApp.newTrigger('resumoSemanal').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(7).inTimezone(TZ).create();
   ScriptApp.newTrigger('resumoMensal').timeBased().onMonthDay(1).atHour(7).inTimezone(TZ).create();
   [ABA_ALUNOS, ABA_EVENTOS, ABA_OBS, ABA_RES].forEach(n => aba_(n, n === ABA_ALUNOS ? COLS : n === ABA_EVENTOS ? COL_EVENTOS : n === ABA_OBS ? ['quando','nome','email','telefone','observacao','status'] : ['data','periodo','nome','email','telefone','plano','dias','exercicios','partituras','precisao','errosAcidente','errosOitava','recomendacao']));
+}
+
+
+/* ---------- alerta de novo assinante (e-mail na hora) ---------- */
+const NOME_PLANO_ = { mensal: 'Mensal', trimestral: 'Trimestral', semestral: 'Semestral', anual: 'Anual', vitalicio: 'Vitalício', parcelado: 'Vitalício parcelado' };
+function alertaAssinante_(o, plano, origem, extra) {
+  const c = CacheService.getScriptCache(), k = 'alerta_' + o.email + '_' + plano; if (c.get(k)) return; c.put(k, '1', 21600);
+  const nome = String(o.nome || o.email), pl = NOME_PLANO_[plano] || plano, wa = wa_(o, 'Olá, ' + primeiro_(o.nome) + '! Seja muito bem-vindo(a) ao MUSICALIS 🎷 Seu plano ' + pl + ' foi recebido. Já estou liberando o seu acesso completo.');
+  enviarEmail_('💰 MUSICALIS • novo assinante: ' + nome + ' • plano ' + pl,
+    '<div style="font-family:Arial,sans-serif;font-size:15px;max-width:640px"><h2 style="margin:0 0 6px">💰 Novo assinante do MUSICALIS</h2>' +
+    '<p style="margin:4px 0"><b>' + nome + '</b> • plano <b>' + pl + '</b>' + (extra ? ' • ' + extra : '') + '</p>' +
+    '<p style="margin:4px 0">E-mail: ' + o.email + '<br>WhatsApp: ' + (o.telefone || '—') + '<br>Cidade: ' + (o.cidade || '—') + '/' + (o.estado || '—') + '</p>' +
+    '<p style="color:#555;margin:6px 0">' + origem + '</p>' +
+    '<p><b>Para liberar o acesso:</b> abra o app → <b>Criador</b> → item 1 (gerar código) → e-mail <b>' + o.email + '</b> → plano <b>' + pl + '</b> → envie o link ao aluno.</p>' +
+    (wa ? '<p><a href="' + wa + '" style="display:inline-block;background:#1f9d55;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none">Enviar WhatsApp de boas-vindas</a></p>' : '') +
+    '<p style="color:#555">Antes de liberar, confira o pagamento na Kiwify ou no Pix.</p></div>');
+}
+
+/* ---------- webhook da Kiwify: compra aprovada ---------- */
+function kiwify_(d) {
+  const st = String(d.order_status || d.webhook_event_type || '').toLowerCase();
+  const cli = d.Customer || d.customer || {}, prod = d.Product || d.product || {};
+  const email = txt_(cli.email, 120).toLowerCase().trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: true, ignorado: 'sem e-mail' };
+  const nomeProd = String(prod.product_name || prod.name || d.product_name || '');
+  const plano = /vital/i.test(nomeProd) ? 'vitalicio' : /anual/i.test(nomeProd) ? 'anual' : /semest/i.test(nomeProd) ? 'semestral' : /trimest/i.test(nomeProd) ? 'trimestral' : /mensal/i.test(nomeProd) ? 'mensal' : 'outro';
+  const { sh, linha, antigo } = linhaAluno_(email), o = base_({ email, nome: cli.full_name || cli.name, telefone: cli.mobile || cli.phone, cidade: cli.city, estado: cli.state }, antigo, false);
+  const valor = d.Commissions && d.Commissions.charge_amount ? 'R$ ' + (Number(d.Commissions.charge_amount) / 100).toFixed(2).replace('.', ',') : '';
+  if (/paid|approved|aprovad|order_approved/.test(st)) {
+    o.ultimoEvento = 'kiwify_pago_' + plano; o.statusContato = txt_('Pago na Kiwify: ' + (NOME_PLANO_[plano] || nomeProd) + ' (' + hoje_() + ') • liberar acesso', 120);
+    gravar_(sh, linha, o);
+    aba_(ABA_EVENTOS, COL_EVENTOS).appendRow([new Date(), email, o.nome, o.telefone, 'pagamento', o.plano, txt_(JSON.stringify({ kiwify: st, produto: nomeProd, plano, valor, pedido: d.order_id || '' }), 1500), o.versao]);
+    alertaAssinante_(o, plano, 'Pagamento APROVADO na Kiwify • produto: ' + nomeProd, valor);
+  } else {
+    aba_(ABA_EVENTOS, COL_EVENTOS).appendRow([new Date(), email, o.nome || cli.full_name || '', o.telefone || '', 'pagamento', o.plano || '', txt_(JSON.stringify({ kiwify: st, produto: nomeProd }), 1500), '']);
+  }
+  return { ok: true };
 }
