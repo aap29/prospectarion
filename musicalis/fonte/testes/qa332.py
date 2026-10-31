@@ -20,9 +20,11 @@ async def main():
     # aluno tocando: não pode ser interrompido
     await pg.evaluate("openM2('b601');meterState.playing=true");publicar('99.1')
     await pg.evaluate("checarAtualizacao()");await pg.wait_for_timeout(1500)
-    ok('Durante a partitura/playback NÃO recarrega', await pg.evaluate("APP_VERSAO")==V0 and await pg.evaluate("ATUALIZAR_PENDENTE")=='99.1')
-    await pg.evaluate("meterState.playing=false;closeMeter()");await pg.wait_for_timeout(3500)
-    ok('Ao sair da partitura, atualiza sozinho para a nova versão', await pg.evaluate("APP_VERSAO")=='99.1', await pg.evaluate("APP_VERSAO"))
+    ok('Durante a partitura/playback NÃO recarrega', await pg.evaluate("APP_VERSAO")==V0 and await pg.evaluate("NOVA_VERSAO")=='99.1')
+    await pg.evaluate("meterState.playing=false;closeMeter()");await pg.wait_for_timeout(800)
+    ok('Ao sair da partitura aparece o botão Atualização disponível', await pg.evaluate("!!document.querySelector('#app .top .upd-auto')"))
+    await pg.click('#app .top .upd-auto');await pg.wait_for_timeout(3500)
+    ok('Um toque no botão: atualiza para a nova versão', await pg.evaluate("APP_VERSAO")=='99.1', await pg.evaluate("APP_VERSAO"))
     ok('Continua logado e com o progresso', await pg.evaluate("ACC.session")=='m@x.com' and await pg.evaluate("S.theory")==40)
     await pg.wait_for_timeout(1500);ok('Mostra "MUSICALIS atualizado"', 'atualizado' in (await pg.text_content('#toast') or ''))
     # nova versão com o app na tela inicial: atualiza ao voltar para o app

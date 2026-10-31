@@ -574,7 +574,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
   catch(e){toast('Este arquivo não é um backup do MUSICALIS')}inp.value=''};r.readAsText(f)}
 async function copiarBackup(){const t=JSON.stringify(backupObj());try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast('Backup copiado. Cole no outro aparelho em "Colar backup".')}
 function colarBackup(){const t=($('#bk-txt')||{}).value||'';try{const res=mesclarProgresso(JSON.parse(t));toast(`Progresso recuperado: +${res.praticas} práticas, +${res.selos} selos`);setTimeout(()=>render(),400)}catch(e){toast('Texto de backup inválido')}}
-const APP_VERSAO='3.34';
+const APP_VERSAO='3.35';
 function backupCard(){return `<p style="text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0">MUSICALIS • Versão ${APP_VERSAO}</p><div class="card" style="margin-top:12px"><h3>💾 Backup do meu progresso</h3>
  <p class="sub">Guarde suas práticas, notas e selos. Ao restaurar, o app <b>junta</b> com o que já existe aqui: nada é apagado.</p>
  <button class="btn" onclick="exportData()">Salvar backup</button>
@@ -2219,6 +2219,12 @@ html body .score-head .ouv-btn.on{background:#0f6b52!important;color:#fff!import
 /* V3.33 • botão de volume */
 html body .score-head .vol-btn{background:#0e3151;color:#fff;border:2px solid #4c86c2!important;font-weight:800;white-space:nowrap}
 @media (orientation:landscape) and (max-height:540px){html body .score-head .vol-btn{height:30px!important;padding:0 10px!important;font-size:13px!important}}
+/* V3.35 • botão de atualização no canto superior */
+.upd-auto{display:inline-flex;flex-direction:column;align-items:flex-start;gap:0;border:0;border-radius:12px;background:#1f9d55;color:#fff;padding:6px 10px;font-size:12.5px;line-height:1.15;cursor:pointer;box-shadow:0 0 0 0 #1f9d5588;animation:updpulse 1.8s infinite;margin-left:auto;margin-right:6px;text-align:left}
+.upd-auto b{font-size:13px}.upd-auto span{font-size:11px;opacity:.9}
+.upd-auto.flut{position:fixed;top:8px;right:8px;z-index:996;flex-direction:row;gap:6px;align-items:center}
+@keyframes updpulse{70%{box-shadow:0 0 0 8px #1f9d5500}}
+#toast{pointer-events:none}
 
 </style>
 <script>
@@ -2238,10 +2244,10 @@ async function pubKey(){return PUBK||(PUBK=await crypto.subtle.importKey('jwk',P
 async function sigOk(email,body,sig){const s=unb32(sig||'');if(!s||s.length!==64)return false;try{return await crypto.subtle.verify(ECA,await pubKey(),s,enc.encode(normEmail(email)+'|'+body))}catch(e){return false}}
 async function assinar(email,body){if(!PRIVK)throw new Error('A chave do Criador não está neste aparelho');const s=await crypto.subtle.sign(ECA,PRIVK,enc.encode(normEmail(email)+'|'+body));return b32(new Uint8Array(s))}
 const limpaCod=c=>(c||'').replace(/\s+/g,'').toUpperCase();
-async function makeLicense(email,plan,months){const P={mensal:'M',trimestral:'T',semestral:'S',anual:'A',vitalicio:'V',escola:'E'}[plan];let d='000000';if(P!=='V'){const x=new Date();x.setMonth(x.getMonth()+(+months||({M:1,T:3,S:6,A:12,E:12}[P])));d=x.toISOString().slice(2,10).replace(/-/g,'')}
+async function makeLicense(email,plan,months,ateISO){const P={mensal:'M',trimestral:'T',semestral:'S',anual:'A',vitalicio:'V',escola:'E',parcelado:'P'}[plan];let d='000000';if(P!=='V'){if(ateISO&&/^\d{4}-\d{2}-\d{2}$/.test(ateISO))d=ateISO.slice(2).replace(/-/g,'');else{const x=new Date();x.setMonth(x.getMonth()+(+months||({M:1,T:3,S:6,A:12,E:12,P:1}[P])));d=x.toISOString().slice(2,10).replace(/-/g,'')}}
  const r=[...crypto.getRandomValues(new Uint8Array(4))].map(b=>B32[b%32]).join(''),body=P+d+'-'+r;return 'MUS2-'+body+'-'+await assinar(email,'L'+body)}
-async function checkLicense(email,code){const m=/^MUS2-([MTSAVE])(\d{6})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
- if(!await sigOk(email,'L'+m[1]+m[2]+'-'+m[3],m[4]))return null;const plan={M:'mensal',T:'trimestral',S:'semestral',A:'anual',V:'vitalicio',E:'escola'}[m[1]];
+async function checkLicense(email,code){const m=/^MUS2-([MTSAVEP])(\d{6})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
+ if(!await sigOk(email,'L'+m[1]+m[2]+'-'+m[3],m[4]))return null;const plan={M:'mensal',T:'trimestral',S:'semestral',A:'anual',V:'vitalicio',E:'escola',P:'parcelado'}[m[1]];
  const exp=m[1]==='V'?null:'20'+m[2].slice(0,2)+'-'+m[2].slice(2,4)+'-'+m[2].slice(4,6);if(exp&&new Date(exp+'T23:59:59')<new Date())return {expired:true};return {plan,exp}}
 async function makeItemCode(email,id){const r=[...crypto.getRandomValues(new Uint8Array(4))].map(b=>B32[b%32]).join(''),body='P'+itemCode(id)+'-'+r;return 'MUP2-'+itemCode(id)+'-'+r+'-'+await assinar(email,body)}
 async function checkItemCode(email,code){const m=/^MUP2-([A-Z2-9]{5})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
@@ -2595,7 +2601,7 @@ async function checarAtualizacao(){if(NATIVO||!/^https?:/.test(location.protocol
   if(verNum(j.v)>verNum(APP_VERSAO)){let tentou=false;try{tentou=sessionStorage.getItem('musicalis_tentou')===j.v}catch(e){}
    if(tentou){avisoAtualizar(j.v);return}ATUALIZAR_PENDENTE=j.v;if(podeRecarregar())aplicarAtualizacao(j.v)}}catch(e){}}
 function avisoAtualizar(v){if(document.getElementById('upd-bar'))return;document.body.insertAdjacentHTML('beforeend',`<div id="upd-bar" style="position:fixed;left:10px;right:10px;top:10px;z-index:990;max-width:480px;margin:0 auto;background:#0f6b52;color:#fff;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 24px #0007"><b style="flex:1;font-size:14px">Nova versão ${v} do MUSICALIS</b><button class="btn" style="width:auto;margin:0;padding:8px 14px" onclick="location.reload()">Atualizar</button></div>`)}
-setTimeout(checarAtualizacao,4000);setInterval(checarAtualizacao,15*60000);
+setTimeout(()=>checarAtualizacao(),4000);setInterval(()=>checarAtualizacao(),15*60000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checarAtualizacao()});
 {const a=go;go=function(p){const r=a(p);if(ATUALIZAR_PENDENTE&&podeRecarregar())aplicarAtualizacao(ATUALIZAR_PENDENTE);return r}}
 try{const v=sessionStorage.getItem('musicalis_atualizado');if(v){sessionStorage.removeItem('musicalis_atualizado');setTimeout(()=>toast('MUSICALIS atualizado para a versão '+APP_VERSAO+' ✅',3500),1200)}}catch(e){}
@@ -2701,5 +2707,63 @@ if(!NATIVO){novasVersoes=function(){return []};atualizacao=function(){shell(`<di
 {const a=login;login=function(){a();if(authMode==='criar'&&$('#lg-tel')&&!$('#lg-cid'))$('#lg-tel').insertAdjacentHTML('afterend',camposLocal())}}
 /* confere o plano também ao abrir o app (não só no login) */
 setTimeout(()=>{if(ACC.session)verificarPlano()},400);
+
+/* ===================== V3.35 • BOTÃO DE ATUALIZAÇÃO + PLANO PARCELADO + CONDIÇÕES ESPECIAIS =====================
+   1) quando há versão nova: botão "🔔 Atualização disponível" no canto superior; um toque e o app se atualiza
+   2) plano "Vitalício parcelado": vale até a data da próxima parcela; avisa antes, no dia e depois;
+      em atraso, as funções pagas ficam bloqueadas até o pagamento (o progresso fica guardado)
+   3) Painel do Criador: gerador de condição especial (link de ativação com data de vencimento) */
+
+/* ---------- 1. ATUALIZAÇÃO COM BOTÃO ---------- */
+let _T0=Date.now(),NOVA_VERSAO=null;
+checarAtualizacao=async function(){if(NATIVO||!/^https?:/.test(location.protocol)||navigator.onLine===false)return;
+ try{const r=await fetch('versao.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+  if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(g=>g&&g.update()).catch(()=>{});
+  if(verNum(j.v)>verNum(APP_VERSAO)){NOVA_VERSAO=limpaTxt(j.v,10);let tentou=false;try{tentou=sessionStorage.getItem('musicalis_tentou')===j.v}catch(e){}
+   if(!tentou&&Date.now()-_T0<20000&&podeRecarregar()){aplicarAtualizacao(NOVA_VERSAO);return}   // ao abrir o app: já atualiza
+   botaoAtualizacao()}}catch(e){}};
+ATUALIZAR_PENDENTE=null;
+function botaoAtualizacao(){if(!NOVA_VERSAO)return;const t=document.querySelector('#app .top');
+ if(t){if(!t.querySelector('.upd-auto')){const b=document.createElement('button');b.className='upd-auto';b.innerHTML='🔔 <b>Atualização disponível</b><span>toque para atualizar</span>';b.onclick=atualizarAgora;const alvo=t.querySelector('.badge');alvo?t.insertBefore(b,alvo):t.appendChild(b)}return}
+ if(!document.getElementById('upd-flut')){const b=document.createElement('button');b.id='upd-flut';b.className='upd-auto flut';b.innerHTML='🔔 <b>Atualizar</b>';b.onclick=atualizarAgora;document.body.appendChild(b)}}
+async function atualizarAgora(){if(!podeRecarregar()&&!confirmarSaida())return;toast('Baixando a atualização '+(NOVA_VERSAO||'')+'…',3000);
+ try{const g=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(g){await g.update()}}catch(e){}
+ try{sessionStorage.setItem('musicalis_atualizado',NOVA_VERSAO||'');sessionStorage.removeItem('musicalis_tentou')}catch(e){}setTimeout(()=>location.reload(),700)}
+let _confSaida=false;function confirmarSaida(){if(_confSaida)return true;_confSaida=true;toast('Pare a música e toque de novo para atualizar.',4000);return false}
+
+/* ---------- 2. PLANO PARCELADO ---------- */
+PLANOS.parcelado='Vitalício (parcelado)';
+if(typeof PAGOS!=='undefined'&&!PAGOS.includes('parcelado'))PAGOS.push('parcelado');
+{const a=planActive;planActive=function(){const u=curUser();if(u&&!isOwner()&&u.plan==='parcelado')return !!u.exp&&diasPara(u.exp)>=0;return a()}}
+const PIX_ESPECIAL='https://aap29.github.io/prospectarion/musicalis/vitalicio-especial/';
+function botoesPagar(){const u=curUser()||{},n=encodeURIComponent(primeiroNome(u.nome||'')||'');
+ const wa='https://wa.me/5551984168848?text='+encodeURIComponent(`Olá, Kenny! Aqui é ${u.nome||''} (${ACC.session}). Paguei a parcela do MUSICALIS Vitalício. Segue o comprovante:`);
+ return `<a class="btn gold" style="text-decoration:none;display:flex;justify-content:center" href="${PIX_ESPECIAL}?n=${n}" target="_blank" rel="noopener">Pagar a parcela no Pix</a><a class="btn alt" style="text-decoration:none;display:flex;justify-content:center" href="${wa}" target="_blank" rel="noopener">Já paguei: enviar comprovante</a>`}
+function avisoParcelado(){const u=curUser();if(!u||isOwner()||u.plan!=='parcelado'||!u.exp)return '';const d=diasPara(u.exp),dt=brData(u.exp);
+ if(d<0){if(u.avisoAtraso!==u.exp){u.avisoAtraso=u.exp;saveAcc();registrar('pagamento',{situacao:'parcela_em_atraso',vencimento:u.exp})}
+  return `<div class="card aviso-plano forte" style="border:2px solid #d62828"><p style="margin:0 0 4px;font-size:17px">⚠️ <b>Parcela em atraso</b> desde ${dt}.</p><p class="tiny" style="margin:0 0 8px;font-size:14px">As funções pagas do MUSICALIS foram <b>bloqueadas</b> até o pagamento. Seu progresso está guardado e tudo volta assim que a parcela for paga.</p>${botoesPagar()}</div>`}
+ if(d<=2)return `<div class="card aviso-plano forte" style="border:2px solid #d39b1f"><p style="margin:0 0 4px;font-size:17px">⏳ Sua parcela vence ${d===0?'<b>hoje</b>':`em <b>${d} ${d>1?'dias':'dia'}</b>`} (${dt}).</p><p class="tiny" style="margin:0 0 8px;font-size:14px">Pague até a data para manter o seu plano <b>Vitalício</b> funcionando sem interrupção.</p>${botoesPagar()}</div>`;
+ return `<div class="card" style="border:1px solid #2e5b8a"><p style="margin:0;font-size:14.5px">🎷 <b>Vitalício (parcelado)</b> • próxima parcela até <b>${dt}</b>.</p></div>`}
+{const a=avisoPlano;avisoPlano=function(){const u=curUser();if(u&&u.plan==='parcelado'&&!isOwner())return avisoParcelado();return a()}}
+
+/* ---------- 3. PAINEL: GERADOR DE CONDIÇÃO ESPECIAL ---------- */
+function cardEspecial(){return `<div class="card" id="card-especial" style="border:2px solid #d39b1f"><h3>⭐ Condição especial (parcelado)</h3>
+ <p class="sub">Libera o app até a data da próxima parcela. Se a parcela não for paga, as funções pagas são bloqueadas sozinhas e o aluno é avisado. Quando ele pagar tudo, gere o <b>Vitalício</b> no item 1.</p>
+ <label>E-mail do aluno</label><input class="field" id="ce-email" type="email" placeholder="email@do.aluno">
+ <label>Nome do aluno</label><input class="field" id="ce-nome" placeholder="Nome e sobrenome">
+ <label>Acesso liberado até (data da próxima parcela)</label><input class="field" id="ce-data" type="date">
+ <label>Valor da parcela</label><input class="field" id="ce-valor" placeholder="R$ 500,00" value="R$ 500,00">
+ <button class="btn gold" onclick="gerarEspecial()">Gerar link de acesso especial</button><div id="ce-out"></div></div>`}
+async function gerarEspecial(){const e=normEmail($('#ce-email').value),n=limpaTxt($('#ce-nome').value,80),dt=$('#ce-data').value,v=limpaTxt($('#ce-valor').value,20);
+ if(!validEmail(e)){toast('E-mail inválido');return}if(!/^\d{4}-\d{2}-\d{2}$/.test(dt)||diasPara(dt)<0){toast('Escolha uma data futura');return}
+ let code;try{code=await makeLicense(e,'parcelado',0,dt)}catch(x){toast(x.message);go('chave');return}
+ ACC.cfg.sales=ACC.cfg.sales||[];ACC.cfg.sales.push({email:e,plan:'parcelado',code,ate:dt,date:new Date().toLocaleDateString('pt-BR')});saveAcc();
+ const pn=primeiroNome(n)||'',link=linkAtiv(code),pix=PIX_ESPECIAL+'?n='+encodeURIComponent(pn);
+ const msg=`Olá, ${pn}! 🎷 Obrigado por fazer parte do MUSICALIS.\n\nSeu acesso especial está liberado até ${brData(dt)}, data da próxima parcela (${v}).\n\n1) Toque no link abaixo\n2) Entre com o e-mail ${e}\n3) Pronto: o plano é ativado sozinho\n\n${link}\n\nPara pagar a próxima parcela no Pix:\n${pix}\n\nImportante: se a parcela não for paga até ${brData(dt)}, as funções pagas do app ficam bloqueadas até o pagamento. Quitando tudo, seu plano vira Vitalício.\n\nKenny Anderson • MUSICALIS\nWhatsApp (51) 98416-8848`;
+ $('#ce-out').innerHTML=caixaCodigo(code,`${e} • Vitalício parcelado até ${brData(dt)}`,msg)}
+{const a=painel;painel=function(){a();const c=document.querySelector('#sl-out');const card=c&&c.closest('.card');if(card&&!document.getElementById('card-especial'))card.insertAdjacentHTML('afterend',cardEspecial())}}
+
+/* ---------- telas ---------- */
+{const a=render;render=function(){a();botaoAtualizacao()}}
 
 </script>

@@ -1,0 +1,65 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>MUSICALIS • Obrigado!</title>
+<meta property="og:title" content="🎷 Obrigado por fazer parte do MUSICALIS!">
+<meta property="og:description" content="Confirme seus dados para receber as melhorias do app.">
+<meta property="og:image" content="https://aap29.github.io/prospectarion/musicalis/capa.jpg">
+<style>
+:root{--bg:#07152b;--card:#0f2238;--ouro:#d39b1f;--txt:#eef3f9;--sub:#a9b7c9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 500px at 50% -200px,#1b3558,var(--bg));color:var(--txt);font:17px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:22px 16px 40px}
+.logo{font-weight:900;letter-spacing:1px;font-size:22px}.logo span{color:var(--ouro)}
+h1{font-size:26px;line-height:1.25;margin:16px 0 8px}h1 b{color:var(--ouro)}
+.card{background:var(--card);border:2px solid #24405f;border-radius:18px;padding:18px;margin:16px 0}
+.plano{border-color:var(--ouro)}
+label{display:block;font-weight:700;font-size:15px;margin:12px 0 4px}
+input,select{width:100%;min-height:50px;border-radius:12px;border:1px solid #3a5878;background:#06101f;color:#fff;font-size:17px;padding:0 14px}
+.op{display:flex;gap:8px;flex-wrap:wrap}.op label{flex:1;min-width:120px;display:flex;align-items:center;gap:8px;background:#06101f;border:1px solid #3a5878;border-radius:12px;padding:10px 12px;margin:0;font-weight:600}
+.op input{width:auto;min-height:0}
+.btn{width:100%;min-height:56px;margin:16px 0 0;border-radius:14px;border:0;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none}
+.ouro{background:var(--ouro);color:#10151f}.alt{background:transparent;border:2px solid #3a5878;color:#fff}
+.msg{min-height:22px;margin:10px 0 0;font-size:15px;color:#ffd27a}
+.ok{display:none;text-align:center}.ok .big{font-size:46px}
+.tiny{font-size:13.5px;color:var(--sub)}
+footer{color:var(--sub);font-size:14px;text-align:center;margin-top:22px}
+</style></head><body><main>
+<div class="logo">MUSI<span>CALIS</span></div>
+<div id="form-area">
+<h1>🎷 Obrigado<span id="nm"></span>, por adquirir o <b>MUSICALIS</b>!</h1>
+<p>É uma alegria ter você estudando com a gente. O MUSICALIS recebe melhorias o tempo todo: novos exercícios, partituras e recursos.</p>
+<div class="card plano" id="plano" style="display:none"></div>
+<div class="card">
+ <p style="margin:0">Para você receber as novidades e os links das melhorias, <b>confirme seus dados</b>:</p>
+ <label for="f-nome">Nome completo</label><input id="f-nome" autocomplete="name" placeholder="Nome e sobrenome">
+ <label for="f-email">E-mail (o mesmo que você usa no app)</label><input id="f-email" type="email" autocomplete="email" placeholder="seu@email.com">
+ <label for="f-tel">WhatsApp com DDD</label><input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(51) 99999-9999">
+ <label for="f-cid">Cidade</label><input id="f-cid" autocomplete="address-level2" placeholder="Ex.: Porto Alegre">
+ <label for="f-uf">Estado</label><select id="f-uf" autocomplete="address-level1"><option value="">Escolha o estado</option></select>
+ <label>Como prefere receber as melhorias?</label>
+ <div class="op"><label><input type="radio" name="pref" value="whatsapp" checked> WhatsApp</label><label><input type="radio" name="pref" value="email"> E-mail</label><label><input type="radio" name="pref" value="ambos"> Os dois</label></div>
+ <button class="btn ouro" id="enviar">Confirmar meus dados</button><p class="msg" id="msg"></p>
+ <p class="tiny">🔒 Seus dados ficam só com o professor e servem apenas para avisar sobre o seu plano e as melhorias do app.</p>
+</div></div>
+<div class="card ok" id="ok"><div class="big">✅</div><h2 style="margin:6px 0">Dados confirmados!</h2><p>Obrigado! Sempre que o MUSICALIS receber melhorias, você recebe o aviso. E o app também se atualiza sozinho quando você abre.</p>
+ <a class="btn ouro" href="https://aap29.github.io/prospectarion/musicalis/app/">Abrir o MUSICALIS</a></div>
+<footer>Kenny Anderson • MUSICALIS<br>WhatsApp (51) 98416-8848</footer>
+</main>
+<script>
+const SRV='https://script.google.com/macros/s/AKfycbwo5XBBm7WQZbdOLOHEbBX5N1fRgwcHsY5I69b9gCWLnrG7B_NkSLs4mv1BR_xnSJ4o/exec';
+const UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+const $=s=>document.querySelector(s),limpa=(s,n)=>String(s||'').replace(/[<>"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,n||120);
+UFS.forEach(u=>{const o=document.createElement('option');o.textContent=u;$('#f-uf').appendChild(o)});
+const q=new URLSearchParams(location.search),nome=limpa(q.get('n'),60),ate=q.get('ate');
+if(nome){$('#nm').textContent=', '+nome.split(' ')[0];$('#f-nome').value=nome}
+if(q.get('e'))$('#f-email').value=limpa(q.get('e'),120);
+if(ate&&/^\d{4}-\d{2}-\d{2}$/.test(ate)){const p=$('#plano');p.style.display='block';p.innerHTML='🎷 <b>Seu plano: Vitalício (parcelado)</b><br>Próxima parcela até <b>'+ate.split('-').reverse().join('/')+'</b>. Quitando, o plano fica vitalício: acesso para sempre.'}
+$('#enviar').onclick=async()=>{const n=limpa($('#f-nome').value),e=limpa($('#f-email').value).toLowerCase(),t=limpa($('#f-tel').value,30),c=limpa($('#f-cid').value,60),uf=$('#f-uf').value,pref=(document.querySelector('input[name=pref]:checked')||{}).value||'whatsapp';
+ const msg=x=>$('#msg').textContent=x;
+ if(n.split(' ').length<2)return msg('Digite seu nome completo (nome e sobrenome).');
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e))return msg('Digite um e-mail válido.');
+ if(t.replace(/\D/g,'').length<10)return msg('Digite seu WhatsApp com DDD.');
+ if(c.length<2)return msg('Digite sua cidade.');if(!UFS.includes(uf))return msg('Escolha seu estado.');
+ const b=$('#enviar');b.disabled=true;b.textContent='Enviando…';msg('');
+ try{const r=await fetch(SRV,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({acao:'lead',evento:'confirmou_dados_'+pref,email:e,nome:n,telefone:t,cidade:c,estado:uf})});const j=await r.json();
+  if(!j.ok)throw new Error(j.erro||'erro');$('#form-area').style.display='none';$('#ok').style.display='block';scrollTo(0,0)}
+ catch(x){b.disabled=false;b.textContent='Confirmar meus dados';msg('Não consegui enviar agora. Confira a internet e toque de novo.')}};
+</script></body></html>

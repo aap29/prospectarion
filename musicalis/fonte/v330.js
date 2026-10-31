@@ -178,7 +178,7 @@ async function checarAtualizacao(){if(NATIVO||!/^https?:/.test(location.protocol
   if(verNum(j.v)>verNum(APP_VERSAO)){let tentou=false;try{tentou=sessionStorage.getItem('musicalis_tentou')===j.v}catch(e){}
    if(tentou){avisoAtualizar(j.v);return}ATUALIZAR_PENDENTE=j.v;if(podeRecarregar())aplicarAtualizacao(j.v)}}catch(e){}}
 function avisoAtualizar(v){if(document.getElementById('upd-bar'))return;document.body.insertAdjacentHTML('beforeend',`<div id="upd-bar" style="position:fixed;left:10px;right:10px;top:10px;z-index:990;max-width:480px;margin:0 auto;background:#0f6b52;color:#fff;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 24px #0007"><b style="flex:1;font-size:14px">Nova versão ${v} do MUSICALIS</b><button class="btn" style="width:auto;margin:0;padding:8px 14px" onclick="location.reload()">Atualizar</button></div>`)}
-setTimeout(checarAtualizacao,4000);setInterval(checarAtualizacao,15*60000);
+setTimeout(()=>checarAtualizacao(),4000);setInterval(()=>checarAtualizacao(),15*60000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checarAtualizacao()});
 {const a=go;go=function(p){const r=a(p);if(ATUALIZAR_PENDENTE&&podeRecarregar())aplicarAtualizacao(ATUALIZAR_PENDENTE);return r}}
 try{const v=sessionStorage.getItem('musicalis_atualizado');if(v){sessionStorage.removeItem('musicalis_atualizado');setTimeout(()=>toast('MUSICALIS atualizado para a versão '+APP_VERSAO+' ✅',3500),1200)}}catch(e){}
