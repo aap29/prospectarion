@@ -18,7 +18,7 @@ head=('<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="i
  '<link rel="apple-touch-icon" href="icone-192.png"><meta name="apple-mobile-web-app-capable" content="yes">'
  '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MUSICALIS">'
  '<meta name="description" content="MUSICALIS • Método de estudos de saxofone de Kenny Anderson">'
- '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob:; media-src \'self\' data: blob:; font-src \'self\' data:; connect-src \'self\' https://script.google.com https://script.googleusercontent.com; worker-src \'self\'; manifest-src \'self\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'">'
+ '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob:; media-src \'self\' data: blob:; font-src \'self\' data:; connect-src \'self\' https://script.google.com https://script.googleusercontent.com; worker-src \'self\' blob:; manifest-src \'self\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'">'
  '<meta name="referrer" content="no-referrer">')
 t=t.replace('<meta name="theme-color" content="#07152b">','<meta name="theme-color" content="#07152b">'+head,1)
 out=t+'\n<style>\n'+L('v328.css')+'\n</style>\n<script>\n'+js+'\n'+L('v330.js')+'\n'+L('v333.js')+'\n'+L('v335.js')+'\n'+L('v336.js')+'\n'+L('v337.js')+'\n</script>\n'

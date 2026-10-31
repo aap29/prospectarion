@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07152b"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icone-192.png"><link rel="apple-touch-icon" href="icone-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MUSICALIS"><meta name="description" content="MUSICALIS • Método de estudos de saxofone de Kenny Anderson"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><title>MUSICALIS</title>
+<meta name="theme-color" content="#07152b"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icone-192.png"><link rel="apple-touch-icon" href="icone-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MUSICALIS"><meta name="description" content="MUSICALIS • Método de estudos de saxofone de Kenny Anderson"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><title>MUSICALIS</title>
 <style>
 :root{--bg:#050b1d;--bg2:#10102a;--card:#0b1e38;--card2:#102947;--line:#1e4770;--blue:#2e9cff;--cyan:#61d7ff;--orange:#ff922e;--gold:#ffd35a;--text:#f7fbff;--muted:#9db4cb;--green:#53e6a8}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#2a102c 0,#07152b 35%,var(--bg) 70%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
@@ -574,7 +574,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
   catch(e){toast('Este arquivo não é um backup do MUSICALIS')}inp.value=''};r.readAsText(f)}
 async function copiarBackup(){const t=JSON.stringify(backupObj());try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast('Backup copiado. Cole no outro aparelho em "Colar backup".')}
 function colarBackup(){const t=($('#bk-txt')||{}).value||'';try{const res=mesclarProgresso(JSON.parse(t));toast(`Progresso recuperado: +${res.praticas} práticas, +${res.selos} selos`);setTimeout(()=>render(),400)}catch(e){toast('Texto de backup inválido')}}
-const APP_VERSAO='3.39';
+const APP_VERSAO='3.40';
 function backupCard(){return `<p style="text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0">MUSICALIS • Versão ${APP_VERSAO}</p><div class="card" style="margin-top:12px"><h3>💾 Backup do meu progresso</h3>
  <p class="sub">Guarde suas práticas, notas e selos. Ao restaurar, o app <b>junta</b> com o que já existe aqui: nada é apagado.</p>
  <button class="btn" onclick="exportData()">Salvar backup</button>
@@ -2812,15 +2812,22 @@ function decorarTopo(){const t=document.querySelector('#app .top');if(!t||t.clas
 /* ---------- 2. FOTO DO PERFIL ---------- */
 function escolherFoto(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files&&i.files[0];if(f)salvarFoto(f)};i.click()}
 /* abre a foto por 3 caminhos (alguns celulares entregam fotos grandes, giradas ou em formatos que um caminho só não abre) */
+/* fotos HEIC/HEIF (padrão de muitos celulares Samsung e iPhone): convertidas aqui mesmo no aparelho, sem enviar para lugar nenhum */
+async function ehHeic(file){if(/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||''))return true;
+ try{const b=new Uint8Array(await file.slice(0,32).arrayBuffer()),t=String.fromCharCode(...b.slice(4,12));return t.startsWith('ftyp')&&/hei|hev|mif1|msf1|avif/.test(String.fromCharCode(...b.slice(8,32)))}catch(e){return false}}
+async function abrirHeic(file){try{toast('Convertendo a foto (formato HEIC)…',6000);const m=await import('./heic-to.js');const b=await m.heicTo({blob:file,type:'image/jpeg',quality:.9});
+ return await createImageBitmap(b)}catch(e){return null}}
 async function abrirImagem(file){
+ if(await ehHeic(file)){const h=await abrirHeic(file);if(h)return h}
  try{if(window.createImageBitmap){const b=await createImageBitmap(file,{imageOrientation:'from-image'});if(b&&b.width)return b}}catch(e){}
  const tenta=src=>new Promise(r=>{const im=new Image();im.onload=()=>r(im.width?im:null);im.onerror=()=>r(null);im.src=src});
  let url=null;try{url=URL.createObjectURL(file);const im=await tenta(url);if(im)return im}catch(e){}finally{if(url)setTimeout(()=>URL.revokeObjectURL(url),3000)}
  try{const d=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(file)});const im=await tenta(d);if(im)return im}catch(e){}
+ const h=await abrirHeic(file);if(h)return h;
  return null}
 async function salvarFoto(file){if(file.type&&!/^image\//.test(file.type)){toast('Escolha uma imagem');return}if(file.size>40e6){toast('Imagem grande demais');return}
  toast('Carregando a foto…',1500);const img=await abrirImagem(file);
- if(!img){const heic=/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||'');toast(heic?'Esta foto está no formato HEIC, que o navegador não abre. Tire um print da foto e escolha o print, ou escolha outra foto.':'Não consegui abrir essa imagem. Tente outra foto ou um print dela.',7000);return}
+ if(!img){const heic=/hei[cf]/i.test(file.type||'')||/\.hei[cf]$/i.test(file.name||'');toast(heic?'Não consegui converter esta foto HEIC. Confira a internet (o conversor baixa uma vez) e tente de novo, ou escolha um print dela.':'Não consegui abrir essa imagem. Tente outra foto ou um print dela.',7000);return}
  const L=256,c=document.createElement('canvas');c.width=c.height=L;const g=c.getContext('2d'),w=img.width,h=img.height,s=Math.min(w,h);
  g.drawImage(img,(w-s)/2,(h-s)/2,s,s,0,0,L,L);try{img.close&&img.close()}catch(e){}
  const u=curUser();if(!u)return;u.foto=c.toDataURL('image/jpeg',.82);try{saveAcc()}catch(e){toast('Sem espaço para salvar a foto');return}toast('Foto atualizada');render()}
