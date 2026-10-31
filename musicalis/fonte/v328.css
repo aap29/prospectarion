@@ -58,3 +58,24 @@ html body .score-head .vol-btn{background:#0e3151;color:#fff;border:2px solid #4
 .upd-auto.flut{position:fixed;top:8px;right:8px;z-index:996;flex-direction:row;gap:6px;align-items:center}
 @keyframes updpulse{70%{box-shadow:0 0 0 8px #1f9d5500}}
 #toast{pointer-events:none}
+/* ===== V3.36 • topo com logo e perfil, questionário, orientador, cores mais claras ===== */
+:root{--bg:#0c1a36;--bg2:#181a42;--card:#13294d;--card2:#1a3760;--line:#2b5c8c}
+body{background:radial-gradient(circle at 80% 0,#3a1d44 0,#10264a 35%,var(--bg) 70%)}
+.card{border-color:#24496f}.btn.alt{background:#143255;border-color:#2d5f8f}.nav{background:#0c1a33ed}
+.top.top2{gap:10px;align-items:center}
+.brand2{display:flex;align-items:center;gap:9px;min-width:0}.brand2 .logo{width:40px;height:40px;border-radius:11px;box-shadow:0 2px 10px #0006;flex:0 0 auto}
+.top2 .badge{display:none}
+.avatar-top{background:none;border:0;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:2px;padding:0;margin-left:auto;min-width:62px;max-width:120px;cursor:pointer;flex:0 0 auto}
+.upd-auto+.badge+.avatar-top,.upd-auto~.avatar-top{margin-left:0}
+.av{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid var(--orange);display:inline-flex;align-items:center;justify-content:center;background:#1d3d66;font-weight:800;font-size:17px;color:#fff;flex:0 0 auto}
+.av img{width:100%;height:100%;object-fit:cover;display:block}.av.av-g{width:76px;height:76px;font-size:26px}
+.avatar-top b{font-size:12.5px;line-height:1.15;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avatar-top small{font-size:11px;color:var(--gold);line-height:1.1;white-space:nowrap}
+.boasv{border:2px solid #e8ad28;background:linear-gradient(145deg,#2a2a52,#16305a)}
+.passos{margin:6px 0 0 20px;padding:0;line-height:1.6}
+.opqs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.opqs.col{grid-template-columns:1fr}
+.opq{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid #2d5f8f;border-radius:13px;background:#10284a;cursor:pointer;font-weight:600}
+.opq input{width:20px;height:20px;accent-color:#ff922e;flex:0 0 auto}.opq:has(input:checked){border-color:#ff922e;background:#2a2b4c}
+#perfilq label{display:block;margin:10px 0 4px;font-weight:600}
+.orient{background:#eef6ff;border:1px solid #9cc7f0;border-radius:12px;padding:8px 12px;margin:8px 0;font-size:14.5px;line-height:1.45}.orient ul{margin:6px 0 0 18px;padding:0}
+@media (orientation:landscape) and (max-height:520px){.brand2 .logo{width:28px;height:28px;border-radius:8px}.avatar-top{flex-direction:row;gap:6px;max-width:220px}.avatar-top .av{width:30px;height:30px;font-size:12px;border-width:1.5px}.avatar-top small{display:none}}

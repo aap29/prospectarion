@@ -21,7 +21,7 @@ head=('<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="i
  '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob:; media-src \'self\' data: blob:; font-src \'self\' data:; connect-src \'self\' https://script.google.com https://script.googleusercontent.com; worker-src \'self\'; manifest-src \'self\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'">'
  '<meta name="referrer" content="no-referrer">')
 t=t.replace('<meta name="theme-color" content="#07152b">','<meta name="theme-color" content="#07152b">'+head,1)
-out=t+'\n<style>\n'+L('v328.css')+'\n</style>\n<script>\n'+js+'\n'+L('v330.js')+'\n'+L('v333.js')+'\n'+L('v335.js')+'\n</script>\n'
+out=t+'\n<style>\n'+L('v328.css')+'\n</style>\n<script>\n'+js+'\n'+L('v330.js')+'\n'+L('v333.js')+'\n'+L('v335.js')+'\n'+L('v336.js')+'\n</script>\n'
 open(os.path.join(APP,'index.html'),'w',encoding='utf-8').write(out)
 sw=open(os.path.join(APP,'sw.js'),encoding='utf-8').read();open(os.path.join(APP,'sw.js'),'w',encoding='utf-8').write(re.sub(r"musicalis-v[0-9.]+",'musicalis-v'+v,sw))
 json.dump({'v':v,'data':datetime.date.today().isoformat()},open(os.path.join(APP,'versao.json'),'w'))
