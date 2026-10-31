@@ -1,0 +1,48 @@
+import asyncio,os,json
+from playwright.async_api import async_playwright
+from protecao import proteger
+APP=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','app'))
+F='file://'+APP+'/index.html';SHOT=os.environ.get('SHOTS','/tmp')
+CH=os.environ.get('MUSICALIS_CHAVE','/home/claude/chave_criador/MUSICALIS_CHAVE_CRIADOR.json')
+R=[];ok=lambda n,c,i='':R.append(('✓' if c else '✗',n,i))
+async def conta(pg,email,nome='Aluno Teste Silva'):
+  await pg.evaluate("authMode='criar';page='login';render()")
+  await pg.fill('#lg-nome',nome);await pg.fill('#lg-tel','51999990000');await pg.fill('#lg-cid','Canoas');await pg.select_option('#lg-uf','RS');await pg.fill('#lg-email',email);await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1300)
+async def main():
+  async with async_playwright() as p:
+    b=await p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required']);proteger(b)
+    ctx=await b.new_context(viewport={'width':412,'height':915});pg=await ctx.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+    await pg.goto(F);await pg.wait_for_timeout(600)
+    # estudos bem escritos
+    r=await pg.evaluate("""Object.entries(JAZZ_EX).map(([k,x])=>{const p=m2Parse(x.n,x.key,x.meter);const somas=p.bars.map(b=>Math.round(b.reduce((s,e)=>s+e.d,0)*1000)/1000);const ps=p.bars.flat().filter(e=>!e.rest).map(e=>e.p);return [k,p.errors,somas.every(s=>s===4),p.bars.length,Math.min(...ps),Math.max(...ps)]})""")
+    for k,e,s4,nb,mn,mx in r:ok(f'{k}: partitura sem erros, 12 compassos de 4 tempos, dentro da extensão do sax',not e and s4 and nb==12 and mn>=58 and mx<=90,str([e[:2],nb,mn,mx]))
+    # aluno: não vê a prévia
+    await conta(pg,'aluno@x.com');await pg.evaluate("S.theory=60;save();go('study')");await pg.wait_for_timeout(300)
+    ok('Aluno não vê a área de jazz enquanto é prévia', not await pg.evaluate("!!document.getElementById('jazz-entrada')"))
+    await pg.evaluate("go('jazz')");ok('Aluno não abre a área de jazz pela URL interna', await pg.evaluate("page")=='study')
+    ok('Planos com acesso: só Trimestral, Semestral, Anual, Vitalício (e parcelado)', await pg.evaluate("(()=>{const u=curUser(),r={};['mensal','teste','trimestral','semestral','anual','vitalicio','parcelado'].forEach(pl=>{u.plan=pl;u.exp=pl==='vitalicio'?null:somaDias(30);r[pl]=jazzPode()});return JSON.stringify(r)})()")=='{"mensal":false,"teste":false,"trimestral":true,"semestral":true,"anual":true,"vitalicio":true,"parcelado":true}')
+    await ctx.close()
+    # criador: vê prévia, lê história, toca estudo
+    c2=await b.new_context(viewport={'width':412,'height':915});p2=await c2.new_page();e2=[];p2.on('pageerror',lambda e:e2.append(str(e)))
+    await p2.goto(F);await p2.wait_for_timeout(800);await conta(p2,'dono@x.com','Dono Teste Silva')
+    jwk=json.dumps(json.load(open(CH))['jwk'])
+    await p2.evaluate("(async()=>{const k=await crypto.subtle.importKey('jwk',"+jwk+",{name:'ECDSA',namedCurve:'P-256'},false,['sign']);await ativarCriador(k,ACC.session);enterSession(ACC.session)})()");await p2.wait_for_timeout(800)
+    await p2.evaluate("go('study')");await p2.wait_for_timeout(300)
+    ok('Criador vê "Jazz: estilos e mestres" (prévia) no Estudar', await p2.evaluate("!!document.getElementById('jazz-entrada')") and 'PRÉVIA' in await p2.text_content('#jazz-entrada'))
+    await p2.click('#jazz-entrada');await p2.wait_for_timeout(300);t=await p2.text_content('#app')
+    ok('6 estilos em ordem: Swing, Bebop, Cool, Hard Bop, Modal, Brasileiro', all(x in t for x in ['Blues e Swing','Bebop','Cool Jazz','Hard Bop','Modal e Pós-bop','Jazz Brasileiro']) and t.index('Blues e Swing')<t.index('Bebop')<t.index('Jazz Brasileiro'))
+    ok('"Para ir além" com livros oficiais e links das editoras', 'Para ir além' in t and await p2.evaluate("[...document.querySelectorAll('#app a')].some(a=>/halleonard\\.com/.test(a.href))"))
+    await p2.screenshot(path=SHOT+'/j1_estilos.png',full_page=True)
+    await p2.evaluate("JZ='swing';go('jazzest')");await p2.wait_for_timeout(300);t=await p2.text_content('#app')
+    ok('Página do estilo: história, artistas, fontes e estudos', 'A história' in t and 'Lester Young' in t and 'Coleman Hawkins' in t and 'Riff de Kansas City' in t and 'Arpejos do Hawk' in t and await p2.evaluate("document.querySelectorAll('#app a[href^=\"https://\"]').length")>=4)
+    await p2.screenshot(path=SHOT+'/j2_swing.png',full_page=True)
+    await p2.evaluate("abrirJazz('jz101')");await p2.wait_for_timeout(600)
+    ok('Estudo abre na partitura com swing e cifras', await p2.evaluate("!!document.querySelector('#meter-svg')") and 'Swing' in await p2.text_content('.paper-sub'))
+    await p2.screenshot(path=SHOT+'/j3_partitura.png')
+    await p2.evaluate("exDone()");await p2.wait_for_timeout(500);await p2.evaluate("closeMeter()");await p2.wait_for_timeout(600)
+    ok('Ao terminar e voltar, retorna ao estilo', await p2.evaluate("page")=='jazzest')
+    ok('Sem erros JavaScript', not errs and not e2, str((errs+e2)[:3]))
+    await b.close()
+  for r in R:print(*r)
+  print(sum(r[0]=='✓' for r in R),'/',len(R))
+asyncio.run(main())
