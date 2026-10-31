@@ -14,10 +14,10 @@ async function pubKey(){return PUBK||(PUBK=await crypto.subtle.importKey('jwk',P
 async function sigOk(email,body,sig){const s=unb32(sig||'');if(!s||s.length!==64)return false;try{return await crypto.subtle.verify(ECA,await pubKey(),s,enc.encode(normEmail(email)+'|'+body))}catch(e){return false}}
 async function assinar(email,body){if(!PRIVK)throw new Error('A chave do Criador não está neste aparelho');const s=await crypto.subtle.sign(ECA,PRIVK,enc.encode(normEmail(email)+'|'+body));return b32(new Uint8Array(s))}
 const limpaCod=c=>(c||'').replace(/\s+/g,'').toUpperCase();
-async function makeLicense(email,plan,months){const P={mensal:'M',trimestral:'T',semestral:'S',anual:'A',vitalicio:'V',escola:'E'}[plan];let d='000000';if(P!=='V'){const x=new Date();x.setMonth(x.getMonth()+(+months||({M:1,T:3,S:6,A:12,E:12}[P])));d=x.toISOString().slice(2,10).replace(/-/g,'')}
+async function makeLicense(email,plan,months,ateISO){const P={mensal:'M',trimestral:'T',semestral:'S',anual:'A',vitalicio:'V',escola:'E',parcelado:'P'}[plan];let d='000000';if(P!=='V'){if(ateISO&&/^\d{4}-\d{2}-\d{2}$/.test(ateISO))d=ateISO.slice(2).replace(/-/g,'');else{const x=new Date();x.setMonth(x.getMonth()+(+months||({M:1,T:3,S:6,A:12,E:12,P:1}[P])));d=x.toISOString().slice(2,10).replace(/-/g,'')}}
  const r=[...crypto.getRandomValues(new Uint8Array(4))].map(b=>B32[b%32]).join(''),body=P+d+'-'+r;return 'MUS2-'+body+'-'+await assinar(email,'L'+body)}
-async function checkLicense(email,code){const m=/^MUS2-([MTSAVE])(\d{6})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
- if(!await sigOk(email,'L'+m[1]+m[2]+'-'+m[3],m[4]))return null;const plan={M:'mensal',T:'trimestral',S:'semestral',A:'anual',V:'vitalicio',E:'escola'}[m[1]];
+async function checkLicense(email,code){const m=/^MUS2-([MTSAVEP])(\d{6})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
+ if(!await sigOk(email,'L'+m[1]+m[2]+'-'+m[3],m[4]))return null;const plan={M:'mensal',T:'trimestral',S:'semestral',A:'anual',V:'vitalicio',E:'escola',P:'parcelado'}[m[1]];
  const exp=m[1]==='V'?null:'20'+m[2].slice(0,2)+'-'+m[2].slice(2,4)+'-'+m[2].slice(4,6);if(exp&&new Date(exp+'T23:59:59')<new Date())return {expired:true};return {plan,exp}}
 async function makeItemCode(email,id){const r=[...crypto.getRandomValues(new Uint8Array(4))].map(b=>B32[b%32]).join(''),body='P'+itemCode(id)+'-'+r;return 'MUP2-'+itemCode(id)+'-'+r+'-'+await assinar(email,body)}
 async function checkItemCode(email,code){const m=/^MUP2-([A-Z2-9]{5})-([A-Z2-9]{4})-([A-Z2-9]{103})$/.exec(limpaCod(code));if(!m)return null;
