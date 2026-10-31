@@ -27,7 +27,7 @@ async def conta(pg,email='aluna@x.com',cid='Porto Alegre',uf='RS'):
   await pg.fill('#lg-email',email);await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1300)
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
+    b=await p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required']);from protecao import proteger;proteger(b)
     ctx=await b.new_context(viewport={'width':412,'height':915});pg=await ctx.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
     await pg.goto(F);await pg.wait_for_timeout(600)
     # cadastro

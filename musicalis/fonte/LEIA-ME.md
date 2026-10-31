@@ -21,3 +21,7 @@ Ele é **montado** a partir destes arquivos. Nunca edite `../app/index.html` à 
 4. `git add -A && git commit && git push`. Em 1–2 min os alunos recebem sozinhos (o app confere `versao.json`).
 
 Segredos (chave privada, senha do Criador, código de recuperação, senha da planilha) **nunca** entram no repositório.
+
+## Planilha ligada (versão 3.34)
+- O app envia os dados para a planilha "MUSICALIS Alunos" (endereço em `SRV_URL_PADRAO` no `base_v327.html`).
+- **Os testes nunca podem enviar dados para a planilha verdadeira**: todos usam `testes/protecao.py` (bloqueia script.google.com) e o `qa332.py` usa uma cópia do app sem o endereço. Teste novo = importar `proteger` também.

@@ -40,7 +40,7 @@ async def main():
   sp=subprocess.Popen(['python3','-m','http.server','8811','-d',os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','app')],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(.8)
   try:
    async with async_playwright() as p:
-    b=await p.chromium.launch()
+    b=await p.chromium.launch();from protecao import proteger;proteger(b)
     html=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','app','index.html')).read()
     ok('Código público sem segredo nem e-mails do criador','f4e03fa2' not in html and 'kennysax29@gmail' not in html and 'andersonpinto.rs@gmail' not in html and '"d"' not in html.split('PUB_JWK=')[1][:300])
     # 1. e-mail do criador NÃO vira criador

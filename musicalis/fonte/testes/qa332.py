@@ -1,17 +1,17 @@
 import asyncio,subprocess,time,shutil,os,re
 from playwright.async_api import async_playwright
-import tempfile;D=os.path.join(tempfile.gettempdir(),'musicalis_site');shutil.rmtree(D,ignore_errors=True);APP=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','app');shutil.copytree(APP,D)
+import tempfile;D=os.path.join(tempfile.gettempdir(),'musicalis_site');shutil.rmtree(D,ignore_errors=True);APP=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','app');shutil.copytree(APP,D);_semsrv=lambda s:re.sub(r"const SRV_URL_PADRAO='[^']*'","const SRV_URL_PADRAO=''",s);_h=_semsrv(open(D+'/index.html').read());open(D+'/index.html','w').write(_h)
 U='http://localhost:8822/'
 R=[];ok=lambda n,c,i='':R.append(('✓' if c else '✗',n,i))
 def publicar(v):
-  t=re.sub(r"const APP_VERSAO='[0-9.]+'",f"const APP_VERSAO='{v}'",open(os.path.join(APP,'index.html')).read());open(D+'/index.html','w').write(t)
+  t=re.sub(r"const APP_VERSAO='[0-9.]+'",f"const APP_VERSAO='{v}'",open(os.path.join(APP,'index.html')).read());open(D+'/index.html','w').write(_semsrv(t))
   open(D+'/versao.json','w').write('{"v":"%s"}'%v)
   s=re.sub(r'musicalis-v[0-9.]+','musicalis-v'+v,open(os.path.join(APP,'sw.js')).read());open(D+'/sw.js','w').write(s)
 async def main():
   sp=subprocess.Popen(['python3','-m','http.server','8822','-d',D],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(.8)
   try:
    async with async_playwright() as p:
-    b=await p.chromium.launch();ctx=await b.new_context(viewport={'width':412,'height':915});pg=await ctx.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+    b=await p.chromium.launch();ctx=await b.new_context(viewport={'width':412,'height':915});pg=await ctx.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)));from protecao import proteger;proteger(b)
     await pg.goto(U);await pg.wait_for_timeout(1500)
     await pg.evaluate("authMode='criar';page='login';render()")
     await pg.fill('#lg-nome','Maria da Silva');await pg.fill('#lg-tel','51999998888');await pg.fill('#lg-cid','Porto Alegre');await pg.select_option('#lg-uf','RS');await pg.fill('#lg-email','m@x.com');await pg.fill('#lg-pass','abcdef');await pg.fill('#lg-pass2','abcdef');await pg.click('#lg-go');await pg.wait_for_timeout(1200)
