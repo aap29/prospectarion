@@ -16,3 +16,5 @@ function arrumarInicio(){const app=document.getElementById('app'),t=app.querySel
 {const a=render;render=function(){a();document.body.className=document.body.className.replace(/\bpg-\S+/g,'').trim();document.body.classList.add('pg-'+(ACC.session?page:'login'));
  if(ACC.session&&page==='home')arrumarInicio();
  document.querySelectorAll('#app .card').forEach(c=>{if(/Instale o MUSICALIS na tela inicial/.test((c.querySelector('h3')||{}).textContent||''))c.classList.add('inst-card')})}}
+/* o professor não precisa do aviso de migração do app antigo */
+{const a=cardAppAntigo;cardAppAntigo=function(){if(isOwner()||(typeof jzCriador==='function'&&jzCriador()))return '';return a()}}
