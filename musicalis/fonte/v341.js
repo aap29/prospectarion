@@ -25,7 +25,7 @@ const VINHETAS={
    [[0,[53,57,60,64],41],[2,[55,58,62,65],43],[4,[48,52,55,58,62],36],[6,[53,57,60,64,67],41]].forEach(([k,ns,ba],i,a)=>{const d=((a[i+1]?a[i+1][0]:9)-k)*b+.2;ns.forEach((m,j)=>teclado(c,m,t0+k*b+j*.02,d,.02));baixoNota(c,ba,t0+k*b,b*1.2);baixoNota(c,ba+7,t0+(k+1.5)*b,b*.5)});
    [[0,.5,60],[.5,.5,64],[1.5,1,67],[2.5,.5,65],[3,1,62],[4.5,.5,64],[5,.5,62],[5.5,.5,58],[6,3,64]].forEach(([k,d,m])=>tenorNota(c,m,t0+k*b,d*b,.06));return 9.5*b}},
  swing:{t:'Swing',d:'a frase rápida de antes'}};
-const vinhetaEstilo=()=>VINHETAS[ACC.cfg.vinhetaEstilo]?ACC.cfg.vinhetaEstilo:'balada';
+let vinhetaEstilo=()=>VINHETAS[ACC.cfg.vinhetaEstilo]?ACC.cfg.vinhetaEstilo:'balada';
 {const antiga=tocarVinheta;tocarVinheta=function(estilo){const e=estilo||vinhetaEstilo();if(e==='swing')return antiga();
  try{const c=ctx();if(c.state!=='running')return false;VINHETAS[e].toca(c,c.currentTime+.08);try{sessionStorage.setItem('musicalis_vinheta','1')}catch(x){}window.__vinhetaTocou=Date.now();return true}catch(x){return false}}}
 function ouvirVinheta(e){try{ctx().resume().then(()=>tocarVinheta(e))}catch(x){}}
