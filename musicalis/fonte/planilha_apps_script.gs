@@ -1,5 +1,5 @@
 /**
- * MUSICALIS • Banco de dados dos alunos + automações • versão 4.1
+ * MUSICALIS • Banco de dados dos alunos + automações • versão 5
  * Já vem preenchido: só colar no Apps Script da planilha "MUSICALIS Alunos", salvar e implantar.
  */
 const TOKEN = 'TROQUE';
@@ -37,6 +37,7 @@ function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
     if (p.acao === 'info') return json_(info_());
+    if (p.acao === 'aparelhos') { if (p.token !== TOKEN) return json_({ erro: 'token inválido' }); return json_(aparelhosLista_()); }
     if (p.acao === 'leads') {
       if (p.token !== TOKEN) return json_({ erro: 'token inválido' });
       const sh = aba_(ABA_ALUNOS, COLS), v = sh.getDataRange().getValues(), cab = v.shift();
@@ -54,7 +55,11 @@ function doPost(e) {
     const d = JSON.parse(bruto);
     const q = (e && e.parameter) || {};
     if (q.kiwify) { if (q.kiwify !== KIWIFY_CHAVE) return json_({ erro: 'chave inválida' }); return json_(kiwify_(d)); }
-    if ((d.acao === 'lead' || d.acao === 'evento') && !limite_(d.email)) return json_({ erro: 'limite de envios' });
+    if ((d.acao === 'lead' || d.acao === 'evento' || /^aparelho/.test(d.acao || '')) && !limite_(d.email)) return json_({ erro: 'limite de envios' });
+    if (d.acao === 'aparelho') return json_(aparelho_(d));
+    if (d.acao === 'aparelho_codigo') return json_(aparelhoCodigo_(d));
+    if (d.acao === 'aparelho_trocar') return json_(aparelhoTrocar_(d));
+    if (d.acao === 'aparelho_liberar') { if (d.token !== TOKEN) return json_({ erro: 'token inválido' }); return json_(aparelhoLiberar_(d)); }
     if (d.acao === 'lead') return json_(lead_(d));
     if (d.acao === 'evento') return json_(evento_(d));
     if (d.acao === 'config') { if (d.token !== TOKEN) return json_({ erro: 'token inválido' });
@@ -188,6 +193,9 @@ function automacaoDiaria() {
     return item_(a, (parc ? 'Vitalício parcelado' : 'Plano ' + a.plano) + ' • ' + (d < 0 ? 'EM ATRASO há ' + (-d) + ' dia(s) (venceu ' + fmt_(a.vencimento) + ') • funções pagas bloqueadas no app' : d === 0 ? 'vence HOJE' : 'vence em ' + d + ' dia(s) (' + fmt_(a.vencimento) + ')'),
       d < 0 ? 'Olá, ' + primeiro_(a.nome) + '! ' + (parc ? 'A parcela do seu MUSICALIS Vitalício' : 'O seu plano do MUSICALIS') + ' venceu em ' + fmt_(a.vencimento) + ' e algumas funções do app ficaram pausadas. Assim que o pagamento for feito, eu libero na hora. Precisa de ajuda com o pagamento?'
             : 'Olá, ' + primeiro_(a.nome) + '! Passando para lembrar que ' + (parc ? 'a parcela do seu MUSICALIS Vitalício' : 'o seu plano do MUSICALIS') + ' vence ' + (d === 0 ? 'hoje' : 'em ' + fmt_(a.vencimento)) + '. Pagando até a data, tudo continua funcionando sem interrupção. 🎷'); })));
+  const tent = eventos_(1).filter(e => e.tipo === 'aparelho' && /outro_aparelho/.test(e.detalhe || ''));
+  if (tent.length) { const por = {}; tent.forEach(e => { por[e.email] = por[e.email] || { n: 0, nome: e.nome }; por[e.email].n++; });
+    S.push('<h3 style="margin:18px 0 4px">📱 Tentativas de acesso em outro aparelho (24 h)</h3><p style="color:#555;margin:0">Pode ser troca de celular ou senha compartilhada. Veja a aba <b>Aparelhos</b>.</p><ul style="padding-left:18px">' + Object.keys(por).map(k => '<li><b>' + (por[k].nome || k) + '</b> (' + k + '): ' + por[k].n + ' tentativa(s)</li>').join('') + '</ul>'); }
   if (obs.length) S.push('<h3 style="margin:18px 0 4px">💬 Observações novas dos alunos (' + obs.length + ')</h3><ul style="padding-left:18px">' + obs.map(r => '<li><b>' + r[1] + '</b> (' + r[2] + '): ' + r[4] + '</li>').join('') + '</ul><p style="color:#555">Marque como "lida" na aba Observações.</p>');
   const semPlano = relatorioSemPlano_(A);
   const usando = semPlano.filter(a => a.ultimoAcesso instanceof Date && (Date.now() - a.ultimoAcesso.getTime()) / 864e5 <= 7);
@@ -304,3 +312,54 @@ function instalarAvisoArmazenamento() {
   ScriptApp.newTrigger('verificarArmazenamento').timeBased().everyHours(6).create();
   const a = verificarArmazenamento(); Logger.log('Armazenamento do Google: ' + a.pct + '% usado'); return a;
 }
+
+/* ================= APARELHOS: 1 aparelho pessoal por assinante ================= */
+const ABA_APAR = 'Aparelhos', COL_APAR = ['email','aparelho','descricao','status','registrado','ultimoAcesso','acessos','trocas','ultimaTroca'];
+const devOk_ = v => /^[a-f0-9]{32}$/.test(String(v || ''));
+function linhasApar_(email) { const sh = aba_(ABA_APAR, COL_APAR), v = sh.getDataRange().getValues(); const L = [];
+  for (let i = 1; i < v.length; i++) if (String(v[i][0]).toLowerCase() === email) L.push({ linha: i + 1, email, aparelho: v[i][1], descricao: v[i][2], status: v[i][3], registrado: v[i][4], ultimoAcesso: v[i][5], acessos: Number(v[i][6]) || 0, trocas: Number(v[i][7]) || 0, ultimaTroca: v[i][8] });
+  return { sh, L }; }
+function evApar_(email, nome, detalhe) { aba_(ABA_EVENTOS, COL_EVENTOS).appendRow([new Date(), email, nome || '', '', 'aparelho', '', txt_(JSON.stringify(detalhe), 1500), '']); }
+function nomeAluno_(email) { const r = linhaAluno_(email); return r.antigo ? r.antigo[1] : ''; }
+function aparelho_(d) {
+  const email = txt_(d.email, 120).toLowerCase().trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !devOk_(d.aparelho)) return { erro: 'dados inválidos' };
+  const { sh, L } = linhasApar_(email), ativo = L.find(x => x.status === 'ativo'), descr = txt_(d.descricao, 80);
+  if (!ativo) { const ex = L.find(x => x.aparelho === d.aparelho);
+    if (ex) sh.getRange(ex.linha, 4, 1, 4).setValues([['ativo', ex.registrado || new Date(), new Date(), ex.acessos + 1]]);
+    else sh.appendRow([email, d.aparelho, descr, 'ativo', new Date(), new Date(), 1, 0, '']);
+    evApar_(email, nomeAluno_(email), { acao: 'registrado', aparelho: descr }); return { ok: true, status: 'ok', novo: true }; }
+  if (ativo.aparelho === d.aparelho) { sh.getRange(ativo.linha, 6, 1, 2).setValues([[new Date(), ativo.acessos + 1]]); return { ok: true, status: 'ok' }; }
+  evApar_(email, nomeAluno_(email), { acao: 'tentativa_outro_aparelho', aparelho: descr, registrado: ativo.descricao });
+  return { ok: true, status: 'outro', registrado: ativo.descricao, desde: fmt_(ativo.registrado) };
+}
+function aparelhoCodigo_(d) {
+  const email = txt_(d.email, 120).toLowerCase().trim(); if (!devOk_(d.aparelho)) return { erro: 'dados inválidos' };
+  const { L } = linhasApar_(email), ativo = L.find(x => x.status === 'ativo'); if (!ativo) return { ok: true, status: 'livre' };
+  if (ativo.ultimaTroca instanceof Date && Date.now() - ativo.ultimaTroca.getTime() < 30 * 864e5) return { ok: true, status: 'limite' };
+  const c = CacheService.getScriptCache(), kN = 'apcN_' + email, n = Number(c.get(kN) || 0); if (n >= 3) return { ok: true, status: 'muitos' };
+  c.put(kN, String(n + 1), 86400);
+  const codigo = String(Math.floor(100000 + Math.random() * 900000));
+  c.put('apc_' + email, JSON.stringify({ codigo, aparelho: d.aparelho, descricao: txt_(d.descricao, 80), tent: 0 }), 900);
+  MailApp.sendEmail({ to: email, subject: 'MUSICALIS • código para usar o app neste aparelho: ' + codigo,
+    htmlBody: '<div style="font-family:Arial,sans-serif;font-size:15px"><p>Olá! Recebemos um pedido para passar o seu acesso do MUSICALIS para um novo aparelho (<b>' + txt_(d.descricao, 80) + '</b>).</p><p style="font-size:28px;letter-spacing:4px"><b>' + codigo + '</b></p><p>Digite este código no app. Ele vale por 15 minutos. O aparelho antigo deixa de ter acesso.</p><p>Se não foi você, ignore este e-mail e avise o professor: o seu acesso continua seguro.</p><p>' + ASSINATURA + '</p></div>' });
+  return { ok: true, status: 'enviado' };
+}
+function aparelhoTrocar_(d) {
+  const email = txt_(d.email, 120).toLowerCase().trim(), c = CacheService.getScriptCache(), raw = c.get('apc_' + email); if (!raw) return { ok: true, status: 'expirado' };
+  const P = JSON.parse(raw); if (P.aparelho !== d.aparelho) return { ok: true, status: 'invalido' };
+  if (String(d.codigo || '').trim() !== P.codigo) { P.tent++; if (P.tent >= 5) c.remove('apc_' + email); else c.put('apc_' + email, JSON.stringify(P), 900); return { ok: true, status: 'invalido' }; }
+  c.remove('apc_' + email);
+  const { sh, L } = linhasApar_(email); let trocas = 0;
+  L.forEach(x => { if (x.status === 'ativo') { sh.getRange(x.linha, 4).setValue('inativo'); trocas = x.trocas; } });
+  const ex = L.find(x => x.aparelho === P.aparelho);
+  if (ex) sh.getRange(ex.linha, 3, 1, 7).setValues([[P.descricao, 'ativo', ex.registrado || new Date(), new Date(), ex.acessos + 1, trocas + 1, new Date()]]);
+  else sh.appendRow([email, P.aparelho, P.descricao, 'ativo', new Date(), new Date(), 1, trocas + 1, new Date()]);
+  const nome = nomeAluno_(email); evApar_(email, nome, { acao: 'troca_confirmada', aparelho: P.descricao });
+  enviarEmail_('📱 MUSICALIS • ' + (nome || email) + ' trocou de aparelho', '<p><b>' + (nome || email) + '</b> (' + email + ') confirmou pelo e-mail a troca para: <b>' + P.descricao + '</b>. Troca nº ' + (trocas + 1) + '.</p>');
+  return { ok: true, status: 'ok' };
+}
+function aparelhoLiberar_(d) { const email = txt_(d.email, 120).toLowerCase().trim(), { sh, L } = linhasApar_(email);
+  L.forEach(x => { if (x.status === 'ativo') sh.getRange(x.linha, 4).setValue('inativo'); }); evApar_(email, nomeAluno_(email), { acao: 'liberado_pelo_professor' }); return { ok: true, status: 'liberado' }; }
+function aparelhosLista_() { const v = aba_(ABA_APAR, COL_APAR).getDataRange().getValues(); v.shift(); const tent = {};
+  eventos_(7).filter(e => e.tipo === 'aparelho' && /outro_aparelho/.test(e.detalhe || '')).forEach(e => tent[e.email] = (tent[e.email] || 0) + 1);
+  return { ok: true, aparelhos: v.filter(r => r[0]).map(r => ({ email: r[0], descricao: r[2], status: r[3], registrado: fmt_(r[4]), ultimoAcesso: fmt_(r[5]), acessos: r[6], trocas: r[7], tentativas7d: tent[r[0]] || 0 })) }; }
