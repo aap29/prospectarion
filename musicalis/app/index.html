@@ -574,7 +574,7 @@ function importData(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=ne
   catch(e){toast('Este arquivo não é um backup do MUSICALIS')}inp.value=''};r.readAsText(f)}
 async function copiarBackup(){const t=JSON.stringify(backupObj());try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast('Backup copiado. Cole no outro aparelho em "Colar backup".')}
 function colarBackup(){const t=($('#bk-txt')||{}).value||'';try{const res=mesclarProgresso(JSON.parse(t));toast(`Progresso recuperado: +${res.praticas} práticas, +${res.selos} selos`);setTimeout(()=>render(),400)}catch(e){toast('Texto de backup inválido')}}
-const APP_VERSAO='3.45';
+const APP_VERSAO='3.46';
 function backupCard(){return `<p style="text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0">MUSICALIS • Versão ${APP_VERSAO}</p><div class="card" style="margin-top:12px"><h3>💾 Backup do meu progresso</h3>
  <p class="sub">Guarde suas práticas, notas e selos. Ao restaurar, o app <b>junta</b> com o que já existe aqui: nada é apagado.</p>
  <button class="btn" onclick="exportData()">Salvar backup</button>
@@ -2284,6 +2284,13 @@ body{background:radial-gradient(circle at 80% 0,#3a1d44 0,#10264a 35%,var(--bg) 
 @media (orientation:landscape) and (max-height:520px){.top.top2{--lg:34px;margin-bottom:10px}.top2 .saud{display:none}}
 #vinheta-card .btn{min-height:46px}
 #app>.card:not(:last-child){margin-bottom:12px}
+/* V3.46 boas-vindas de volta */
+.volta-fundo{position:fixed;inset:0;z-index:9000;background:rgba(4,10,20,.72);display:flex;align-items:center;justify-content:center;padding:16px;animation:voltaF .35s ease}
+.volta-card{max-width:440px;width:100%;max-height:92vh;overflow:auto;border:2px solid #F0B33A;box-shadow:0 18px 60px rgba(0,0,0,.5);animation:voltaS .45s cubic-bezier(.2,1.4,.4,1)}
+.volta-sax{font-size:46px;text-align:center;animation:voltaB 1.6s ease-in-out infinite}
+.volta-card h2{text-align:center}
+@keyframes voltaF{from{opacity:0}to{opacity:1}}@keyframes voltaS{from{transform:translateY(30px) scale(.94);opacity:0}to{transform:none;opacity:1}}@keyframes voltaB{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-4px)}}
+@media (max-height:520px){.volta-card{max-width:620px;padding:12px 16px}.volta-sax{display:none}.volta-card h2{font-size:20px;margin:0 0 6px!important}.volta-card .sub{font-size:14px!important}.volta-card .btn{min-height:40px;margin:6px 0}}
 
 </style>
 <script>
@@ -3256,5 +3263,38 @@ setTimeout(()=>verificarAparelho(true),1500);
  if(aparBloq()&&!document.getElementById('apar-card')&&!document.querySelector('.score-screen')){const h=cardAparelho();if(h)inserirTopo(h)}
  if(page==='profile'&&!document.getElementById('meu-apar')){const f=document.getElementById('card-perfil-pro');const h=cardMeuAparelho();if(f&&h)f.insertAdjacentHTML('afterend',h)}
  if(page==='painel'&&isOwner()&&!document.getElementById('card-aparelhos')){const c=document.getElementById('card-especial')||document.querySelector('#app .card');c&&c.insertAdjacentHTML('afterend',cardAparelhosPainel())}}}
+
+/* ===================== V3.46 • BOAS-VINDAS DE VOLTA, COMO UM AMIGO =====================
+   - o app guarda o dia da última visita de cada aluno (S.ultVisita, só neste aparelho)
+   - quem volta depois de 3 dias ou mais é recebido com uma mensagem de apoio, sem cobrança
+   - de 3 a 7 dias: "senti sua falta"; 8 dias ou mais: "guardei tudo do jeitinho que você deixou"
+   - quem está sem plano pago recebe o mesmo carinho e, no fim, um convite leve para os planos */
+const hojeVolta=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const diasEntre=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
+let VOLTA=null;   // {dias, semPlano}
+function voltaVale(){const u=curUser();return !!u&&!isOwner()&&!(typeof jzCriador==='function'&&jzCriador())&&S.theory!==null&&S.theory!==undefined}
+function marcarVisita(){const u=curUser();if(!u)return;const h=hojeVolta(),ult=S.ultVisita;
+ if(ult&&/^\d{4}-\d{2}-\d{2}$/.test(ult)&&voltaVale()){const d=diasEntre(ult,h);if(d>=3&&!VOLTA)VOLTA={dias:d}}
+ if(ult!==h){S.ultVisita=h;save()}}
+function semPlanoPago(){const u=curUser()||{};return !(PAGOS.includes(u.plan)&&planActive())}
+function nomeAmigo(){const u=curUser()||{};return limpaTxt(primeiroNome(u.nome||S.name||''),30)||'saxofonista'}
+function cardVolta(){if(!VOLTA)return '';const n=nomeAmigo(),d=VOLTA.dias,curto=d<=7,semPlano=semPlanoPago();
+ const tit=curto?`Que bom te ver de novo, ${n}! 🎷`:`${n}, que alegria você voltar! 🎷`;
+ const txt=curto
+  ?`Senti sua falta por aqui. A vida corre, e tudo bem: o seu sax continua te esperando, e eu também.<br><br>Que tal só <b>10 minutinhos</b> hoje? Pode ser uma escala para soltar os dedos. Cada sopro conta na sua evolução.`
+  :`Faz ${d} dias, e eu guardei tudo do jeitinho que você deixou: seu progresso, suas conquistas e o seu próximo passo.<br><br>Recomeçar também é evoluir. Sem pressa e sem cobrança: <b>um exercício de cada vez</b>, e eu sigo aqui do seu lado.`;
+ const conv=semPlano?`<p class="sub" style="margin:10px 0 0">E quando quiser deixar tudo liberado de vez, os planos começam em <b>R$ 79,90</b>. Vou adorar continuar te acompanhando. 💛</p>`:'';
+ return `<div class="volta-fundo" id="volta"><div class="card volta-card" role="dialog" aria-label="Boas-vindas de volta">
+  <div class="volta-sax">🎷</div><h2 style="margin:6px 0 10px">${tit}</h2><p class="sub" style="margin:0;font-size:16px;line-height:1.5">${txt}</p>${conv}
+  <button class="btn gold" onclick="voltaIr('study')">Tocar 10 minutinhos</button>
+  <button class="btn alt" onclick="voltaIr('journey')">Ver onde parei</button>
+  ${semPlano?`<button class="btn alt" onclick="voltaIr('plans')">Conhecer os planos</button>`:''}
+  <p class="tiny" style="margin:10px 0 0;text-align:center">Com carinho, seu parceiro de estudos • MUSICALIS</p></div></div>`}
+function voltaIr(p){try{registrar('acesso',{evento:'volta',dias:VOLTA&&VOLTA.dias,botao:p})}catch(e){}VOLTA=null;const el=document.getElementById('volta');el&&el.remove();go(p)}
+function mostrarVolta(){if(VOLTA&&ACC.session&&!document.getElementById('volta')&&!['welcome','quiz','login','prova'].includes(page))document.body.insertAdjacentHTML('beforeend',cardVolta())}
+{const a=enterSession;enterSession=function(e){const r=a(e);try{marcarVisita();mostrarVolta()}catch(x){}return r}}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&ACC.session){const antes=VOLTA;marcarVisita();if(!antes&&VOLTA)mostrarVolta()}});
+setTimeout(()=>{if(ACC.session){marcarVisita();mostrarVolta()}},900);
+{const a=render;render=function(){a();mostrarVolta()}}
 
 </script>
