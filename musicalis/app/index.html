@@ -2110,7 +2110,7 @@ addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test((e.target||{}).ta
 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="mudanca-dados" style="font:600 13px system-ui;border:0;border-radius:8px;padding:8px 12px;background:#E8B84B;color:#0A1628;cursor:pointer">1. Levar meus dados</button>
 <a id="mudanca-ir" style="font:600 13px system-ui;border-radius:8px;padding:8px 12px;background:#fff;color:#0A1628;text-decoration:none">2. Abrir o novo endereço</a>
 <button type="button" id="mudanca-fechar" style="font:600 13px system-ui;border:0;background:none;color:#AFC0D6;text-decoration:underline;cursor:pointer">Continuar aqui por enquanto</button></div></div></div>
-<script>(function(){var C={"app": "musicalis", "nome": "Musicalis", "url": "https://musicalis.github.io/app/", "prefixos": null};var t=document.getElementById("mudanca-txt"),b=document.getElementById("mudanca-dados");
+<script>(function(){var C={"app": "musicalis", "nome": "Musicalis", "url": "https://musicalis-br.github.io/app/", "prefixos": null};var t=document.getElementById("mudanca-txt"),b=document.getElementById("mudanca-dados");
 document.getElementById("mudanca-ir").href=C.url;document.getElementById("mudanca-fechar").onclick=function(){document.getElementById("mudanca").remove();};
 if(C.prefixos){t.textContent="Seus dados ficam neste aparelho: baixe a cópia, abra o novo endereço, crie sua conta e use Minha conta → Cópia de segurança → Restaurar cópia.";
 b.onclick=function(){var o={};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(C.prefixos.some(function(p){return k.indexOf(p)===0;}))o[k]=localStorage.getItem(k);}
