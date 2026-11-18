@@ -3097,7 +3097,7 @@ body.ori-aberto { overflow: hidden; }
 
       <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn btn-full" onclick="closeModal('modal-contact')">Cancelar</button>
-        <button class="btn btn-primary btn-full" onclick="salvarContato()">Salvar</button>
+        <button class="btn btn-primary btn-full" onclick="(function(){try{salvarContato();}catch(e){alert('ERRO: '+e.message+'\n\nStack: '+(e.stack||'sem stack'));}})()" >Salvar</button>
       </div>
     </div>
   </div>
@@ -6042,19 +6042,14 @@ function _marcarFalhaLeitura(motivo) {
 }
 
 function saveAll() {
-  // FASE 0A: base existente ilegível → não sobrescrever
   if (_leituraFalhou) {
-    var _agora = Date.now();
-    if (_agora - _p0aUltimoAvisoGravacao > 8000) {
-      _p0aUltimoAvisoGravacao = _agora;
-      try { showToast('\u26A0\uFE0F Grava\u00e7\u00e3o bloqueada: restaure um backup para proteger seus dados'); } catch (e) {}
-    }
+    alert('DIAGNOSTICO: _leituraFalhou=true - saveAll bloqueado');
     return false;
   }
   try {
-    const raw = JSON.stringify(APP);
+    var raw = JSON.stringify(APP);
     localStorage.setItem('prospectarionAll', _enc(raw));
-  } catch(e){}
+  } catch(e){ alert('ERRO saveAll: ' + e.message); }
 }
 
 function loadAll() {
@@ -6825,7 +6820,9 @@ function salvarContato() {
     renderAll();
     if (typeof atualizarBarraTrial === 'function') atualizarBarraTrial();
   } catch(err) {
-    showToast('Erro ao salvar: ' + (err && err.message ? err.message : String(err)));
+    var _emsg = err && err.message ? err.message : String(err);
+    var _estk = err && err.stack ? err.stack.substring(0, 200) : '';
+    alert('ERRO AO SALVAR:\n' + _emsg + '\n---\n' + _estk);
   }
 }
 
