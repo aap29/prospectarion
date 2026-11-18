@@ -6746,63 +6746,87 @@ function openNewContact() {
 }
 
 function salvarContato() {
-  const nome = document.getElementById('fc-nome').value.trim();
-  if (!nome) { showToast('Digite o nome'); return; }
-  const limit = PLANO_LIMIT[APP.user.plano] || 1000;
-  if (!APP.editingContactId && APP.contacts.length >= limit) {
-    if (APP.user.plano === 'trial') {
-      showToast(`⚠️ Limite do teste: máx. ${TRIAL.MAX_LEADS} leads. Assine para continuar.`);
-      setTimeout(() => renovarPlano(), 1800);
+  try {
+    var nome = document.getElementById('fc-nome').value.trim();
+    if (!nome) { showToast('Digite o nome'); return; }
+    var limit = PLANO_LIMIT[APP.user.plano] || 1000;
+    if (!APP.editingContactId && APP.contacts.length >= limit) {
+      if (APP.user.plano === 'trial') {
+        showToast('⚠️ Limite do teste: máx. ' + (TRIAL ? TRIAL.MAX_LEADS : 5) + ' leads. Assine para continuar.');
+        setTimeout(function(){ if(typeof renovarPlano==='function') renovarPlano(); }, 1800);
+      } else {
+        showToast('Limite do plano atingido! Faça upgrade.');
+      }
+      return;
+    }
+    var _g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    var profissao    = _g('fc-profissao');
+    var temperatura  = _g('fc-temp');
+    var statusVal    = _g('fc-status') || 'novo';
+    var origem       = _g('fc-origem');
+    var interesse    = _g('fc-interesse');
+    var interesseTxt = _g('fc-interesse-txt');
+    var cidade       = _g('fc-cidade');
+    var estado       = _g('fc-estado');
+    var nascimento   = _g('fc-nascimento');
+    var catEl = document.getElementById('fc-cat');
+    var categoria = catEl ? catEl.value : 'lead';
+    if (APP.editingContactId) {
+      var idx = -1;
+      for (var i = 0; i < APP.contacts.length; i++) {
+        if (APP.contacts[i].id === APP.editingContactId) { idx = i; break; }
+      }
+      if (idx > -1) {
+        var c = APP.contacts[idx];
+        c.nome        = nome;
+        c.tel         = _g('fc-tel');
+        c.email       = _g('fc-email');
+        c.empresa     = _g('fc-empresa');
+        c.categoria   = categoria;
+        c.obs         = _g('fc-obs');
+        c.profissao   = profissao;
+        c.temperatura = temperatura;
+        c.status      = statusVal;
+        c.origem      = origem;
+        c.interesse   = interesse;
+        c.interesseTxt= interesseTxt;
+        c.cidade      = cidade;
+        c.estado      = estado;
+        c.nascimento  = nascimento;
+        c.updatedAt   = new Date().toISOString();
+      }
+      showToast('Contato atualizado ✓');
     } else {
-      showToast('Limite do plano atingido! Faça upgrade.');
-    }
-    return;
-  }
-  // Coletar campos V9 com leitura defensiva
-  const _g = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  const novoscampos = {
-    profissao:    _g('fc-profissao'),
-    temperatura:  _g('fc-temp'),
-    status:       _g('fc-status') || 'novo',
-    origem:       _g('fc-origem'),
-    interesse:    _g('fc-interesse'),
-    interesseTxt: _g('fc-interesse-txt'),
-    cidade:       _g('fc-cidade'),
-    estado:       _g('fc-estado'),
-    nascimento:   _g('fc-nascimento'),
-  };
-  if (APP.editingContactId) {
-    const i = APP.contacts.findIndex(c => c.id === APP.editingContactId);
-    if (i > -1) {
-      APP.contacts[i] = {
-        ...APP.contacts[i],                     // preserva todos os campos existentes
-        nome,
-        tel:     _g('fc-tel'),
-        email:   _g('fc-email'),
-        empresa: _g('fc-empresa'),
-        categoria: document.getElementById('fc-cat').value,
-        obs:     _g('fc-obs'),
-        ...novoscampos,                          // sobrescreve apenas os editados
-        updatedAt: new Date().toISOString()
+      var novoContato = {
+        id:           'c' + Date.now(),
+        nome:         nome,
+        tel:          _g('fc-tel'),
+        email:        _g('fc-email'),
+        empresa:      _g('fc-empresa'),
+        categoria:    categoria,
+        obs:          _g('fc-obs'),
+        profissao:    profissao,
+        temperatura:  temperatura,
+        status:       statusVal,
+        origem:       origem,
+        interesse:    interesse,
+        interesseTxt: interesseTxt,
+        cidade:       cidade,
+        estado:       estado,
+        nascimento:   nascimento,
+        createdAt:    new Date().toISOString()
       };
+      APP.contacts.push(novoContato);
+      if (typeof addActivity === 'function') addActivity('Contato <strong>' + nome + '</strong> adicionado');
+      showToast('Contato salvo ✓');
     }
-    showToast('Contato atualizado ✓');
-  } else {
-    APP.contacts.push({
-      id: 'c' + Date.now(),
-      nome,
-      tel:       _g('fc-tel'),
-      email:     _g('fc-email'),
-      empresa:   _g('fc-empresa'),
-      categoria: document.getElementById('fc-cat').value,
-      obs:       _g('fc-obs'),
-      ...novoscampos,
-      createdAt: new Date().toISOString()
-    });
-    addActivity(`Contato <strong>${nome}</strong> adicionado`);
-    showToast('Contato salvo ✓');
+    saveAll();
+    closeModal('modal-contact');
+    renderAll();
+    if (typeof atualizarBarraTrial === 'function') atualizarBarraTrial();
+  } catch(err) {
+    showToast('Erro ao salvar: ' + (err && err.message ? err.message : String(err)));
   }
-  saveAll(); closeModal('modal-contact'); renderAll(); atualizarBarraTrial();
 }
 
 /* ══════════════════════════════════════════════
