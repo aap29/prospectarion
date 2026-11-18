@@ -3097,7 +3097,7 @@ body.ori-aberto { overflow: hidden; }
 
       <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn btn-full" onclick="closeModal('modal-contact')">Cancelar</button>
-        <button class="btn btn-primary btn-full" onclick="(function(){try{salvarContato();}catch(e){alert('ERRO: '+e.message+'\n\nStack: '+(e.stack||'sem stack'));}})()" >Salvar</button>
+        <button class="btn btn-primary btn-full" onclick="salvarContato()">Salvar</button>
       </div>
     </div>
   </div>
@@ -5198,7 +5198,7 @@ function travaRecPainelConfere() {
    com uma chave que só nasce da Chave Mestra; editar os dados não abre o cofre.
    Nada aqui apaga dados: com o cofre fechado, os dados ficam guardados e escondidos.
 ═══════════════════════════════════════════ */
-var COFRE_CFG = {"emails": ["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e", "65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc", "577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a", "a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c", "136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c", "004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"], "mestra": {"sal": "191ae0cfce820c2f315e4692be8f1544", "iter": 60000, "verif": "d624b73fdaffd8099185c64ffbcd638a2fa4e49424ef50d4308735d229e1cd2e"}, "rec": {"kenc": "d756120f732b31ca9f3483c90d62c80d3d7649d29f93f5a0abd93aff71a767ee"}, "dica": "an\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022.rs@gmail.com"};
+var COFRE_CFG = {"emails":["ab1ded3707d605ca38719d6374c6c9b37ea05d832028e97a6377b5c1dacaa55e","65ab5ea35add92f76850bd0356937f3d5ca789d507c54fdd9e7b03ea2c96d4fc","577f29ad5a916a4069cc290212c9ea13cd2340b5eda942a70bcce7559701288a","a936e7dcdc8bba58eb72c43e0a3c7eec481516486325d01b6953e08a1ef4807c","136695c4d819f6775d05b683ff3afa725cf6b32a1b3af909f025396da647222c","004099750db41feed7ed3d1ac6de387505030b2d85401425074499a0d4b97951"],"mestra":{"sal":"96636697161b00511824ac407745ec3b","iter":60000,"verif":"95fb648dee7f89f9938912b63ec093e8f8c14e0f960d9570c3cf87051957f34c"},"rec":{"kenc":"179cb73810f3776b579ad45aa95e25de257c4850460e346f1c2ad9aaf6a3f67a"},"dica":"an•••••••••••.rs@gmail.com"};
 var COFRE_ITER_SENHA = 30000, COFRE_ITER_RESP = 10000;
 var COFRE_TOKEN = 'prospectarion_aparelho';
 var COFRE_SESSAO = 'prospectarion_sessao';
@@ -6043,13 +6043,17 @@ function _marcarFalhaLeitura(motivo) {
 
 function saveAll() {
   if (_leituraFalhou) {
-    alert('DIAGNOSTICO: _leituraFalhou=true - saveAll bloqueado');
+    var _agora = Date.now();
+    if (_agora - _p0aUltimoAvisoGravacao > 8000) {
+      _p0aUltimoAvisoGravacao = _agora;
+      try { showToast('\u26A0\uFE0F Grava\u00e7\u00e3o bloqueada: restaure um backup para proteger seus dados'); } catch (e) {}
+    }
     return false;
   }
   try {
-    var raw = JSON.stringify(APP);
+    const raw = JSON.stringify(APP);
     localStorage.setItem('prospectarionAll', _enc(raw));
-  } catch(e){ alert('ERRO saveAll: ' + e.message); }
+  } catch(e){}
 }
 
 function loadAll() {
@@ -6820,9 +6824,7 @@ function salvarContato() {
     renderAll();
     if (typeof atualizarBarraTrial === 'function') atualizarBarraTrial();
   } catch(err) {
-    var _emsg = err && err.message ? err.message : String(err);
-    var _estk = err && err.stack ? err.stack.substring(0, 200) : '';
-    alert('ERRO AO SALVAR:\n' + _emsg + '\n---\n' + _estk);
+    showToast('Erro ao salvar: ' + (err && err.message ? err.message : String(err)));
   }
 }
 
