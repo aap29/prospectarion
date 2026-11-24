@@ -14,7 +14,7 @@ lista.json:
      "intencao": "Vender a casa por R$ 130 mil, somente à vista.",
      "whatsapp": "(51) 98107-0093", "publicado": "20/10/2026",
      "link": "https://...", "verificacao": "Nome e WhatsApp escritos pelo próprio anunciante; ...",
-     "mensagem": "Olá, Daniel, tudo bem?\n\nAqui é o corretor [NOME DO CORRETOR], da Innovar Imobiliária, ...\n\nSe não for o momento, é só me avisar que eu não te chamo de novo."}
+     "mensagem": "Olá, Daniel, tudo bem?\n\nAqui é o corretor [NOME DO CORRETOR], da PRO IMOB, ...\n\nSe não for o momento, é só me avisar que eu não te chamo de novo."}
   ]
 }
 Requer Playwright (python) com Chromium.
@@ -79,7 +79,7 @@ def montar(d):
     wa = sum(1 for x in L if x.get('whatsapp'))
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório de leads · {dia}</title><style>{CSS}</style></head><body>
 <div class="capa"><p class="k">RELATÓRIO DE LEADS · {dia}</p><h1>Leads para atendimento ativo</h1>
-<p>De: <b>Corretor Anderson Alves</b> · Para: direção e equipe de corretores da Innovar Imobiliária</p>
+<p>De: <b>Corretor Anderson Alves</b> · Para: equipe de corretores da PRO IMOB</p>
 <p class="sub">{len(L)} contatos do dia, levantados e verificados pelo app PRO IMOBILIÁRIA, prontos para distribuição.</p></div>
 <div class="kpis"><div class="kpi"><b>{len(L)}</b><span>leads do dia</span></div><div class="kpi"><b>{len(p1)}</b><span>proprietário confirmado pelo texto</span></div>
 <div class="kpi"><b>{len(p2)}</b><span>confirmar na 1ª mensagem</span></div><div class="kpi"><b>{wa}</b><span>com WhatsApp direto</span></div></div>
@@ -92,7 +92,7 @@ def montar(d):
 <h2>Resumo para distribuição</h2>
 <table><thead><tr><th>#</th><th>Lead</th><th>Cidade</th><th>Quer</th><th>Intenção</th><th>WhatsApp</th><th>Corretor</th></tr></thead><tbody>{tab}</tbody></table>
 <h2>Como abordar</h2><ul class="reg">
-<li>Cada corretor se identifica pelo próprio nome no lugar de <b>[NOME DO CORRETOR]</b> (ex.: “Aqui é o corretor Fulano, da Innovar Imobiliária”).</li>
+<li>Cada corretor se identifica pelo próprio nome no lugar de <b>[NOME DO CORRETOR]</b> (ex.: “Aqui é o corretor Fulano, da PRO IMOB”).</li>
 <li>Prioridade 2: começar perguntando se a pessoa é a proprietária. Se for corretor ou imobiliária, agradecer e encerrar.</li>
 <li>Um lead, um corretor: anote o nome na coluna Corretor e não repasse o contato para outra pessoa.</li>
 <li>Se a pessoa pedir para não ser contatada, registrar e não insistir.</li>

@@ -16,7 +16,7 @@ Funciona sozinho: não precisa do Claude nem de nenhuma conta externa.
 
 ## Opção 1 — Usar como arquivo no aparelho (pronto agora)
 
-1. Dê dois cliques em `index.html` (ou no `PRO-INNOVAR.html`, que é o mesmo arquivo).
+1. Dê dois cliques em `index.html` (ou no `index.html`, que é o mesmo arquivo).
 2. Faça o registro e crie o seu PIN.
 3. Pronto. Os dados ficam salvos nesse navegador, nesse computador.
 
@@ -32,7 +32,7 @@ Acesse **github.com/signup** e crie a conta com o seu e-mail.
 
 ### Passo 2. Criar o repositório
 1. No canto superior direito, clique em **+** → **New repository**.
-2. Nome: `proinnovar`.
+2. Nome: `pro-imobiliaria`.
 3. Marque **Public** (o plano grátis do GitHub Pages exige repositório público).
 4. Clique em **Create repository**.
 
@@ -49,7 +49,7 @@ Acesse **github.com/signup** e crie a conta com o seu e-mail.
 2. Em **Source**, escolha **Deploy from a branch**.
 3. Em **Branch**, escolha **main** e a pasta **/ (root)**. Clique em **Save**.
 4. Espere 1 a 2 minutos. O seu link aparece no topo da página, no formato:
-   `https://SEU-USUARIO.github.io/proinnovar/`
+   `https://SEU-USUARIO.github.io/pro-imobiliaria/`
 
 ### Passo 5. Primeiro acesso
 1. Abra o link no navegador.
@@ -66,7 +66,7 @@ Em cada aparelho, escolha o perfil: **Principal** (pede o PIN), **Corretor** ou 
 
 ---
 
-## Domínio próprio (ex.: proinnovar.com.br)
+## Domínio próprio (ex.: proimob.com.br)
 
 1. Registre o domínio em **registro.br**.
 2. No GitHub: **Settings** → **Pages** → **Custom domain** → digite `proinnovar.com.br` → **Save**.
@@ -100,7 +100,7 @@ Faça o backup pelo menos uma vez por semana e guarde o arquivo no Drive ou no s
 ## Atualizar o app no futuro
 
 1. Substitua o `index.html` no GitHub pelo novo (Add file → Upload files).
-2. Abra o `sw.js` no GitHub, troque `proinnovar-v1` por `proinnovar-v2` (v3, v4… a cada atualização) e salve.
+2. Abra o `sw.js` no GitHub, troque `proimob-app-v1` por `proimob-app-v2` (v3, v4… a cada atualização) e salve.
 3. Os aparelhos recebem a versão nova na próxima abertura com internet. Os dados não são apagados.
 
 ## Esqueceu o PIN?
