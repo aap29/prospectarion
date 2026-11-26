@@ -2121,7 +2121,12 @@ b.onclick=function(){try{var p=(typeof pacoteMigracao==="function")&&pacoteMigra
 if(t2.length>=400000){copiarBackup();alert("Progresso copiado. Na versão nova, cole em Perfil → Backup.");location.href=C.url;return;}location.href=C.url+"#migrar="+t2;}catch(e){alert("Use Perfil → Backup → Copiar meu backup e cole na versão nova.");}};}
 else{t.textContent="Seus dados ficam neste aparelho. No endereço novo, entre na sua conta e use Minha conta → Trazer meus dados do endereço antigo.";b.style.display="none";}})();</script>
 <!-- /AVISO-MUDANCA -->
-</body></html>
+<script>/* 3.46.1 • ponte automática para o endereço novo (só a conta do aluno; nunca a do Criador) */
+(function(){var NOVO='https://musicalis-br.github.io/app/';
+async function criador(){try{return isOwner()||(typeof ehCriadorEmail==='function'&&await ehCriadorEmail(ACC.session))}catch(e){return true}}
+async function levar(){try{if(!ACC.session||await criador())return false;var p=pacoteMigracao();if(!p)return false;var t=b64uEnc(JSON.stringify(p));if(t.length>=400000)return false;location.replace(NOVO+'#migrar='+t);return true}catch(e){return false}}
+var a=enterSession;enterSession=function(e){var r=a(e);setTimeout(levar,400);return r};
+setTimeout(async function(){if(location.hash.indexOf('#levar')===0&&ACC.session&&await criador()){logout();setTimeout(function(){var m=document.getElementById('lg-msg');if(m)m.textContent='Entre com a conta do aluno: ela vai para o endereço novo com o progresso.'},300)}else levar()},700);})();</script></body></html>
 <style>
 #notation-svg{min-width:0!important;width:100%!important;height:auto!important}
 @media(max-width:600px){
